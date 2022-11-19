@@ -1,0 +1,11 @@
+fastapi
+pydantic
+sqlalchemy
+lxml
+requests
+urllib3
+psycopg2
+uvicorn
+html2text
+googletrans==4.0.0-rc1
+multipledispatch

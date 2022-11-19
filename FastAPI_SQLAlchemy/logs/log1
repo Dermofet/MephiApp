@@ -1,0 +1,370 @@
+07-Nov-22 17:57:54 - API: fill_db | --args: False, False, True | --status: Start filling db
+07-Nov-22 17:57:54 - Could not find signature for update_teacher: <Session>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/multipledispatch/dispatcher.py", line 269, in __call__
+    func = self._cache[types]
+KeyError: (<class 'sqlalchemy.orm.session.Session'>,)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 261, in fill_db
+    input_parse_info.teachers_fullname_to_db(db)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/parsing/input_parse_info.py", line 108, in teachers_fullname_to_db
+    crud.update_teacher(db, shortname=shortname, teacher=db_teacher)
+  File "/usr/local/lib/python3.10/site-packages/multipledispatch/dispatcher.py", line 273, in __call__
+    raise NotImplementedError(
+NotImplementedError: Could not find signature for update_teacher: <Session>
+07-Nov-22 17:57:54 - API: fill_db | --status: Status_code = 500
+07-Nov-22 17:59:50 - API: fill_db | --args: False, False, True | --status: Start filling db
+07-Nov-22 17:59:50 - Could not find signature for update_teacher: <Session>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/multipledispatch/dispatcher.py", line 269, in __call__
+    func = self._cache[types]
+KeyError: (<class 'sqlalchemy.orm.session.Session'>,)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 261, in fill_db
+    input_parse_info.teachers_fullname_to_db(db)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/parsing/input_parse_info.py", line 108, in teachers_fullname_to_db
+    crud.update_teacher(db, shortname=shortname, teacher=db_teacher)
+  File "/usr/local/lib/python3.10/site-packages/multipledispatch/dispatcher.py", line 273, in __call__
+    raise NotImplementedError(
+NotImplementedError: Could not find signature for update_teacher: <Session>
+07-Nov-22 17:59:50 - API: fill_db | --status: Status_code = 500
+07-Nov-22 18:02:45 - API: fill_db | --args: False, False, True | --status: Start filling db
+07-Nov-22 18:02:45 - list index out of range
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 261, in fill_db
+    input_parse_info.teachers_fullname_to_db(db)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/parsing/input_parse_info.py", line 104, in teachers_fullname_to_db
+    shortname = buffer[0] + " " + buffer[1][0] + "." + buffer[2][0] + "."
+IndexError: list index out of range
+07-Nov-22 18:02:45 - API: fill_db | --status: Status_code = 500
+07-Nov-22 18:03:20 - API: fill_db | --args: False, False, True | --status: Start filling db
+07-Nov-22 18:03:20 - list index out of range
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 261, in fill_db
+    input_parse_info.teachers_fullname_to_db(db)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/parsing/input_parse_info.py", line 105, in teachers_fullname_to_db
+    shortname = buffer[0] + " " + buffer[1][0] + "." + buffer[2][0] + "."
+IndexError: list index out of range
+07-Nov-22 18:03:20 - API: fill_db | --status: Status_code = 500
+07-Nov-22 18:04:11 - API: get_all_teachers | --status: Get request
+07-Nov-22 18:04:11 - API: get_all_teachers | --status: Status_code = 200
+07-Nov-22 18:10:20 - API: fill_db | --args: False, False, True | --status: Start filling db
+07-Nov-22 18:10:26 - API: fill_db | --args: False, False, True | --status: Successful filling teachers fullname
+07-Nov-22 18:10:26 - API: fill_db | --status: Successful filling db
+07-Nov-22 18:10:38 - API: get_teacher_info | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 18:10:38 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 18:11:53 - API: get_teacher_info | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 18:11:53 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 18:14:42 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 18:14:42 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 18:22:28 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 18:22:28 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 18:56:24 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 18:56:24 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 18:56:36 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 18:56:37 - name 'fields' is not defined
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 111, in output_From_DBLesson
+    schemas_lessons[i - 1].type = delete_spaces(fields[4])
+NameError: name 'fields' is not defined
+07-Nov-22 18:56:37 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 18:57:08 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 18:57:08 - 'NoneType' object has no attribute 'clear'
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 89, in output_From_DBLesson
+    schemas_lessons[i - 1].teacher_name.clear()
+AttributeError: 'NoneType' object has no attribute 'clear'
+07-Nov-22 18:57:08 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 18:58:13 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 18:58:14 - 'NoneType' object has no attribute 'append'
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 95, in output_From_DBLesson
+    schemas_lessons[i - 1].teacher_name.append(delete_spaces(item))
+AttributeError: 'NoneType' object has no attribute 'append'
+07-Nov-22 18:58:14 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 18:59:12 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 18:59:13 - 'NoneType' object has no attribute 'append'
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 96, in output_From_DBLesson
+    schemas_lessons[i - 1].teacher_name.append(delete_spaces(item))
+AttributeError: 'NoneType' object has no attribute 'append'
+07-Nov-22 18:59:13 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 19:02:22 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:02:23 - 'NoneType' object has no attribute 'append'
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 96, in output_From_DBLesson
+    schemas_lessons[i - 1].teacher_name.append(delete_spaces(item))
+AttributeError: 'NoneType' object has no attribute 'append'
+07-Nov-22 19:02:23 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 19:04:05 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:04:05 - 'NoneType' object has no attribute 'append'
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 98, in output_From_DBLesson
+    schemas_lessons[i - 1].teacher_name.append(delete_spaces(item))
+AttributeError: 'NoneType' object has no attribute 'append'
+07-Nov-22 19:04:05 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 19:05:22 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:05:22 - 'NoneType' object has no attribute 'append'
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 98, in output_From_DBLesson
+    schemas_lessons[i - 1].teacher_name.append(delete_spaces(item))
+AttributeError: 'NoneType' object has no attribute 'append'
+07-Nov-22 19:05:22 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 19:07:35 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:07:36 - 'NoneType' object has no attribute 'append'
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 99, in output_From_DBLesson
+    schemas_lessons[i].teacher_name.append(delete_spaces(item))
+AttributeError: 'NoneType' object has no attribute 'append'
+07-Nov-22 19:07:36 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 19:08:41 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:08:41 - 'NoneType' object has no attribute 'append'
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 100, in output_From_DBLesson
+    schemas_lessons[i].teacher_name.append(delete_spaces(item))
+AttributeError: 'NoneType' object has no attribute 'append'
+07-Nov-22 19:08:41 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 19:09:19 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:09:19 - 'NoneType' object has no attribute 'append'
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 100, in output_From_DBLesson
+    schemas_lessons[i].teacher_name.append(delete_spaces(item))
+AttributeError: 'NoneType' object has no attribute 'append'
+07-Nov-22 19:09:19 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 19:10:17 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:10:17 - 'NoneType' object has no attribute 'append'
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 110, in output_From_DBLesson
+    schemas_lessons[i].teacher_fullname.append(delete_spaces(item))
+AttributeError: 'NoneType' object has no attribute 'append'
+07-Nov-22 19:10:17 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 19:10:47 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:10:47 - list index out of range
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 95, in output_From_DBLesson
+    if items[1].find("#") != -1:
+IndexError: list index out of range
+07-Nov-22 19:10:47 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+07-Nov-22 19:12:15 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:12:15 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:14:13 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:14:13 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:14:23 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:14:23 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:14:30 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:14:31 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:19:18 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:19:19 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:21:22 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:21:22 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:23:44 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:23:44 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:25:01 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:25:01 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:27:09 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:27:09 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:29:57 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:29:58 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:31:38 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:31:38 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:33:47 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:33:47 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:34:47 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:34:48 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:37:18 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:37:18 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:38:15 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:38:16 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:39:53 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:39:54 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:40:28 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:40:29 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:41:26 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:41:26 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:42:21 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:42:21 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:42:57 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:42:57 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:43:22 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:43:22 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:45:00 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:45:01 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:45:47 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:45:47 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:46:19 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:46:19 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:47:44 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:47:44 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:49:04 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:49:04 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:51:00 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:51:01 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:53:03 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 19:53:04 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 19:54:13 - API: get_all_teachers | --status: Get request
+07-Nov-22 19:54:13 - API: get_all_teachers | --status: Status_code = 200
+07-Nov-22 19:54:22 - API: get_lessons_by_teacher | --args: Аксенов В.С. | --status: Get request
+07-Nov-22 19:54:23 - API: get_lessons_by_teacher | --args: Аксенов В.С. | --status: Status_code = 200
+07-Nov-22 19:55:03 - API: get_lessons_by_teacher | --args: Аксенов В.С. | --status: Get request
+07-Nov-22 19:55:03 - API: get_lessons_by_teacher | --args: Аксенов В.С. | --status: Status_code = 200
+07-Nov-22 19:55:12 - API: get_lessons_by_teacher | --args: Аксенов В.С. | --status: Get request
+07-Nov-22 19:55:13 - name 'fields' is not defined
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 93, in get_lessons_by_teacher
+    | tools.output_From_DBLessonT(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 191, in output_From_DBLessonT
+    schemas_lessons[i - 1].type = delete_spaces(fields[2])
+NameError: name 'fields' is not defined
+07-Nov-22 19:55:13 - API: get_lessons_by_teacher | --args: Аксенов В.С. | --status: Status_code = 500
+07-Nov-22 19:55:47 - API: get_lessons_by_teacher | --args: Аксенов В.С. | --status: Get request
+07-Nov-22 19:55:48 - API: get_lessons_by_teacher | --args: Аксенов В.С. | --status: Status_code = 200
+07-Nov-22 20:42:41 - API: main | --status: Get request
+07-Nov-22 20:42:41 - API: main | --status: Status_code = 200
+07-Nov-22 20:42:45 - API: main | --status: Get request
+07-Nov-22 20:42:45 - API: main | --status: Status_code = 200
+07-Nov-22 20:43:12 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 20:43:12 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 20:43:24 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 20:43:24 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 20:44:49 - API: get_all_teachers | --status: Get request
+07-Nov-22 20:44:49 - API: get_all_teachers | --status: Status_code = 200
+07-Nov-22 20:45:05 - API: get_lessons_by_teacher | --args: Автушко В.П. | --status: Get request
+07-Nov-22 20:45:09 - API: get_lessons_by_teacher | --args: Автушко В.П. | --status: Status_code = 200
+07-Nov-22 20:46:31 - API: get_teacher_info | --args: Автушко В.П. | --status: Get request
+07-Nov-22 20:46:31 - API: get_lessons_by_teacher | --args: Автушко В.П. | --status: Status_code = 200
+07-Nov-22 20:48:34 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+07-Nov-22 20:48:34 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+07-Nov-22 20:50:27 - API: fill_db | --args: True, False, True | --status: Start filling db
+07-Nov-22 20:53:23 - API: fill_db | --args: True, False, True | --status: Successful filling schedule
+07-Nov-22 20:53:27 - API: fill_db | --args: True, False, True | --status: Successful filling teachers fullname
+07-Nov-22 20:53:27 - API: fill_db | --status: Successful filling db
+07-Nov-22 21:30:12 - API: get_all_groups | --status: Get request
+07-Nov-22 21:30:12 - API: get_all_groups | --status: Status_code = 200
+07-Nov-22 21:30:16 - API: get_all_teachers | --status: Get request
+07-Nov-22 21:30:16 - API: get_all_teachers | --status: Status_code = 200
+07-Nov-22 21:30:25 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 21:30:25 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 21:30:31 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 21:30:35 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 21:31:37 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 21:31:38 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 21:32:53 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 21:32:54 - list index out of range
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 93, in get_lessons_by_teacher
+    | tools.output_From_DBLessonT(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 199, in output_From_DBLessonT
+    print(schemas_lessons[i - 1])
+IndexError: list index out of range
+07-Nov-22 21:32:54 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 500
+07-Nov-22 21:33:22 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 21:33:23 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 21:36:29 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 21:36:30 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 21:40:38 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 21:40:39 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 21:41:13 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 21:41:16 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 22:01:34 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 22:01:34 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 22:03:24 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 22:03:24 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+07-Nov-22 22:04:41 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+07-Nov-22 22:04:42 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+08-Nov-22 09:22:43 - API: main | --status: Get request
+08-Nov-22 09:22:43 - API: main | --status: Status_code = 200
+08-Nov-22 09:22:53 - API: get_all_teachers | --status: Get request
+08-Nov-22 09:22:53 - API: get_all_teachers | --status: Status_code = 200
+08-Nov-22 09:23:04 - API: get_lessons_by_teacher | --args: Акишина Л.С. | --status: Get request
+08-Nov-22 09:23:04 - API: get_lessons_by_teacher | --args: Акишина Л.С. | --status: Status_code = 200
+08-Nov-22 09:23:12 - API: get_lessons_by_teacher | --args: Акишина Л.С. | --status: Get request
+08-Nov-22 09:23:14 - API: get_lessons_by_teacher | --args: Акишина Л.С. | --status: Status_code = 200
+08-Nov-22 12:48:09 - API: main | --status: Get request
+08-Nov-22 12:48:09 - API: main | --status: Status_code = 200
+08-Nov-22 12:49:16 - API: get_all_teachers | --status: Get request
+08-Nov-22 12:49:16 - API: get_all_teachers | --status: Status_code = 200
+08-Nov-22 12:49:35 - API: get_lessons_by_teacher | --args: Акишина Л.С. | --status: Get request
+08-Nov-22 12:49:35 - API: get_lessons_by_teacher | --args: Акишина Л.С. | --status: Status_code = 200
+08-Nov-22 12:50:03 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+08-Nov-22 12:50:04 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+08-Nov-22 12:50:10 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+08-Nov-22 12:50:17 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+08-Nov-22 12:52:22 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Get request
+08-Nov-22 12:52:24 - API: get_lessons_by_teacher | --args: Абдуллова Г.Р. | --status: Status_code = 200
+08-Nov-22 13:05:01 - API: main | --status: Get request
+08-Nov-22 13:05:01 - API: main | --status: Status_code = 200
+08-Nov-22 13:05:08 - API: get_all_teachers | --status: Get request
+08-Nov-22 13:05:08 - API: get_all_teachers | --status: Status_code = 200
+08-Nov-22 13:05:23 - API: get_lessons_by_teacher | --args: Акишина Л.С. | --status: Get request
+08-Nov-22 13:05:24 - API: get_lessons_by_teacher | --args: Акишина Л.С. | --status: Status_code = 200
+08-Nov-22 13:05:40 - API: get_lessons_by_teacher | --args: Аверин А.С. | --status: Get request
+08-Nov-22 13:05:42 - API: get_lessons_by_teacher | --args: Аверин А.С. | --status: Status_code = 200
+08-Nov-22 13:06:55 - API: get_lessons_by_teacher | --args: Аверин А.С. | --status: Get request
+08-Nov-22 13:06:56 - API: get_lessons_by_teacher | --args: Аверин А.С. | --status: Status_code = 200
+08-Nov-22 13:07:07 - API: get_lessons_by_teacher | --args: Аверин А.С. | --status: Get request
+08-Nov-22 13:07:13 - API: get_lessons_by_teacher | --args: Аверин А.С. | --status: Status_code = 200
+08-Nov-22 13:10:30 - API: get_lessons_by_teacher | --args: Аверин А.С. | --status: Get request
+08-Nov-22 13:10:31 - API: get_lessons_by_teacher | --args: Аверин А.С. | --status: Status_code = 200
+12-Nov-22 13:04:32 - API: main | --status: Get request
+12-Nov-22 13:04:32 - API: main | --status: Status_code = 200
+12-Nov-22 13:04:50 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 13:04:50 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+12-Nov-22 13:04:58 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 13:05:00 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+12-Nov-22 13:10:23 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 13:10:23 - local variable 'time' referenced before assignment
+Traceback (most recent call last):
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/main.py", line 54, in get_lessons_by_group
+    lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
+  File "/FastAPI_SQLAlchemy/./FastAPI_SQLAlchemy/_fastapi_/tools.py", line 76, in output_From_DBLesson
+    _ = time.time()
+UnboundLocalError: local variable 'time' referenced before assignment
+12-Nov-22 13:10:23 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 500
+12-Nov-22 13:11:30 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 13:11:31 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+12-Nov-22 13:11:43 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 13:11:45 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+12-Nov-22 13:12:35 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 13:12:36 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+12-Nov-22 13:12:53 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 13:12:53 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+12-Nov-22 13:13:01 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 13:13:01 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+12-Nov-22 13:13:07 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 13:13:08 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+12-Nov-22 15:09:52 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 15:09:52 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+12-Nov-22 15:09:56 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 15:09:56 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200
+12-Nov-22 15:10:03 - API: get_lessons_by_group | --args: С20-501 | --status: Get requests
+12-Nov-22 15:10:04 - API: get_lessons_by_group | --args: С20-501 | --status: Status_code = 200

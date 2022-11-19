@@ -1,0 +1,1726 @@
+{
+   "name": "FastAPI_SQLAlchemy/parsing/schedule/ПФ",
+   "courses": [
+      {
+         "name": "1",
+         "groups": [
+            {
+               "name": "И22-01",
+               "lessons": {
+                  "monday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Яремчук О.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22189"
+                              ],
+                              "date_start": "05.09.2022",
+                              "date_end": "10.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Яремчук О.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22189"
+                              ],
+                              "date_start": "17.10.2022",
+                              "date_end": "23.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "tuesday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Яремчук О.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22189"
+                              ],
+                              "date_start": "06.09.2022",
+                              "date_end": "11.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Яремчук О.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22189"
+                              ],
+                              "date_start": "18.10.2022",
+                              "date_end": "24.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "wednesday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Яремчук О.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22189"
+                              ],
+                              "date_start": "07.09.2022",
+                              "date_end": "12.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Яремчук О.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22189"
+                              ],
+                              "date_start": "19.10.2022",
+                              "date_end": "25.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "thursday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "11:50",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Яремчук О.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22189"
+                              ],
+                              "date_start": "01.09.2022",
+                              "date_end": "13.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Яремчук О.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22189"
+                              ],
+                              "date_start": "20.10.2022",
+                              "date_end": "19.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "friday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Яремчук О.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22189"
+                              ],
+                              "date_start": "02.09.2022",
+                              "date_end": "14.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Яремчук О.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22189"
+                              ],
+                              "date_start": "21.10.2022",
+                              "date_end": "20.01.2023"
+                           }
+                        ]
+                     }
+                  ]
+               }
+            },
+            {
+               "name": "И22-02",
+               "lessons": {
+                  "monday": [
+                     {
+                        "time_start": "10:15",
+                        "time_end": "11:50",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Маркевич Е.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22009"
+                              ],
+                              "date_start": "05.09.2022",
+                              "date_end": "31.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-215",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Маркевич Е.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22009"
+                              ],
+                              "date_start": "07.11.2022",
+                              "date_end": "23.01.2023"
+                           }
+                        ]
+                     },
+                     {
+                        "time_start": "12:45",
+                        "time_end": "15:15",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Маркевич Е.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22009"
+                              ],
+                              "date_start": "05.09.2022",
+                              "date_end": "31.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-215",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Маркевич Е.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22009"
+                              ],
+                              "date_start": "07.11.2022",
+                              "date_end": "23.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "tuesday": [
+                     {
+                        "time_start": "14:30",
+                        "time_end": "17:50",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Еременко Н.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22061"
+                              ],
+                              "date_start": "06.09.2022",
+                              "date_end": "01.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Б-211",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Еременко Н.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22061"
+                              ],
+                              "date_start": "08.11.2022",
+                              "date_end": "24.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "wednesday": [
+                     {
+                        "time_start": "09:20",
+                        "time_end": "13:30",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Еременко Н.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22061"
+                              ],
+                              "date_start": "07.09.2022",
+                              "date_end": "02.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-215",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Еременко Н.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22061"
+                              ],
+                              "date_start": "09.11.2022",
+                              "date_end": "25.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "thursday": [
+                     {
+                        "time_start": "12:45",
+                        "time_end": "17:00",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Еременко Н.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22061"
+                              ],
+                              "date_start": "01.09.2022",
+                              "date_end": "27.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Еременко Н.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22061"
+                              ],
+                              "date_start": "03.11.2022",
+                              "date_end": "19.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "friday": [
+                     {
+                        "time_start": "10:15",
+                        "time_end": "11:50",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Маркевич Е.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22009"
+                              ],
+                              "date_start": "03.09.2022",
+                              "date_end": "29.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Маркевич Е.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22009"
+                              ],
+                              "date_start": "05.11.2022",
+                              "date_end": "21.01.2023"
+                           }
+                        ]
+                     },
+                     {
+                        "time_start": "12:45",
+                        "time_end": "15:15",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Маркевич Е.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22009"
+                              ],
+                              "date_start": "03.09.2022",
+                              "date_end": "29.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Маркевич Е.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22009"
+                              ],
+                              "date_start": "05.11.2022",
+                              "date_end": "21.01.2023"
+                           }
+                        ]
+                     }
+                  ]
+               }
+            },
+            {
+               "name": "И22-03",
+               "lessons": {
+                  "monday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "05.09.2022",
+                              "date_end": "31.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Б-211",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "07.11.2022",
+                              "date_end": "23.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "tuesday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "06.09.2022",
+                              "date_end": "01.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-301а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "08.11.2022",
+                              "date_end": "24.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "wednesday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "07.09.2022",
+                              "date_end": "02.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "09.11.2022",
+                              "date_end": "25.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "thursday": [
+                     {
+                        "time_start": "10:15",
+                        "time_end": "14:20",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Арбатская О.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22191"
+                              ],
+                              "date_start": "02.09.2022",
+                              "date_end": "28.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-301а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Арбатская О.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22191"
+                              ],
+                              "date_start": "04.11.2022",
+                              "date_end": "20.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "friday": [
+                     {
+                        "time_start": "10:15",
+                        "time_end": "13:30",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Арбатская О.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22191"
+                              ],
+                              "date_start": "03.09.2022",
+                              "date_end": "29.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-301а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Арбатская О.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22191"
+                              ],
+                              "date_start": "05.11.2022",
+                              "date_end": "21.01.2023"
+                           }
+                        ]
+                     }
+                  ]
+               }
+            },
+            {
+               "name": "И22-04",
+               "lessons": {
+                  "monday": [
+                     {
+                        "time_start": "13:35",
+                        "time_end": "17:50",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "05.09.2022",
+                              "date_end": "10.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Б-211",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "17.10.2022",
+                              "date_end": "23.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "tuesday": [
+                     {
+                        "time_start": "13:35",
+                        "time_end": "17:50",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "06.09.2022",
+                              "date_end": "11.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-301а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "18.10.2022",
+                              "date_end": "24.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "wednesday": [
+                     {
+                        "time_start": "14:30",
+                        "time_end": "18:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "01.09.2022",
+                              "date_end": "13.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Малахова М.Г."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22190"
+                              ],
+                              "date_start": "20.10.2022",
+                              "date_end": "19.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "thursday": [
+                     {
+                        "time_start": "14:30",
+                        "time_end": "18:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Арбатская О.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22191"
+                              ],
+                              "date_start": "02.09.2022",
+                              "date_end": "14.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-301а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Арбатская О.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22191"
+                              ],
+                              "date_start": "21.10.2022",
+                              "date_end": "20.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "friday": [
+                     {
+                        "time_start": "13:35",
+                        "time_end": "17:00",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Арбатская О.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22191"
+                              ],
+                              "date_start": "03.09.2022",
+                              "date_end": "15.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-301а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Арбатская О.А."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22191"
+                              ],
+                              "date_start": "22.10.2022",
+                              "date_end": "21.01.2023"
+                           }
+                        ]
+                     }
+                  ]
+               }
+            },
+            {
+               "name": "И22-05",
+               "lessons": {
+                  "monday": [
+                     {
+                        "time_start": "11:05",
+                        "time_end": "15:15",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Барминова С.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22193"
+                              ],
+                              "date_start": "05.09.2022",
+                              "date_end": "28.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Барминова С.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22193"
+                              ],
+                              "date_start": "05.12.2022",
+                              "date_end": "23.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "tuesday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "11:50",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Барминова С.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22193"
+                              ],
+                              "date_start": "06.09.2022",
+                              "date_end": "29.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Б-211",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Барминова С.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22193"
+                              ],
+                              "date_start": "06.12.2022",
+                              "date_end": "24.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "wednesday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "01.09.2022",
+                              "date_end": "24.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-301а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "01.12.2022",
+                              "date_end": "19.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "thursday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "02.09.2022",
+                              "date_end": "25.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Б-211",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "02.12.2022",
+                              "date_end": "20.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "friday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "03.09.2022",
+                              "date_end": "26.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Б-211",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "03.12.2022",
+                              "date_end": "21.01.2023"
+                           }
+                        ]
+                     }
+                  ]
+               }
+            },
+            {
+               "name": "И22-06",
+               "lessons": {
+                  "monday": [
+                     {
+                        "time_start": "16:15",
+                        "time_end": "20:20",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Барминова С.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22193"
+                              ],
+                              "date_start": "05.09.2022",
+                              "date_end": "28.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Барминова С.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22193"
+                              ],
+                              "date_start": "05.12.2022",
+                              "date_end": "23.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "tuesday": [
+                     {
+                        "time_start": "15:20",
+                        "time_end": "19:30",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Барминова С.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22193"
+                              ],
+                              "date_start": "06.09.2022",
+                              "date_end": "29.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Барминова С.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22193"
+                              ],
+                              "date_start": "06.12.2022",
+                              "date_end": "24.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "wednesday": [
+                     {
+                        "time_start": "13:35",
+                        "time_end": "17:50",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "01.09.2022",
+                              "date_end": "24.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-301а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "01.12.2022",
+                              "date_end": "19.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "thursday": [
+                     {
+                        "time_start": "13:35",
+                        "time_end": "17:50",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "02.09.2022",
+                              "date_end": "25.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Б-211",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "02.12.2022",
+                              "date_end": "20.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "friday": [
+                     {
+                        "time_start": "13:35",
+                        "time_end": "17:00",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "03.09.2022",
+                              "date_end": "26.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Б-211",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Силантьева М.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22192"
+                              ],
+                              "date_start": "03.12.2022",
+                              "date_end": "21.01.2023"
+                           }
+                        ]
+                     }
+                  ]
+               }
+            },
+            {
+               "name": "И22-07",
+               "lessons": {
+                  "monday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Смурова Т.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22194"
+                              ],
+                              "date_start": "05.09.2022",
+                              "date_end": "31.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-301а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Смурова Т.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22194"
+                              ],
+                              "date_start": "07.11.2022",
+                              "date_end": "23.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "tuesday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Смурова Т.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22194"
+                              ],
+                              "date_start": "06.09.2022",
+                              "date_end": "01.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-215",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Смурова Т.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22194"
+                              ],
+                              "date_start": "08.11.2022",
+                              "date_end": "24.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "wednesday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Смурова Т.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22194"
+                              ],
+                              "date_start": "07.09.2022",
+                              "date_end": "02.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Б-211",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Смурова Т.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22194"
+                              ],
+                              "date_start": "09.11.2022",
+                              "date_end": "25.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "thursday": [
+                     {
+                        "time_start": "12:45",
+                        "time_end": "17:00",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Мкртчян В.С."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22195"
+                              ],
+                              "date_start": "01.09.2022",
+                              "date_end": "27.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-215",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Мкртчян В.С."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22195"
+                              ],
+                              "date_start": "03.11.2022",
+                              "date_end": "19.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "friday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Мкртчян В.С."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22195"
+                              ],
+                              "date_start": "02.09.2022",
+                              "date_end": "28.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Мкртчян В.С."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22195"
+                              ],
+                              "date_start": "04.11.2022",
+                              "date_end": "20.01.2023"
+                           }
+                        ]
+                     }
+                  ]
+               }
+            },
+            {
+               "name": "И22-08",
+               "lessons": {
+                  "monday": [
+                     {
+                        "time_start": "12:45",
+                        "time_end": "16:05",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Смурова Т.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22194"
+                              ],
+                              "date_start": "05.09.2022",
+                              "date_end": "31.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-301а",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Смурова Т.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22194"
+                              ],
+                              "date_start": "07.11.2022",
+                              "date_end": "23.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "tuesday": [
+                     {
+                        "time_start": "14:30",
+                        "time_end": "18:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Смурова Т.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22194"
+                              ],
+                              "date_start": "06.09.2022",
+                              "date_end": "01.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-215",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Смурова Т.В."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22194"
+                              ],
+                              "date_start": "08.11.2022",
+                              "date_end": "24.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "wednesday": [
+                     {
+                        "time_start": "13:35",
+                        "time_end": "17:50",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Мкртчян В.С."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22195"
+                              ],
+                              "date_start": "07.09.2022",
+                              "date_end": "02.11.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-215",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Мкртчян В.С."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22195"
+                              ],
+                              "date_start": "09.11.2022",
+                              "date_end": "25.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "thursday": [
+                     {
+                        "time_start": "08:30",
+                        "time_end": "12:40",
+                        "lessons": [
+                           {
+                              "dot": true,
+                              "cabinet": null,
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Мкртчян В.С."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22195"
+                              ],
+                              "date_start": "01.09.2022",
+                              "date_end": "27.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "А-215",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Мкртчян В.С."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22195"
+                              ],
+                              "date_start": "03.11.2022",
+                              "date_end": "19.01.2023"
+                           }
+                        ]
+                     }
+                  ],
+                  "friday": [
+                     {
+                        "time_start": "12:45",
+                        "time_end": "17:00",
+                        "lessons": [
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Мкртчян В.С."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22195"
+                              ],
+                              "date_start": "02.09.2022",
+                              "date_end": "28.10.2022"
+                           },
+                           {
+                              "dot": false,
+                              "cabinet": "Т-100",
+                              "lesson_type": "Пр",
+                              "weeks": "еженед",
+                              "lesson_name": "Русский язык как иностранный",
+                              "subgroup": null,
+                              "teacher_name": [
+                                 "Мкртчян В.С."
+                              ],
+                              "teacher_url": [
+                                 "https://home.mephi.ru/tutors/22195"
+                              ],
+                              "date_start": "04.11.2022",
+                              "date_end": "20.01.2023"
+                           }
+                        ]
+                     }
+                  ]
+               }
+            }
+         ]
+      }
+   ]
+}
