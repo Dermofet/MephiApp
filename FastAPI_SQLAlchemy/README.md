@@ -1,1 +1,1 @@
-Debug version API for developing MephiApp
+FastAPI + SQLAlchemy + parsers
