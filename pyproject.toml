@@ -1,0 +1,68 @@
+[tool.poetry]
+name = "app-backend"
+version = "0.1.0"
+description = "Backend part for MEPFI APP"
+authors = ["Dermofet"]
+
+
+[tool.poetry.dependencies]
+python = ">=3.9.16,<3.12"
+alembic = "^1.8.1"
+fastapi = "^0.79.0"
+SQLAlchemy = "^1.4.40"
+uvicorn = "^0.18.2"
+python-dotenv = "^0.20.0"
+asyncpg = "^0.26.0"
+python-multipart = "^0.0.5"
+pydantic = "^1.9.2"
+requests = "^2.28.1"
+beautifulsoup4 = "^4.11.1"
+lxml = "^4.9.1"
+fastapi_filter = { version = "^0.5.1", python = "^3.9.16"}
+
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.942"
+black = {extras = ["d"], version = "^22.8.0"}
+isort = "^5.10.1"
+pytest = "^7.1.1"
+sqlalchemy-stubs = "^0.4"
+pytest-cov = "^3.0.0"
+pytest-alembic = "^0.8.4"
+pytest-asyncio = "^0.19.0"
+pytest-trio = "^0.7.0"
+httpx = "^7.2.0"
+
+
+[tool.black]
+line-length = 120
+target-version = ['py39']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+)
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+line_length = 120
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
