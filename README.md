@@ -5,3 +5,7 @@
 Приложение создавалось как аналог приложения "НИЯУ МИФИ. Личный кабинет" (https://play.google.com/store/apps/details?id=com.mephi.corporatemephi&hl=ru&gl=US).
 
 Поскольку у нашей команды не было доступа к сервисам, предоставляющим расписание, я реализовал парсеры с помощью библиотеки lxml.
+
+-------------
+
+В текущий момент backend переписывается под асинхронную работу SQLAlchemy (https://github.com/Dermofet/MephiApp/tree/async-backend)
