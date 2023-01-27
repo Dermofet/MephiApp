@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from backend.DataBase.connection import Base
+from backend.DataBase.Models.AssociationTables import AT_lesson_group
 
 
 class Group(Base):
@@ -15,5 +16,5 @@ class Group(Base):
     course = Column(Integer)
     academic_guid = Column(UUID(as_uuid=True), ForeignKey("academics.guid"))
 
-    _academic_ = relationship("Academic", back_populates="_groups_")
-    _lessons_ = relationship("Lesson", back_populates="_group_", primaryjoin='Group.guid == Lesson.group_guid')
+    academic = relationship("Academic", back_populates="groups", lazy="joined")
+    lessons = relationship("Lesson", back_populates="groups", lazy="selectin", uselist=True, secondary=AT_lesson_group)

@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.Filters.Room import RoomFilter
 from backend.Repositories.Room import RoomRepository
-from backend.Schemas.Room import RoomCreate, RoomOutput
+from backend.Schemas.Room import Room, RoomCreate, RoomOutput
 
 
 class RoomService:
@@ -17,28 +17,28 @@ class RoomService:
             raise HTTPException(409, "Аудитория уже существует")
         else:
             room = await RoomRepository.create(db, schemas)
-        return RoomOutput.from_orm(room)
+        return RoomOutput(**Room.from_orm(room).dict())
 
     @staticmethod
     async def get(db: AsyncSession, guid: UUID4) -> RoomOutput:
         room = await RoomRepository.get_by_id(db, guid)
         if room is None:
             raise HTTPException(404, "Аудитория не найдена")
-        return RoomOutput.from_orm(room)
+        return RoomOutput(**Room.from_orm(room).dict())
 
     @staticmethod
     async def get_by_name(db: AsyncSession, name: str) -> RoomOutput:
         room = await RoomRepository.get_by_name(db, name)
         if room is None:
             raise HTTPException(404, "Аудитория не найдена")
-        return RoomOutput.from_orm(room)
+        return RoomOutput(**Room.from_orm(room).dict())
 
     @staticmethod
     async def get_all(db: AsyncSession) -> list[str]:
         rooms = await RoomRepository.get_all(db)
         if rooms is None:
             raise HTTPException(404, "Аудитория не найдена")
-        return [RoomOutput.from_orm(room) for room in rooms]
+        return [RoomOutput(**Room.from_orm(room).dict()) for room in rooms]
 
     @staticmethod
     async def get_empty(db: AsyncSession, room_filter: RoomFilter) -> list[str]:
@@ -46,14 +46,14 @@ class RoomService:
         rooms = await RoomRepository.get_empty(db, room_filter)
         if rooms is None:
             raise HTTPException(404, "Аудитория не найдена")
-        return [RoomOutput.from_orm(room) for room in rooms]
+        return [RoomOutput(**Room.from_orm(room).dict()) for room in rooms]
 
     @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: RoomCreate) -> RoomOutput:
         room = await RoomRepository.update(db, guid, schemas)
         if room is None:
             raise HTTPException(404, "Аудитория не найдена")
-        return RoomOutput.from_orm(room)
+        return RoomOutput(**Room.from_orm(room).dict())
 
     @staticmethod
     async def delete(db: AsyncSession, guid: UUID4) -> Response(status_code=204):

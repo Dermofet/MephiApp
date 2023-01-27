@@ -24,9 +24,7 @@ class RoomRepository:
     @staticmethod
     async def get_by_id(db: AsyncSession, guid: UUID4) -> Room:
         room = await db.execute(select(Room).where(Room.guid == guid).limit(1))
-        if len(room.scalars().all()) > 0:
-            return room.scalars().all()[0]
-        return None
+        return room.scalar()
 
     @staticmethod
     async def get_all(db: AsyncSession) -> List[Room]:
@@ -36,22 +34,11 @@ class RoomRepository:
     @staticmethod
     async def get_by_number(db: AsyncSession, number: str) -> Room:
         room = await db.execute(select(Room).where(Room.number == number).limit(1))
-        if len(room.scalars().all()) > 0:
-            return room.scalars().all()[0]
-        return None
+        return room.scalar()
 
     @staticmethod
     async def get_empty(db: AsyncSession, room_filter: RoomFilter) -> List[Room]:
         rooms = await db.execute(room_filter.filter(select(Room).outerjoin(Lesson).outerjoin(Corps)))
-
-        # rooms = await db.execute(
-        #     select(Room).join(Lesson).where(Lesson.time_start == time_start and
-        #                                     Lesson.time_end == time_end and
-        #                                     Lesson.weeks == week and
-        #                                     ((Lesson.date_start is not None and Lesson.date_start < _date) or
-        #                                      (Lesson.date_end is not None and Lesson.date_end < _date) or
-        #                                      True) and
-        #                                     Room.guid != Lesson.room_guid))
         return rooms.scalars().unique().all()
 
     @staticmethod

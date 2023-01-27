@@ -5,6 +5,7 @@ from starlette import status
 
 from backend.Config.config import get_config
 from backend.DataBase.connection import get_session
+from backend.Schemas.Group import GroupOutput
 from backend.Services.Group import GroupService
 
 config = get_config()
@@ -23,3 +24,18 @@ async def get_all(
         group_service: GroupService = Depends()
 ):
     return await group_service.get_all(db)
+
+
+@router.get(
+    "/group/{name}",
+    response_model=GroupOutput,
+    status_code=status.HTTP_200_OK,
+    description="Получить группe по id",
+    summary="Получить группe по id",
+)
+async def get(
+        name: str,
+        db: AsyncSession = Depends(get_session),
+        group_service: GroupService = Depends(),
+):
+    return await group_service.get_by_name(db, name=name)

@@ -38,6 +38,7 @@ class Config(_Settings):
     BACKEND_PREFIX: str
 
     BACKEND_HOST: str
+    BACKEND_LOCALHOST: str
     BACKEND_PORT: int
     BACKEND_RELOAD: bool
 

@@ -11,9 +11,7 @@ class AcademicCreate(AcademicBase):
 
 
 class AcademicOutput(AcademicBase):
-
-    class Config:
-        orm_mode = True
+    pass
 
 
 class Academic(AcademicBase):

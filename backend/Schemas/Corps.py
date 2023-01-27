@@ -11,13 +11,11 @@ class CorpsCreate(CorpsBase):
 
 
 class CorpsOutput(CorpsBase):
-
-    class Config:
-        orm_mode = True
+    pass
 
 
 class Corps(CorpsBase):
-    id: UUID4 = Field(description="ID")
+    guid: UUID4 = Field(description="ID")
 
     class Config:
         orm_mode = True

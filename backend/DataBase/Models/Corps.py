@@ -12,4 +12,5 @@ class Corps(Base):
 
     guid = Column(UUID(as_uuid=True), default=uuid.uuid4(), primary_key=True, index=True, unique=True)
     name = Column(String(300), unique=True)
-    _rooms_ = relationship("Room", back_populates="_corps_")
+    rooms = relationship("Room", back_populates="corps", primaryjoin="Corps.guid == Room.corps_guid", uselist=True,
+                         lazy="selectin")

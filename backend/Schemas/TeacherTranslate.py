@@ -1,27 +1,27 @@
+from typing import Optional
+
 from pydantic import UUID4, BaseModel, Field
 from sqlalchemy.orm import Session
 
-from backend.Schemas.Language import Language
+# from backend.Schemas.Language import Language
 
 
 class TeacherTranslateBase(BaseModel):
     name: str = Field(description="Краткое ФИО")
-    fullname: str = Field(description="Полное ФИО")
+    fullname: Optional[str] = Field(description="Полное ФИО")
+    lang: str = Field(description="Код языка")
 
 
 class TeacherTranslateCreate(TeacherTranslateBase):
-    pass
+    teacher_guid: UUID4 = Field(description="ID преподавателя")
 
 
 class TeacherTranslateOutput(TeacherTranslateBase):
-
-    class Config:
-        orm_mode = True
+    pass
 
 
 class TeacherTranslate(TeacherTranslateBase):
     guid: UUID4 = Field(description="ID")
-    lang: Language = Field(description="Код языка")
 
     class Config:
         orm_mode = True

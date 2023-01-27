@@ -11,8 +11,8 @@ from backend.Schemas.TeacherTranslate import TeacherTranslateCreate, TeacherTran
 
 class TeacherTranslateRepository:
     @staticmethod
-    async def create(db: AsyncSession, schemas: TeacherTranslateCreate, lang_guid: UUID4) -> TeacherTranslate:
-        teacher_tr = TeacherTranslate(**schemas.dict(exclude_unset=True), lang_guid=lang_guid)
+    async def create(db: AsyncSession, schemas: TeacherTranslateCreate) -> TeacherTranslate:
+        teacher_tr = TeacherTranslate(**schemas.dict(exclude_unset=True))
         db.add(teacher_tr)
         await db.commit()
         await db.refresh(teacher_tr)
@@ -21,9 +21,13 @@ class TeacherTranslateRepository:
     @staticmethod
     async def get_by_id(db: AsyncSession, guid: UUID4) -> TeacherTranslate:
         teacher_tr = await db.execute(select(TeacherTranslate).where(TeacherTranslate.guid == guid).limit(1))
-        if len(teacher_tr.scalars().all()) > 0:
-            return teacher_tr.scalars().all()[0]
-        return None
+        return teacher_tr.scalar()
+
+    @staticmethod
+    async def get_unique(db: AsyncSession, teacher_guid: UUID4, lang: str):
+        teacher_tr = await db.execute(select(TeacherTranslate).where(TeacherTranslate.teacher_guid == teacher_guid and
+                                                                     TeacherTranslate.lang == lang).limit(1))
+        return teacher_tr.scalar()
 
     @staticmethod
     async def get_all_by_lang(db: AsyncSession, lang_guid: UUID4) -> List[TeacherTranslate]:

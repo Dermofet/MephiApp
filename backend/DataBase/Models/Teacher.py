@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from backend.DataBase.connection import Base
+from backend.DataBase.Models.AssociationTables import AT_lesson_teacher
 
 
 class Teacher(Base):
@@ -13,7 +14,10 @@ class Teacher(Base):
     guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True, index=True, unique=True)
     online_url = Column(String(200), nullable=True)
     alt_online_url = Column(String(200), nullable=True)
-    teacher_translate_guid = Column(UUID(as_uuid=True), ForeignKey("teacher_translate.guid"))
 
-    _teacher_translate_ = relationship("TeacherTranslate", back_populates="_teacher_")
-    _lessons_ = relationship("Lesson", back_populates="_teacher_", primaryjoin="Teacher.guid == Lesson.teacher_guid")
+    trans = relationship("TeacherTranslate",
+                         back_populates="teacher",
+                         lazy="selectin",
+                         uselist=True)
+    lessons = relationship("Lesson", back_populates="teachers", lazy="selectin", uselist=True,
+                           secondary=AT_lesson_teacher)

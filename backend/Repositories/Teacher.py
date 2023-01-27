@@ -12,8 +12,8 @@ from backend.Schemas.Teacher import TeacherCreate
 
 class TeacherRepository:
     @staticmethod
-    async def create(db: AsyncSession, schemas: TeacherCreate, trans_guid: UUID4) -> Teacher:
-        teacher = Teacher(**schemas.dict(exclude_unset=True), teacher_translate_guid=trans_guid)
+    async def create(db: AsyncSession, schemas: TeacherCreate) -> Teacher:
+        teacher = Teacher(online_url=schemas.online_url, alt_online_url=schemas.alt_online_url)
         db.add(teacher)
         await db.commit()
         await db.refresh(teacher)
@@ -22,24 +22,21 @@ class TeacherRepository:
     @staticmethod
     async def get_by_id(db: AsyncSession, guid: UUID4) -> Teacher:
         teacher = await db.execute(select(Teacher).where(Teacher.guid == guid).limit(1))
-        if len(teacher.scalars().all()) > 0:
-            return teacher.scalars().all()[0]
-        return None
+        return teacher.scalar()
 
     @staticmethod
     async def get_all(db: AsyncSession) -> List[Teacher]:
-        teachers = await db.execute(select(Teacher))
+        teachers = await db.execute(select(Teacher).join(TeacherTranslate, Teacher.guid == TeacherTranslate.teacher_guid))
         return teachers.scalars().unique().all()
 
     @staticmethod
-    async def get_by_name(db: AsyncSession, name: str) -> Teacher:
+    async def get_by_name(db: AsyncSession, name: str, lang: str) -> Teacher:
         teacher = await db.execute(select(Teacher)
                                    .join(TeacherTranslate,
-                                         TeacherTranslate.name == name)
-                                   .where(TeacherTranslate.guid == Teacher.teacher_translate_guid).limit(1))
-        if len(teacher.scalars().all()) > 0:
-            return teacher.scalars().all()[0]
-        return None
+                                         TeacherTranslate.name == name,
+                                         TeacherTranslate.lang == lang)
+                                   .where(Teacher.guid == TeacherTranslate.teacher_guid).limit(1))
+        return teacher.scalar()
 
     @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: TeacherCreate) -> Teacher:

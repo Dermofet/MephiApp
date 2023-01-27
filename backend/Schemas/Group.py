@@ -12,18 +12,16 @@ class GroupBase(BaseModel):
 
 
 class GroupCreate(GroupBase):
-    academic: Optional[str] = Field(description="Ученое звание")
+    academic: str = Field(description="Ученое звание")
 
 
 class GroupOutput(GroupBase):
-
-    class Config:
-        orm_mode = True
+    academic: AcademicOutput = Field(description="Ученое звание")
 
 
 class Group(GroupBase):
     guid: UUID4 = Field(description="ID")
-    academic: AcademicOutput = Field(description="Ученое звание")
+    academic: Academic = Field(description="Ученое звание")
 
     class Config:
         orm_mode = True

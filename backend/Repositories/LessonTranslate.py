@@ -21,9 +21,13 @@ class LessonTranslateRepository:
     @staticmethod
     async def get_by_id(db: AsyncSession, guid: UUID4) -> LessonTranslate:
         lesson_tr = await db.execute(select(LessonTranslate).where(LessonTranslate.guid == guid).limit(1))
-        if len(lesson_tr.scalars().all()) > 0:
-            return lesson_tr.scalars().all()[0]
-        return None
+        return lesson_tr.scalar()
+
+    @staticmethod
+    async def get_unique(db: AsyncSession, lesson_guid: UUID4, lang: str) -> LessonTranslate:
+        lesson_tr = await db.execute(select(LessonTranslate).where(LessonTranslate.lesson_guid == lesson_guid and
+                                                                   LessonTranslate.lang == lang).limit(1))
+        return lesson_tr.scalar()
 
     @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: LessonTranslateCreate) -> LessonTranslate:

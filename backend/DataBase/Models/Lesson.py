@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from backend.DataBase.connection import Base
+from backend.DataBase.Models.AssociationTables import *
 
 
 class Lesson(Base):
@@ -15,16 +16,22 @@ class Lesson(Base):
     time_end = Column(String(50))
     dot = Column(Boolean, default=False)
     weeks = Column(Integer)
-    date_start = Column(String(15))
-    date_end = Column(String(15))
+    date_start = Column(String(15), nullable=True)
+    date_end = Column(String(15), nullable=True)
     day = Column(String(15))
 
-    room_guid = Column(UUID(as_uuid=True), ForeignKey("rooms.guid"))
-    group_guid = Column(UUID(as_uuid=True), ForeignKey("groups.guid"))
-    teacher_guid = Column(UUID(as_uuid=True), ForeignKey("teachers.guid"))
-    lesson_translate_guid = Column(UUID(as_uuid=True), ForeignKey("lesson_translate.guid"))
+    groups = relationship("Group", back_populates="lessons", lazy="selectin", uselist=True, secondary=AT_lesson_group)
+    teachers = relationship("Teacher", back_populates="lessons", lazy="selectin", uselist=True, secondary=AT_lesson_teacher)
+    rooms = relationship("Room", back_populates="lessons", lazy="selectin", uselist=True, secondary=AT_lesson_room)
+    trans = relationship("LessonTranslate", back_populates="lesson", lazy="selectin", uselist=True,
+                         primaryjoin="LessonTranslate.lesson_guid == Lesson.guid")
 
-    _group_ = relationship("Group", back_populates="_lessons_")
-    _teacher_ = relationship("Teacher", back_populates="_lessons_")
-    _room_ = relationship("Room", back_populates="_lessons_")
-    _lesson_translate_ = relationship("LessonTranslate", back_populates="_lessons_")
+    # def __repr__(self):
+    #     return f'guid = {self.guid}\n' \
+    #            f'time_start = {self.time_start}\n' \
+    #            f'time_end = {self.time_end}\n' \
+    #            f'dot = {self.dot}\n' \
+    #            f'weeks = {self.weeks}\n' \
+    #            f'date_start = {self.date_start}\n' \
+    #            f'date_end = {self.date_end}\n' \
+    #            f'day = {self.day}\n'

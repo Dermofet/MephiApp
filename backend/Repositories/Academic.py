@@ -19,16 +19,12 @@ class AcademicRepository:
     @staticmethod
     async def get_by_id(db: AsyncSession, guid: UUID4) -> Academic:
         academic = await db.execute(select(Academic).where(Academic.guid == guid).limit(1))
-        if len(academic.scalars().all()) > 0:
-            return academic.scalars().all()[0]
-        return None
+        return academic.scalar()
 
     @staticmethod
     async def get_by_name(db: AsyncSession, name: str) -> Academic:
         academic = await db.execute(select(Academic).where(Academic.name == name).limit(1))
-        if len(academic.scalars().all()) > 0:
-            return academic.scalars().all()[0]
-        return None
+        return academic.scalar()
 
     @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: AcademicCreate) -> Academic:

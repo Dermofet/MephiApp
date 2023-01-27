@@ -23,15 +23,15 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
     summary="Создание занятия",
 )
 async def create(
-    schemas: LessonCreate,
-    db: AsyncSession = Depends(get_session),
-    lesson_service: LessonService = Depends(),
+        schemas: LessonCreate,
+        db: AsyncSession = Depends(get_session),
+        lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.create(db=db, schemas=schemas)
 
 
 @router.get(
-    "/lesson/id/{id}",
+    "/lesson/id/{guid}",
     response_model=LessonOutput,
     response_description="Успешный возврат занятия",
     status_code=status.HTTP_200_OK,
@@ -39,11 +39,12 @@ async def create(
     summary="Получение занятия по id",
 )
 async def get(
-    id: UUID4 = Path(None, description="Id занятия"),
-    db: AsyncSession = Depends(get_session),
-    lesson_service: LessonService = Depends(),
+        guid,
+        lang: str = "ru",
+        db: AsyncSession = Depends(get_session),
+        lesson_service: LessonService = Depends(),
 ):
-    return await lesson_service.get(db=db, guid=id)
+    return await lesson_service.get(db=db, guid=guid, lang=lang)
 
 
 @router.get(
@@ -55,11 +56,13 @@ async def get(
     summary="Получение занятий по группе",
 )
 async def get_by_group(
-    group: UUID4 = Path(None, description="Группа, у которой проводятся занятия"),
-    db: AsyncSession = Depends(get_session),
-    lesson_service: LessonService = Depends(),
+
+        group: str = Path(description="Группа, у которой проводятся занятия"),
+        lang: str = "ru",
+        db: AsyncSession = Depends(get_session),
+        lesson_service: LessonService = Depends(),
 ):
-    return await lesson_service.get_by_group(db=db, group=group)
+    return await lesson_service.get_by_group(db=db, group=group, lang=lang)
 
 
 @router.get(
@@ -71,11 +74,12 @@ async def get_by_group(
     summary="Получение занятий по преподавателю",
 )
 async def get_by_group(
-    teacher: UUID4 = Path(None, description="Преподаватель, который проводит занятия"),
-    db: AsyncSession = Depends(get_session),
-    lesson_service: LessonService = Depends(),
+        teacher: str = Path(None, description="Преподаватель, который проводит занятия"),
+        lang: str = "ru",
+        db: AsyncSession = Depends(get_session),
+        lesson_service: LessonService = Depends(),
 ):
-    return await lesson_service.get_by_teacher(db=db, teacher=teacher)
+    return await lesson_service.get_by_teacher(db=db, teacher=teacher, lang=lang)
 
 
 @router.put(
@@ -87,12 +91,12 @@ async def get_by_group(
     summary="Изменение занятия по id",
 )
 async def update(
-    schemas: LessonCreate,
-    id: UUID4 = Path(None, description="Id занятия"),
-    db: AsyncSession = Depends(get_session),
-    lesson_service: LessonService = Depends(),
+        schemas: LessonCreate,
+        Id: UUID4 = Path(None, description="Id занятия"),
+        db: AsyncSession = Depends(get_session),
+        lesson_service: LessonService = Depends(),
 ):
-    return await lesson_service.update(db=db, guid=id, schemas=schemas)
+    return await lesson_service.update(db=db, guid=Id, schemas=schemas)
 
 
 @router.delete(
@@ -103,8 +107,8 @@ async def update(
     summary="Удаление занятия по id",
 )
 async def delete(
-    id: UUID4 = Path(None, description="Id занятия"),
-    db: AsyncSession = Depends(get_session),
-    lesson_service: LessonService = Depends(),
+        Id: UUID4 = Path(None, description="Id занятия"),
+        db: AsyncSession = Depends(get_session),
+        lesson_service: LessonService = Depends(),
 ):
-    return await lesson_service.delete(db=db, guid=id)
+    return await lesson_service.delete(db=db, guid=Id)
