@@ -1,6 +1,8 @@
+
 version: "3.9"
 services:
   db:
+    container_name: db
     image: postgres:15.1
     volumes:
       - app-db-data:/var/lib/postgresql/data/
@@ -12,6 +14,7 @@ services:
       - "5432:5432"
     networks:
       - app-network
+    network_mode: "bridge"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d schedule" ]
       interval: 5s
@@ -19,6 +22,7 @@ services:
       retries: 5
 
   backend:
+    container_name: backend
     build:
       context: .
     depends_on:
@@ -47,7 +51,7 @@ services:
       ENV: development
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fastapi.rule=Host(`fastapi.localhost`)"
+      - "traefik.http.routers.fastapi.rule=Host(`${BACKEND_LOCALHOST}`)"
     networks:
       - app-network
 
@@ -60,6 +64,35 @@ services:
     volumes:
       - "./traefik.dev.toml:/etc/traefik/traefik.toml"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    networks:
+      - app-network
+
+#  parsers:
+#    container_name: parsers
+#    build:
+#      context: ./parsers
+#    volumes:
+#      - ./parsers:/parsers
+#    ports:
+#      - "6000:6000"
+#    environment:
+#      MEPHI_AUTH_URL: ${MEPHI_AUTH_URL}
+#      MEPHI_SCHEDULE_URL: ${MEPHI_SCHEDULE_URL}
+#      HOME_MEPHI_URL: ${HOME_MEPHI_URL}
+#      USERNAME: ${USERNAME}
+#      PASSWORD: ${PASSWORD}
+#    networks:
+#      - app-network
 
 volumes:
   app-db-data:

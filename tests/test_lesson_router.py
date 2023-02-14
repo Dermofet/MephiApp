@@ -1,9 +1,9 @@
 import pytest
 from httpx import AsyncClient
 
-from backend.Config.config import get_config
+from backend.config.config import get_config
 from backend.main import app
-from backend.Schemas.Lesson import LessonCreate, LessonOutput
+from backend.schemas.Lesson import LessonCreate, LessonOutput
 
 
 @pytest.mark.anyio

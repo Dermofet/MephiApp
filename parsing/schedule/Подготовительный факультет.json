@@ -1,0 +1,1706 @@
+{
+   "name": "Подготовительный факультет",
+   "lang": "ru",
+   "courses": [
+      {
+         "name": 1,
+         "groups": [
+            {
+               "name": "И22-01",
+               "schedule": [
+                  {
+                     "day": "Понедельник",
+                     "lessons": [
+                        {
+                           "time_start": "14:30",
+                           "time_end": "17:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-306",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Батеев А.Б."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Вторник",
+                     "lessons": [
+                        {
+                           "time_start": "09:20",
+                           "time_end": "11:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-1006",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Барменков А.Н."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "11:55",
+                           "time_end": "14:20",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-1006",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Богданов А.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "14:30",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Яремчук О.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Среда",
+                     "lessons": [
+                        {
+                           "time_start": "10:15",
+                           "time_end": "14:20",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Яремчук О.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "16:15",
+                           "time_end": "18:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "В-418",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Барменков А.Н."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Четверг",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "13:30",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-211",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Яремчук О.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "16:15",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "401",
+                                 "lesson_type": "Лек",
+                                 "weeks": 2,
+                                 "lesson_name": "Информатика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Алюшин А.М."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Пятница",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "10:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Яремчук О.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "11:55",
+                           "time_end": "14:20",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Яремчук О.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "name": "И22-02",
+               "schedule": [
+                  {
+                     "day": "Понедельник",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "11:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-306",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Пестова П.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "11:05",
+                           "time_end": "15:15",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-301а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Маркевич Е.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Вторник",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "11:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-305",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Резванов Р.Р."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "11:05",
+                           "time_end": "14:20",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-301а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Еременко Н.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Четверг",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "11:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-308",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Пестова П.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "11:55",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Еременко Н.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "16:15",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "401",
+                                 "lesson_type": "Лек",
+                                 "weeks": 2,
+                                 "lesson_name": "Информатика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Алюшин А.М."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Пятница",
+                     "lessons": [
+                        {
+                           "time_start": "10:15",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-411",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Резванов Р.Р."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Суббота",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "13:30",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Маркевич Е.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "name": "И22-03",
+               "schedule": [
+                  {
+                     "day": "Понедельник",
+                     "lessons": [
+                        {
+                           "time_start": "12:45",
+                           "time_end": "17:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Малахова М.Г."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Вторник",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Малахова М.Г."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "14:30",
+                           "time_end": "17:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "В-411",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Баскаков А.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Среда",
+                     "lessons": [
+                        {
+                           "time_start": "09:20",
+                           "time_end": "11:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "НЛК-464",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Баскаков А.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "15:20",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-414",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Борисов С.Н."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Четверг",
+                     "lessons": [
+                        {
+                           "time_start": "11:55",
+                           "time_end": "14:20",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "401",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Борисов С.Н."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "16:15",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "401",
+                                 "lesson_type": "Лек",
+                                 "weeks": 2,
+                                 "lesson_name": "Информатика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Алюшин А.М."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Пятница",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-301а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Арбатская О.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Суббота",
+                     "lessons": [
+                        {
+                           "time_start": "12:45",
+                           "time_end": "17:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-301а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Арбатская О.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "name": "И22-04",
+               "schedule": [
+                  {
+                     "day": "Понедельник",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Малахова М.Г."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "13:35",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-205",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Бухарова Т.И."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Вторник",
+                     "lessons": [
+                        {
+                           "time_start": "13:35",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-207",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Бухарова Т.И."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Среда",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Малахова М.Г."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "13:35",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "И-110",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Королев Н.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Четверг",
+                     "lessons": [
+                        {
+                           "time_start": "16:15",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "401",
+                                 "lesson_type": "Лек",
+                                 "weeks": 2,
+                                 "lesson_name": "Информатика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Алюшин А.М."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Пятница",
+                     "lessons": [
+                        {
+                           "time_start": "12:45",
+                           "time_end": "17:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-301а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Арбатская О.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Суббота",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-301а",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Арбатская О.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "13:35",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-216",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Королев Н.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "name": "И22-05",
+               "schedule": [
+                  {
+                     "day": "Понедельник",
+                     "lessons": [
+                        {
+                           "time_start": "12:45",
+                           "time_end": "17:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Барминова С.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Вторник",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Барминова С.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Среда",
+                     "lessons": [
+                        {
+                           "time_start": "16:15",
+                           "time_end": "18:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "В-409",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Волков В.Е."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Четверг",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Силантьева М.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "13:35",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-213",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Гандурин Ю.Н."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "16:15",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "401",
+                                 "lesson_type": "Лек",
+                                 "weeks": 2,
+                                 "lesson_name": "Информатика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Алюшин А.М."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Пятница",
+                     "lessons": [
+                        {
+                           "time_start": "16:15",
+                           "time_end": "18:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-205",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Волков В.Е."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Суббота",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Силантьева М.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "13:35",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-217",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Гандурин Ю.Н."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "name": "И22-06",
+               "schedule": [
+                  {
+                     "day": "Понедельник",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "11:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Барминова С.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Вторник",
+                     "lessons": [
+                        {
+                           "time_start": "10:15",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "И-108",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Клиндухов В.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "12:45",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Барминова С.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Среда",
+                     "lessons": [
+                        {
+                           "time_start": "10:15",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-208",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Клиндухов В.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "15:20",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-306",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Нурушева М.Б."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Четверг",
+                     "lessons": [
+                        {
+                           "time_start": "16:15",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "401",
+                                 "lesson_type": "Лек",
+                                 "weeks": 2,
+                                 "lesson_name": "Информатика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Алюшин А.М."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Пятница",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Силантьева М.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "13:35",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-212ст",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Физика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Тимошенко С.Л."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Суббота",
+                     "lessons": [
+                        {
+                           "time_start": "12:45",
+                           "time_end": "17:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Силантьева М.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "name": "И22-07",
+               "schedule": [
+                  {
+                     "day": "Понедельник",
+                     "lessons": [
+                        {
+                           "time_start": "14:30",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "В-415",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "История",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Швец Т.Д."
+                                 ],
+                                 "date_start": "13.02.2023",
+                                 "date_end": "12.06.2023"
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Вторник",
+                     "lessons": [
+                        {
+                           "time_start": "11:05",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-210",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "История",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Швец Т.Д."
+                                 ],
+                                 "date_start": "07.02.2023",
+                                 "date_end": "06.06.2023"
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "14:30",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-211",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Смурова Т.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Среда",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "13:30",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-100",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Смурова Т.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "13:35",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-216",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Дубравина В.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "16:15",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-417",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Обществознание",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Белов В.И."
+                                 ],
+                                 "date_start": "08.02.2023",
+                                 "date_end": "07.06.2023"
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Четверг",
+                     "lessons": [
+                        {
+                           "time_start": "10:15",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "И-108",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Дубравина В.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "12:45",
+                           "time_end": "17:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Мкртчян В.С."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Пятница",
+                     "lessons": [
+                        {
+                           "time_start": "12:45",
+                           "time_end": "17:00",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Мкртчян В.С."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Суббота",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "11:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-211",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Литература",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Дмитренко М.М."
+                                 ],
+                                 "date_start": "11.02.2023",
+                                 "date_end": "10.06.2023"
+                              }
+                           ]
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "name": "И22-08",
+               "schedule": [
+                  {
+                     "day": "Понедельник",
+                     "lessons": [
+                        {
+                           "time_start": "11:05",
+                           "time_end": "13:30",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Т-107",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Пестова П.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "16:15",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "В-415",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "История",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Швец Т.Д."
+                                 ],
+                                 "date_start": "13.02.2023",
+                                 "date_end": "12.06.2023"
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Вторник",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "14:20",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-211",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Смурова Т.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "16:15",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-308",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "История",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Швец Т.Д."
+                                 ],
+                                 "date_start": "07.02.2023",
+                                 "date_end": "06.06.2023"
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Среда",
+                     "lessons": [
+                        {
+                           "time_start": "13:35",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Смурова Т.В."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "16:15",
+                           "time_end": "17:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "К-417",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Обществознание",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Белов В.И."
+                                 ],
+                                 "date_start": "08.02.2023",
+                                 "date_end": "07.06.2023"
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Четверг",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Мкртчян В.С."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Пятница",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "12:40",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "А-215",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Русский язык как иностранный",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Мкртчян В.С."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        },
+                        {
+                           "time_start": "13:35",
+                           "time_end": "16:05",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "НЛК-466",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Математика",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Пестова П.А."
+                                 ],
+                                 "date_start": null,
+                                 "date_end": null
+                              }
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     "day": "Суббота",
+                     "lessons": [
+                        {
+                           "time_start": "08:30",
+                           "time_end": "11:50",
+                           "lesson": [
+                              {
+                                 "dot": false,
+                                 "room": "Б-211",
+                                 "lesson_type": "Пр",
+                                 "weeks": 2,
+                                 "lesson_name": "Литература",
+                                 "subgroup": null,
+                                 "teacher_name": [
+                                    "Дмитренко М.М."
+                                 ],
+                                 "date_start": "11.02.2023",
+                                 "date_end": "10.06.2023"
+                              }
+                           ]
+                        }
+                     ]
+                  }
+               ]
+            }
+         ]
+      }
+   ]
+}
