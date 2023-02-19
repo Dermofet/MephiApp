@@ -11,7 +11,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 
 
 @router.post(
-    "/academic",
+    "/academics",
     response_model=AcademicOutputSchema,
     response_description="Ученое звание успешно создано",
     status_code=status.HTTP_201_CREATED,

@@ -7,16 +7,15 @@ from starlette import status
 
 from backend.config import config
 from backend.database.connection import get_session
-from backend.schemas.lesson import LessonCreateSchema, LessonOutputSchema
-from backend.schemas.lesson_translate import LessonTranslateOutputSchema
+from backend.schemas.lesson import LessonCreateSchema, LessonOutputSchema, LessonSchema
 from backend.services.lesson import LessonService
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 
 
 @router.post(
-    "/lesson",
-    response_model=LessonTranslateOutputSchema,
+    "/lessons",
+    response_model=LessonOutputSchema,
     response_description="Занятие успешно создано",
     status_code=status.HTTP_201_CREATED,
     description="Создать занятие и вернуть его",
@@ -31,7 +30,7 @@ async def create(
 
 
 @router.get(
-    "/lesson/id/{guid}",
+    "/lessons/id/{guid}",
     response_model=LessonOutputSchema,
     response_description="Успешный возврат занятия",
     status_code=status.HTTP_200_OK,
@@ -39,16 +38,17 @@ async def create(
     summary="Получение занятия по id",
 )
 async def get(
-        guid,
+        guid: UUID4 = Path(None, description="Id занятия"),
+        lang: str = "ru",
         db: AsyncSession = Depends(get_session),
         lesson_service: LessonService = Depends(),
 ):
-    return await lesson_service.get(db=db, guid=guid)
+    return await lesson_service.get(db=db, guid=guid, lang=lang)
 
 
 @router.get(
-    "/lesson/group/{group}",
-    response_model=List[LessonTranslateOutputSchema],
+    "/lessons/groups/{group}",
+    response_model=dict,
     response_description="Успешный возврат занятий",
     status_code=status.HTTP_200_OK,
     description="Получить список занятий определенной группы",
@@ -65,8 +65,8 @@ async def get_by_group(
 
 
 @router.get(
-    "/lesson/teacher/{teacher}",
-    response_model=List[LessonOutputSchema],
+    "/lessons/teachers/{teacher}",
+    response_model=dict,
     response_description="Успешный возврат занятий",
     status_code=status.HTTP_200_OK,
     description="Получить список занятий, где преподает определенный преподаватель",
@@ -82,7 +82,7 @@ async def get_by_teacher(
 
 
 @router.put(
-    "/lesson/id/{id}",
+    "/lessons/id/{id}",
     response_model=LessonOutputSchema,
     response_description="Успешное обновление занятия",
     status_code=status.HTTP_200_OK,
@@ -91,23 +91,23 @@ async def get_by_teacher(
 )
 async def update(
         schemas: LessonCreateSchema,
-        Id: UUID4 = Path(None, description="Id занятия"),
+        guid: UUID4 = Path(None, description="Id занятия"),
         db: AsyncSession = Depends(get_session),
         lesson_service: LessonService = Depends(),
 ):
-    return await lesson_service.update(db=db, guid=Id, schemas=schemas)
+    return await lesson_service.update(db=db, guid=guid, schemas=schemas)
 
 
 @router.delete(
-    "/lesson/id/{id}",
+    "/lessons/id/{id}",
     response_description="Успешное удаление занятия",
     status_code=status.HTTP_204_NO_CONTENT,
     description="Удалить занятие по его id",
     summary="Удаление занятия по id",
 )
 async def delete(
-        Id: UUID4 = Path(None, description="Id занятия"),
+        guid: UUID4 = Path(None, description="Id занятия"),
         db: AsyncSession = Depends(get_session),
         lesson_service: LessonService = Depends(),
 ):
-    return await lesson_service.delete(db=db, guid=Id)
+    return await lesson_service.delete(db=db, guid=guid)

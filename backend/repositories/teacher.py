@@ -27,9 +27,11 @@ class TeacherRepository:
         return teacher.scalar()
 
     @staticmethod
-    async def get_all(db: AsyncSession) -> List[TeacherTranslateModel]:
-        teachers_translate = await db.execute(
-            select(TeacherTranslateModel).join(TeacherModel, TeacherModel.guid == TeacherTranslateModel.teacher_guid))
+    async def get_all(db: AsyncSession, lang: str) -> List[TeacherModel]:
+        teachers_translate = await db.execute(select(TeacherModel)
+                                              .join(TeacherTranslateModel,
+                                                    TeacherModel.guid == TeacherTranslateModel.teacher_guid)
+                                              .where(TeacherTranslateModel.lang == lang))
         return teachers_translate.scalars().unique().all()
 
     @staticmethod
@@ -55,22 +57,25 @@ class TeacherRepository:
 
     @staticmethod
     async def update(db: AsyncSession, schemas: TeacherCreateSchema) -> TeacherModel:
-        teacher_tr = await TeacherTranslateRepository.get_by_name(db, name=schemas.name)
+        teacher = await TeacherRepository.get_by_name(db, name=schemas.name, lang=schemas.lang)
 
-        if teacher_tr is None:
+        if teacher is None:
             raise HTTPException(404, "Преподавателя не существует")
 
         await db.execute(update(TeacherTranslateModel)
-                         .where(TeacherTranslateModel.guid == teacher_tr.guid)
+                         .where(TeacherTranslateModel.teacher_guid == teacher.guid)
                          .values(name=schemas.name,
                                  fullname=schemas.fullname,
-                                 lang=schemas.lang))
-        await db.execute(update(TeacherModel).where(TeacherModel.guid == teacher_tr.teacher_guid)
+                                 lang=schemas.lang,
+                                 teacher_guid=teacher.guid))
+        await db.execute(update(TeacherModel).where(TeacherModel.guid == teacher.guid)
                          .values(online_url=schemas.online_url,
                                  alt_online_url=schemas.alt_online_url))
+
         await db.commit()
-        await db.refresh(teacher_tr)
-        return teacher_tr
+        await db.refresh(teacher)
+
+        return teacher
 
     @staticmethod
     async def delete(db: AsyncSession, guid: UUID4) -> None:

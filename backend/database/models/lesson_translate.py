@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from backend.database.connection import Base
+from backend.database.models.association_tables import *
 
 
 class LessonTranslateModel(Base):
@@ -18,4 +19,13 @@ class LessonTranslateModel(Base):
     lesson_guid = Column(UUID(as_uuid=True), ForeignKey("lessons.guid"))
 
     lesson = relationship("LessonModel", back_populates="trans", lazy="joined", uselist=False,
-                          primaryjoin="LessonModel.guid == LessonTranslateModel.lesson_guid")
+                          primaryjoin="LessonTranslateModel.lesson_guid == LessonModel.guid")
+
+    def __repr__(self):
+        return f'<LessonTranslateModel:\n' \
+               f' guid: {self.guid}\n' \
+               f' type: {self.type}\n' \
+               f' name: {self.name}\n' \
+               f' subgroup: {self.subgroup}\n' \
+               f' lang: {self.lang}\n' \
+               f' lesson_guid: {self.lesson_guid}>'

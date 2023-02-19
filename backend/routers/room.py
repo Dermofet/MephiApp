@@ -13,7 +13,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 
 
 @router.post(
-    "/room",
+    "/rooms",
     response_model=RoomOutputSchema,
     response_description="Аудитория успешно создано",
     status_code=status.HTTP_201_CREATED,
@@ -29,7 +29,7 @@ async def create(
 
 
 @router.get(
-    "/room/empty",
+    "/rooms/empty",
     response_model=list[str],
     status_code=status.HTTP_200_OK,
     description="Получить все аудитории, в которых не проводятся занятия в заданный период времени",

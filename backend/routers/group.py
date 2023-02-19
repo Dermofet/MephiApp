@@ -12,7 +12,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 
 
 @router.post(
-    "/group",
+    "/groups",
     response_model=GroupOutputSchema,
     response_description="Группа успешно создано",
     status_code=status.HTTP_201_CREATED,
@@ -42,7 +42,7 @@ async def get_all(
 
 
 @router.get(
-    "/group/{name}",
+    "/groups/{name}",
     response_model=GroupOutputSchema,
     status_code=status.HTTP_200_OK,
     description="Получить группу по названию",

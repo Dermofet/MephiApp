@@ -14,18 +14,19 @@ from backend.schemas.teacher_translate import (
 
 class TeacherService:
     @staticmethod
-    async def create(db: AsyncSession, schemas: TeacherCreateSchema) -> TeacherTranslateOutputSchema:
+    async def create(db: AsyncSession, schemas: TeacherCreateSchema) -> TeacherOutputSchema:
         teacher = await TeacherRepository.get_by_name(db, schemas.name, schemas.lang)
         if teacher is not None:
             raise HTTPException(409, "Преподаватель уже существует")
         else:
             teacher = await TeacherRepository.create(db, schemas)
-            teacher_translate = await TeacherTranslateRepository.create(db, TeacherTranslateCreateSchema(
+            await TeacherTranslateRepository.create(db, TeacherTranslateCreateSchema(
                 name=schemas.name,
                 fullname=schemas.fullname,
                 lang=schemas.lang,
                 teacher_guid=teacher.guid))
-        return TeacherTranslateOutputSchema(**TeacherTranslateSchema.from_orm(teacher_translate).dict())
+            await db.refresh(teacher)
+        return TeacherOutputSchema(**TeacherSchema.from_orm(teacher).dict())
 
     @staticmethod
     async def get(db: AsyncSession, guid: UUID4) -> TeacherOutputSchema:
@@ -35,23 +36,30 @@ class TeacherService:
         return TeacherOutputSchema(**TeacherSchema.from_orm(teacher).dict())
 
     @staticmethod
-    async def get_by_name(db: AsyncSession, name: str) -> TeacherTranslateOutputSchema:
-        teacher_translate = await TeacherTranslateRepository.get_by_name(db, name)
-        if teacher_translate is None:
+    async def get_by_name(db: AsyncSession, name: str, lang: str) -> TeacherOutputSchema:
+        teacher = await TeacherRepository.get_by_name(db, name, lang)
+        print(TeacherOutputSchema(**TeacherSchema.from_orm(teacher).dict()))
+        if teacher is None:
             raise HTTPException(404, "Преподаватель не найден")
-        return TeacherTranslateOutputSchema(**TeacherTranslateSchema.from_orm(teacher_translate).dict())
+        return TeacherOutputSchema(**TeacherSchema.from_orm(teacher).dict())
 
     @staticmethod
     async def get_all(db: AsyncSession, lang: str) -> list[str]:
-        teachers = await TeacherTranslateRepositorySchema.get_all_by_lang(db, lang)
-        return [TeacherTranslateSchema.from_orm(teacher).name for teacher in teachers]
+        teachers = await TeacherRepository.get_all(db, lang)
+        trans = [TeacherSchema.from_orm(teacher).trans for teacher in teachers]
+        res = []
+        for translate in trans:
+            for teacher_translate in translate:
+                if teacher_translate.lang == lang:
+                    res.append(teacher_translate.name)
+        return res
 
     @staticmethod
-    async def update(db: AsyncSession, schemas: TeacherCreateSchema) -> TeacherTranslateOutputSchema:
+    async def update(db: AsyncSession, schemas: TeacherCreateSchema) -> TeacherOutputSchema:
         teacher = await TeacherRepository.update(db, schemas)
         if teacher is None:
             raise HTTPException(404, "Преподаватель не найден")
-        return TeacherTranslateOutputSchema(**TeacherTranslateSchema.from_orm(teacher).dict())
+        return TeacherOutputSchema(**TeacherSchema.from_orm(teacher).dict())
 
     @staticmethod
     async def delete(db: AsyncSession, guid: UUID4) -> Response(status_code=204):

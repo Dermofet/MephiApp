@@ -20,7 +20,7 @@ class RoomService:
         else:
             corps = await CorpsRepository.get_by_name(db, name=schemas.corps)
             if corps is None:
-                raise HTTPException(408, "Корпус не существует")
+                raise HTTPException(404, "Корпус, в котором находится аудитория, не найден")
             room = await RoomRepository.create(db, schemas, corps_guid=corps.guid)
         return RoomOutputSchema(**RoomSchema.from_orm(room).dict())
 
@@ -47,11 +47,10 @@ class RoomService:
 
     @staticmethod
     async def get_empty(db: AsyncSession, room_filter: RoomFilter) -> list[str]:
-        room_filter.week = room_filter.week % 2
         rooms = await RoomRepository.get_empty(db, room_filter)
         if rooms is None:
             raise HTTPException(404, "Аудитория не найдена")
-        return [RoomOutputSchema(**RoomSchema.from_orm(room).dict()) for room in rooms]
+        return [RoomOutputSchema(**RoomSchema.from_orm(room).dict()).number for room in rooms]
 
     @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: RoomCreateSchema) -> RoomOutputSchema:

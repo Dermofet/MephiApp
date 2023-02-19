@@ -3,8 +3,6 @@ from typing import Optional
 from pydantic import UUID4, BaseModel, Field
 from sqlalchemy.orm import Session
 
-from backend.schemas.teacher import TeacherOutputSchema, TeacherSchema
-
 
 class TeacherTranslateBaseSchema(BaseModel):
     name: str = Field(description="Краткое ФИО")
@@ -17,12 +15,11 @@ class TeacherTranslateCreateSchema(TeacherTranslateBaseSchema):
 
 
 class TeacherTranslateOutputSchema(TeacherTranslateBaseSchema):
-    teacher: TeacherOutputSchema = Field(description="Поля преподавателя, не нуждающиеся в переводе")
+    pass
 
 
 class TeacherTranslateSchema(TeacherTranslateBaseSchema):
     guid: UUID4 = Field(description="ID")
-    teacher: TeacherSchema = Field(description="Поля преподавателя, не нуждающиеся в переводе")
 
     class Config:
         orm_mode = True

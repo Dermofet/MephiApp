@@ -5,7 +5,8 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from backend.database.connection import Base
-from backend.database.models.association_tables import AT_lesson_teacher
+
+# from backend.database.models.association_tables import AT_lesson_teacher
 
 
 class TeacherModel(Base):
@@ -15,6 +16,13 @@ class TeacherModel(Base):
     online_url = Column(String, nullable=True, unique=True)
     alt_online_url = Column(String, nullable=True, unique=True)
 
-    trans = relationship("TeacherTranslateModel", back_populates="teacher", lazy="selectin", uselist=True)
-    lessons = relationship("LessonModel", back_populates="teachers", lazy="selectin", uselist=True,
-                           secondary=AT_lesson_teacher)
+    trans = relationship("TeacherTranslateModel", back_populates="teacher", lazy="joined", uselist=True,
+                         primaryjoin="TeacherModel.guid == TeacherTranslateModel.teacher_guid")
+    lessons = relationship("LessonModel", back_populates="teacher", lazy="joined", uselist=True)
+
+    def __repr__(self):
+        return f'<TeacherModel:\n' \
+               f' guid: {self.guid}\n' \
+               f' online_url: {self.online_url}\n' \
+               f' alt_online_url: {self.alt_online_url}\n' \
+               f' trans: {None if not self.trans else self.trans[0]}>'

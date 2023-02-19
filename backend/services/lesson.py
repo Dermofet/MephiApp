@@ -13,94 +13,112 @@ from backend.repositories.lesson_translate import LessonTranslateRepository
 from backend.repositories.room import RoomRepository
 from backend.repositories.teacher import TeacherRepository
 from backend.repositories.teacher_translate import TeacherTranslateRepository
-from backend.schemas.lesson import LessonCreateSchema, LessonOutputSchema, LessonSchema
+from backend.schemas.lesson import (
+    LessonCreateSchema,
+    LessonOutputSchema,
+    LessonsByGroupSchema,
+    LessonsByTeacherSchema,
+    LessonSchema,
+)
 from backend.schemas.lesson_translate import (
     LessonTranslateCreateSchema,
     LessonTranslateOutputSchema,
     LessonTranslateSchema,
 )
+from backend.schemas.teacher import TeacherSchema
 
 
 class LessonService:
     @staticmethod
-    async def create(db: AsyncSession, schemas: LessonCreateSchema) -> LessonTranslateOutputSchema:
+    async def create(db: AsyncSession, schemas: LessonCreateSchema) -> LessonOutputSchema:
         lesson = await LessonRepository.get_unique(db, schemas)
         if lesson is not None:
-            await LessonRepository.patch(db, lesson.guid, schemas)
-            lesson_translate = await LessonTranslateRepository.get_by_name(db, schemas.name, schemas.lang)
-            print("Patch lesson")
+            raise HTTPException(409, detail="Занятие уже существует")
         else:
             lesson = await LessonRepository.create(db, schemas)
-
-            # group = await GroupRepository.get_by_name(db, schemas.group)
-            # if group is not None:
-            #     await db.execute(insert(AT_lesson_group).values({
-            #         "lesson_guid": lesson.guid,
-            #         "group_guid": group.guid
-            #     }))
-            #
-            # room = await RoomRepository.get_by_number(db, schemas.room)
-            # if room is not None:
-            #     await db.execute(insert(AT_lesson_room).values({
-            #         "lesson_guid": lesson.guid,
-            #         "room_guid": room.guid
-            #     }))
-            #
-            # teacher = await TeacherRepository.get_by_name(db, schemas.teacher_name, schemas.lang)
-            # if teacher is not None:
-            #     await db.execute(insert(AT_lesson_teacher).values({
-            #         "lesson_guid": lesson.guid,
-            #         "teacher_guid": teacher.guid
-            #     }))
-            #
-            # await db.commit()
-
-            print(f'Lesson: {LessonSchema.from_orm(lesson).dict()}')
-            lesson_translate = await LessonTranslateRepository.create(db,
-                                                                      LessonTranslateCreateSchema(
-                                                                          type=schemas.type,
-                                                                          name=schemas.name,
-                                                                          subgroup=schemas.subgroup,
-                                                                          lang=schemas.lang,
-                                                                          lesson_guid=lesson.guid)
-                                                                      )
-            print(f'LessonTranslate: {LessonTranslateSchema.from_orm(lesson).dict()}')
-            print("Create lesson")
-        return LessonTranslateOutputSchema(**LessonTranslateSchema.from_orm(lesson_translate).dict())
-
-    @staticmethod
-    async def get(db: AsyncSession, guid: UUID4) -> LessonOutputSchema:
-        lesson = await LessonRepository.get_by_id(db, guid)
-        if lesson is None:
-            raise HTTPException(404, "Занятие не найдено")
+            await LessonTranslateRepository.create(db,
+                                                   LessonTranslateCreateSchema(
+                                                       type=schemas.type,
+                                                       name=schemas.name,
+                                                       subgroup=schemas.subgroup,
+                                                       lang=schemas.lang,
+                                                       lesson_guid=lesson.guid))
+            await db.refresh(lesson)
+        trans = lesson.trans
+        for tr in trans:
+            if tr.lang != schemas.lang:
+                lesson.trans.remove(tr)
         return LessonOutputSchema(**LessonSchema.from_orm(lesson).dict())
 
     @staticmethod
-    async def get_by_group(db: AsyncSession, group: str, lang: str) -> list[LessonTranslateOutputSchema]:
-        lessons = await LessonRepository.get_by_group(db, group, lang)
-        print(lessons)
-        if len(lessons) == 0:
+    async def get(db: AsyncSession, guid: UUID4, lang: str) -> LessonOutputSchema:
+        lesson = await LessonRepository.get_by_id(db, guid)
+        if lesson is None:
             raise HTTPException(404, "Занятие не найдено")
-        results = [LessonTranslateSchema.from_orm(lesson) for lesson in lessons]
-        return [LessonTranslateOutputSchema(**result.dict()) for result in results]
+        trans = lesson.trans
+        for tr in trans:
+            if tr.lang != lang:
+                lesson.trans.remove(tr)
+        return LessonOutputSchema(**LessonSchema.from_orm(lesson).dict())
 
     @staticmethod
-    async def get_by_teacher(db: AsyncSession, teacher: str, lang: str) -> list[LessonOutputSchema]:
+    async def get_by_group(db: AsyncSession, group: str, lang: str) -> dict:
+        lessons = await LessonRepository.get_by_group(db, group, lang)
+        if not lessons:
+            raise HTTPException(404, "Занятий не найдено")
+
+        for lesson in lessons:
+            trans = lesson.trans
+            for tr in trans:
+                if tr.lang != lang:
+                    lesson.trans.remove(tr)
+
+            if lesson.teacher is not None:
+                trans = lesson.teacher.trans
+                for tr in trans:
+                    if tr.lang != lang:
+                        lesson.teacher.trans.remove(tr)
+
+        lessons = [LessonOutputSchema(**LessonSchema.from_orm(lesson).dict()) for lesson in lessons]
+        group = await GroupRepository.get_by_name(db, group)
+        res = LessonsByGroupSchema(lessons=lessons, group=group, lang=lang)
+        return res.dict()
+
+    @staticmethod
+    async def get_by_teacher(db: AsyncSession, teacher: str, lang: str) -> dict:
         lessons = await LessonRepository.get_by_teacher(db, teacher, lang)
-        if lessons is None:
+        if not lessons:
             raise HTTPException(404, "Занятие не найдено")
-        results = [LessonSchema.from_orm(lesson) for lesson in lessons]
-        return [LessonTranslateOutputSchema(**result.dict()) for result in results]
+
+        for lesson in lessons:
+            trans = lesson.trans
+            for tr in trans:
+                if tr.lang != lang:
+                    lesson.trans.remove(tr)
+
+            if lesson.teacher is not None:
+                trans = lesson.teacher.trans
+                for tr in trans:
+                    if tr.lang != lang:
+                        lesson.teacher.trans.remove(tr)
+
+        lessons = [LessonOutputSchema(**LessonSchema.from_orm(lesson).dict()) for lesson in lessons]
+        teacher = await TeacherRepository.get_by_name(db, teacher, lang)
+        res = LessonsByTeacherSchema(lessons=lessons, teacher=teacher, lang=lang)
+        return res.dict()
 
     @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: LessonCreateSchema) -> LessonOutputSchema:
         lesson = await LessonRepository.update(db, guid, schemas)
         if lesson is None:
             raise HTTPException(404, "Занятие не найдено")
-        result = LessonSchema.from_orm(lesson)
-        return LessonOutputSchema(**result.dict())
+        trans = lesson.trans
+        for tr in trans:
+            if tr.lang != schemas.lang:
+                lesson.trans.remove(tr)
+        return LessonOutputSchema(**LessonSchema.from_orm(lesson).dict())
 
     @staticmethod
-    async def delete(db: AsyncSession, guid: UUID4) -> Response(status_code=204):
+    async def delete(db: AsyncSession, guid: UUID4) -> Response:
         await LessonRepository.delete(db, guid)
         return Response(status_code=204)

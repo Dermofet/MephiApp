@@ -13,7 +13,7 @@ class Pool:
         self._queue = asyncio.Queue()
         self._scheduler_task: Optional[asyncio.Task] = None
         self._sem = asyncio.Semaphore(concurrent_level or max_rate)
-        self._cuncurrent_workers = 0
+        self._concurrent_workers = 0
         self._stop_event = asyncio.Event()
 
     def start(self):
@@ -23,7 +23,7 @@ class Pool:
     async def stop(self):
         self.is_running = False
         self._scheduler_task.cancel()
-        if self._cuncurrent_workers != 0:
+        if self._concurrent_workers != 0:
             await self._stop_event.wait()
 
     async def put(self, task):
@@ -42,11 +42,11 @@ class Pool:
 
     async def _worker(self, task: Union[PostTask, PutTask]):
         async with self._sem:
-            self._cuncurrent_workers += 1
+            self._concurrent_workers += 1
             completed = await task.perform()
             self._queue.task_done()
             if not completed:
                 await self.put(task)
-        self._cuncurrent_workers -= 1
-        if not self.is_running and self._cuncurrent_workers == 0:
+        self._concurrent_workers -= 1
+        if not self.is_running and self._concurrent_workers == 0:
             self._stop_event.set()

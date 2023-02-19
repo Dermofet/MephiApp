@@ -18,7 +18,7 @@ def parse_academic() -> list[PostTask]:
         json_academic = json.dumps(_academic_, ensure_ascii=False)
         res.append(PostTask(tid=i,
                             str_json=json_academic,
-                            url='http://127.0.0.1:8000/api/academic',
+                            url='http://127.0.0.1:8000/api/academics',
                             description='Academic POST'))
         i += 1
     return res
@@ -43,7 +43,7 @@ def parse_groups() -> list[PostTask]:
                         json_group = json.dumps(_group_, ensure_ascii=False)
                         res.append(PostTask(tid=i,
                                             str_json=json_group,
-                                            url='http://127.0.0.1:8000/api/group',
+                                            url='http://127.0.0.1:8000/api/groups',
                                             description='Group POST'))
                         i += 1
         except FileNotFoundError as err:
@@ -60,7 +60,6 @@ def parse_schedule() -> list[PostTask]:
             with open(f'{getcwd()}\\schedule\\{academic[0]}.json', 'r', encoding='utf-8') as fp:
                 print(f'Filename: {academic[0]}.json')
                 dict_json = json.loads(fp.read().replace("'", '\''))
-                teachers = []
                 for course in dict_json['courses']:
                     for group in course['groups']:
                         for day in group['schedule']:
@@ -91,7 +90,7 @@ def parse_schedule() -> list[PostTask]:
 
                                             res.append(PostTask(tid=i,
                                                                 str_json=json_lesson,
-                                                                url='http://127.0.0.1:8000/api/lesson',
+                                                                url='http://127.0.0.1:8000/api/lessons',
                                                                 description='Lesson POST'))
                                             i += 1
                                     else:
@@ -118,7 +117,7 @@ def parse_schedule() -> list[PostTask]:
 
                                         res.append(PostTask(tid=i,
                                                             str_json=json_lesson,
-                                                            url='http://127.0.0.1:8000/api/lesson',
+                                                            url='http://127.0.0.1:8000/api/lessons',
                                                             description='Lesson POST'))
                                         i += 1
         except FileNotFoundError as err:
@@ -154,7 +153,7 @@ def parse_teachers() -> list[PostTask]:
                                                 json_teacher = json.dumps(_teacher_, ensure_ascii=False)
                                                 res.append(PostTask(tid=i,
                                                                     str_json=json_teacher,
-                                                                    url='http://127.0.0.1:8000/api/teacher',
+                                                                    url='http://127.0.0.1:8000/api/teachers',
                                                                     description='Teacher POST'))
                                                 i += 1
                                                 teachers.append(teacher)
@@ -174,7 +173,7 @@ def parse_room() -> list[PostTask]:
                 json_room = json.dumps(room, ensure_ascii=False)
                 res.append(PostTask(tid=i,
                                     str_json=json_room,
-                                    url='http://127.0.0.1:8000/api/room',
+                                    url='http://127.0.0.1:8000/api/rooms',
                                     description='Room POST'))
                 i += 1
     except FileNotFoundError as err:
@@ -224,7 +223,7 @@ def parse_teachers_fullname() -> list[PostTask]:
                 json_fullname = json.dumps(_teacher_, ensure_ascii=False)
                 res.append(PutTask(tid=i,
                                    str_json=json_fullname,
-                                   url='http://127.0.0.1:8000/api/teacher',
+                                   url='http://127.0.0.1:8000/api/teachers',
                                    description='Teacher PUT'))
                 i += 1
     except FileNotFoundError as err:

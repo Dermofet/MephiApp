@@ -1,9 +1,7 @@
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, Field
+from pydantic import UUID4, BaseModel, Field, validator
 from sqlalchemy.orm import Session
-
-from backend.schemas.lesson_without_language import LessonWithoutLanguageOutputSchema, LessonWithoutLanguageSchema
 
 
 class LessonTranslateBaseSchema(BaseModel):
@@ -18,12 +16,11 @@ class LessonTranslateCreateSchema(LessonTranslateBaseSchema):
 
 
 class LessonTranslateOutputSchema(LessonTranslateBaseSchema):
-    lesson: LessonWithoutLanguageOutputSchema = Field(description="Поля занятия, не нуждающиеся в переводе")
+    pass
 
 
 class LessonTranslateSchema(LessonTranslateBaseSchema):
     guid: UUID4 = Field(description="ID")
-    lesson: LessonWithoutLanguageSchema = Field(description="Поля занятия, не нуждающиеся в переводе")
 
     class Config:
         orm_mode = True

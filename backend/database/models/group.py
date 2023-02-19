@@ -5,7 +5,8 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from backend.database.connection import Base
-from backend.database.models.association_tables import AT_lesson_group
+
+# from backend.database.models.association_tables import AT_lesson_group
 
 
 class GroupModel(Base):
@@ -17,4 +18,11 @@ class GroupModel(Base):
     academic_guid = Column(UUID(as_uuid=True), ForeignKey("academics.guid"))
 
     academic = relationship("AcademicModel", back_populates="groups", lazy="joined")
-    lessons = relationship("LessonModel", back_populates="groups", lazy="selectin", uselist=True, secondary=AT_lesson_group)
+    lessons = relationship("LessonModel", back_populates="group", lazy="joined", uselist=True)
+
+    def __repr__(self):
+        return f'<GroupModel:\n' \
+               f' guid: {self.guid}\n' \
+               f' name: {self.name}\n' \
+               f' course: {self.course}\n' \
+               f' academic_guid: {self.academic_guid}>'

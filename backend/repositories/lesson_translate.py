@@ -7,6 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.models.lesson import LessonModel
 from backend.database.models.lesson_translate import LessonTranslateModel
+from backend.repositories.group import GroupRepository
+from backend.repositories.room import RoomRepository
+from backend.repositories.teacher import TeacherRepository
 from backend.schemas.lesson_translate import (
     LessonTranslateCreateSchema,
     LessonTranslateOutputSchema,
@@ -29,8 +32,8 @@ class LessonTranslateRepository:
         return lesson_tr.scalar()
 
     @staticmethod
-    async def get_unique(db: AsyncSession, type_: str, name: str, subgroup: Optional[str],
-                         lang: str) -> LessonTranslateModel:
+    async def get_unique(db: AsyncSession, type_: str, name: str, subgroup: Optional[str], lang: str) \
+            -> LessonTranslateModel:
         lesson_tr = await db.execute(select(LessonTranslateModel).where(LessonTranslateModel.type == type_ and
                                                                         LessonTranslateModel.name == name and
                                                                         LessonTranslateModel.subgroup == subgroup and
@@ -43,6 +46,11 @@ class LessonTranslateRepository:
                                                                         LessonTranslateModel.lang == lang).limit(1))
         return lesson_tr.scalar()
 
+    @staticmethod
+    async def get_by_lesson_guid(db: AsyncSession, guid: UUID4, lang: str) -> LessonTranslateModel:
+        lesson_tr = await db.execute(select(LessonTranslateModel).where(LessonTranslateModel.lesson_guid == guid and
+                                                                        LessonTranslateModel.lang == lang).limit(1))
+        return lesson_tr.scalar()
 
     @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: LessonTranslateCreateSchema) -> LessonTranslateModel:
@@ -51,8 +59,8 @@ class LessonTranslateRepository:
         if lesson_tr is None:
             HTTPException(status_code=404, detail="Перевод (занятие) не найден")
 
-        lesson_tr = await db.execute(
-            update(LessonTranslateModel).where(LessonTranslateModel.guid == guid).values(**schemas.dict()))
+        lesson_tr = await db.execute(update(LessonTranslateModel).where(LessonTranslateModel.guid == guid)
+                                     .values(**schemas.dict()))
         await db.commit()
         await db.refresh(lesson_tr)
         return lesson_tr
