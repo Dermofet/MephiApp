@@ -38,7 +38,7 @@ async def create(
     summary="Получение занятия по id",
 )
 async def get(
-        guid: UUID4 = Path(None, description="Id занятия"),
+        guid: UUID4,
         lang: str = "ru",
         db: AsyncSession = Depends(get_session),
         lesson_service: LessonService = Depends(),
@@ -56,7 +56,7 @@ async def get(
 )
 async def get_by_group(
 
-        group: str = Path(description="Группа, у которой проводятся занятия"),
+        group: str,
         lang: str = "ru",
         db: AsyncSession = Depends(get_session),
         lesson_service: LessonService = Depends(),
@@ -65,7 +65,7 @@ async def get_by_group(
 
 
 @router.get(
-    "/lessons/teachers/{teacher}",
+    "/lessons/teachers",
     response_model=dict,
     response_description="Успешный возврат занятий",
     status_code=status.HTTP_200_OK,
@@ -73,7 +73,7 @@ async def get_by_group(
     summary="Получение занятий по преподавателю",
 )
 async def get_by_teacher(
-        teacher: str = Path(None, description="Преподаватель, который проводит занятия"),
+        teacher: str,
         lang: str = "ru",
         db: AsyncSession = Depends(get_session),
         lesson_service: LessonService = Depends(),
@@ -91,7 +91,7 @@ async def get_by_teacher(
 )
 async def update(
         schemas: LessonCreateSchema,
-        guid: UUID4 = Path(None, description="Id занятия"),
+        guid: UUID4,
         db: AsyncSession = Depends(get_session),
         lesson_service: LessonService = Depends(),
 ):
@@ -106,7 +106,7 @@ async def update(
     summary="Удаление занятия по id",
 )
 async def delete(
-        guid: UUID4 = Path(None, description="Id занятия"),
+        guid: UUID4,
         db: AsyncSession = Depends(get_session),
         lesson_service: LessonService = Depends(),
 ):

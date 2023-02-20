@@ -208,7 +208,7 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
                 "date_start": lesson.date_start,
                 "date_end": lesson.date_end,
                 "teachers": [],
-                "rooms": []
+                "rooms": set()
             }
 
             day = associative_dict[lesson.day]
@@ -216,7 +216,7 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
                 if _teacher_["teacher_name"] is not None:
                     _lesson_group_["teachers"].append(deepcopy(_teacher_))
                 if _room_ is not None:
-                    _lesson_group_["rooms"].append(deepcopy(_room_))
+                    _lesson_group_["rooms"].add(deepcopy(_room_))
                 _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
                 res["schedule"][day].insert(0, deepcopy(_lesson_))
             else:
@@ -234,7 +234,7 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
                                 if _teacher_["teacher_name"] is not None:
                                     res["schedule"][day][i]["lesson_group"][j]["teachers"].append(deepcopy(_teacher_))
                                 if _room_ is not None:
-                                    res["schedule"][day][i]["lesson_group"][j]["rooms"].append(deepcopy(_room_))
+                                    res["schedule"][day][i]["lesson_group"][j]["rooms"].add(deepcopy(_room_))
                                 flag = True
                                 break
 
@@ -242,13 +242,13 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
                             if _teacher_["teacher_name"] is not None:
                                 _lesson_group_["teachers"].append(deepcopy(_teacher_))
                             if _room_ is not None:
-                                _lesson_group_["rooms"].append(deepcopy(_room_))
+                                _lesson_group_["rooms"].add(deepcopy(_room_))
                             res["schedule"][day][i]["lesson_group"].append(deepcopy(_lesson_group_))
                     elif i == len(res["schedule"][day]) - 1:
                         if _teacher_["teacher_name"] is not None:
                             _lesson_group_["teachers"].append(deepcopy(_teacher_))
                         if _room_ is not None:
-                            _lesson_group_["rooms"].append(deepcopy(_room_))
+                            _lesson_group_["rooms"].add(deepcopy(_room_))
                         _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
                         res["schedule"][day].append(deepcopy(_lesson_))
         return res
@@ -261,7 +261,6 @@ class LessonsByTeacherSchema(LessonsByBaseSchema):
         res = {
             "name": self.teacher.trans.name,
             "fullname": self.teacher.trans.fullname,
-            "lang": self.lang,
             "schedule": {
                 "1": [],
                 "2": [],
@@ -291,20 +290,22 @@ class LessonsByTeacherSchema(LessonsByBaseSchema):
                 "weeks": lesson.weeks,
                 "date_start": lesson.date_start,
                 "date_end": lesson.date_end,
-                "groups": [],
-                "rooms": []
+                "groups": set(),
+                "rooms": set()
             }
 
             day = associative_dict[lesson.day]
             if len(res["schedule"][day]) == 0:
-                _lesson_group_["groups"].append(deepcopy(_group_))
-                _lesson_group_["rooms"].append(deepcopy(_room_))
+                if _group_ is not None:
+                    _lesson_group_["groups"].add(deepcopy(_group_))
+                if _room_ is not None:
+                    _lesson_group_["rooms"].add(deepcopy(_room_))
                 _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
                 res["schedule"][day].insert(0, deepcopy(_lesson_))
             else:
                 for i in range(len(res["schedule"][day])):
                     if lesson.time_start == res["schedule"][day][i]["time_start"]:
-                        flag = False
+                        flag1 = False
                         for j in range(len(res["schedule"][day][i]["lesson_group"])):
                             if res["schedule"][day][i]["lesson_group"][j]["name"] == lesson.trans.name and \
                                     res["schedule"][day][i]["lesson_group"][j]["subgroup"] == lesson.trans.subgroup and \
@@ -312,18 +313,24 @@ class LessonsByTeacherSchema(LessonsByBaseSchema):
                                     res["schedule"][day][i]["lesson_group"][j]["dot"] == lesson.dot and \
                                     res["schedule"][day][i]["lesson_group"][j]["date_start"] == lesson.date_start and \
                                     res["schedule"][day][i]["lesson_group"][j]["date_end"] == lesson.date_end:
-                                res["schedule"][day][i]["lesson_group"][j]["groups"].append(deepcopy(_group_))
-                                res["schedule"][day][i]["lesson_group"][j]["rooms"].append(deepcopy(_room_))
-                                flag = True
+                                if _group_ is not None:
+                                    _lesson_group_["groups"].add(deepcopy(_group_))
+                                if _room_ is not None:
+                                    _lesson_group_["rooms"].add(deepcopy(_room_))
+                                flag1 = True
                                 break
 
-                        if not flag:
-                            _lesson_group_["groups"].append(deepcopy(_group_))
-                            _lesson_group_["rooms"].append(deepcopy(_room_))
+                        if not flag1:
+                            if _group_ is not None:
+                                _lesson_group_["groups"].add(deepcopy(_group_))
+                            if _room_ is not None:
+                                _lesson_group_["rooms"].add(deepcopy(_room_))
                             res["schedule"][day][i]["lesson_group"].append(deepcopy(_lesson_group_))
                     elif i == len(res["schedule"][day]) - 1:
-                        _lesson_group_["groups"].append(deepcopy(_group_))
-                        _lesson_group_["rooms"].append(deepcopy(_room_))
+                        if _group_ is not None:
+                            _lesson_group_["groups"].add(deepcopy(_group_))
+                        if _room_ is not None:
+                            _lesson_group_["rooms"].add(deepcopy(_room_))
                         _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
                         res["schedule"][day].append(deepcopy(_lesson_))
         return res

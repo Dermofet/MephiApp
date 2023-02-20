@@ -8,7 +8,6 @@ from pydantic import UUID4
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# from backend.database.models.association_tables import *
 from backend.database.models.group import GroupModel
 from backend.database.models.lesson import LessonModel
 from backend.database.models.lesson_translate import LessonTranslateModel
@@ -58,31 +57,6 @@ class LessonRepository:
 
     @staticmethod
     async def get_unique(db: AsyncSession, schemas: LessonCreateSchema) -> LessonModel:
-        # lesson = await db.execute(select(LessonModel)
-        #                           .join(LessonTranslateModel,
-        #                                 LessonTranslateModel.lesson_guid == LessonModel.guid)
-        #                           .join(RoomModel,
-        #                                 RoomModel.guid == LessonModel.room_guid)
-        #                           .join(GroupModel,
-        #                                 GroupModel.guid == LessonModel.group_guid)
-        #                           .join(TeacherTranslateModel,
-        #                                 TeacherTranslateModel.teacher_guid == LessonModel.teacher_guid)
-        #                           .where(TeacherTranslateModel.name == schemas.teacher_name and
-        #                                  LessonTranslateModel.name == schemas.name and
-        #                                  LessonTranslateModel.subgroup == schemas.subgroup and
-        #                                  LessonTranslateModel.type == schemas.type and
-        #                                  LessonTranslateModel.lang == schemas.lang and
-        #                                  RoomModel.number == schemas.room and
-        #                                  GroupModel.name == schemas.group and
-        #                                  TeacherTranslateModel.lang == schemas.lang and
-        #                                  TeacherTranslateModel.name == schemas.name and
-        #                                  LessonModel.time_start == schemas.time_start and
-        #                                  LessonModel.time_end == schemas.time_end and
-        #                                  LessonModel.dot == schemas.dot and
-        #                                  LessonModel.weeks == schemas.weeks and
-        #                                  LessonModel.date_start == schemas.date_start and
-        #                                  LessonModel.date_end == schemas.date_end and
-        #                                  LessonModel.day == schemas.day).limit(1))
         lesson = await db.execute(select(LessonModel).where(
             LessonModel.time_start == schemas.time_start,
             LessonModel.time_end == schemas.time_end,
@@ -126,8 +100,7 @@ class LessonRepository:
                                          LessonTranslateModel.lesson_guid == LessonModel.guid)
                                    .join(TeacherTranslateModel,
                                          TeacherTranslateModel.teacher_guid == LessonModel.teacher_guid)
-                                   .where(TeacherTranslateModel.lang == lang and
-                                          TeacherTranslateModel.name == teacher and
+                                   .where(TeacherTranslateModel.name == teacher and
                                           LessonTranslateModel.lang == lang))
         return lessons.scalars().unique().all()
 

@@ -88,7 +88,7 @@ class LessonService:
     async def get_by_teacher(db: AsyncSession, teacher: str, lang: str) -> dict:
         lessons = await LessonRepository.get_by_teacher(db, teacher, lang)
         if not lessons:
-            raise HTTPException(404, "Занятие не найдено")
+            raise HTTPException(404, "Занятий не найдено")
 
         for lesson in lessons:
             trans = lesson.trans

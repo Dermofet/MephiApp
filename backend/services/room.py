@@ -41,16 +41,17 @@ class RoomService:
     @staticmethod
     async def get_all(db: AsyncSession) -> list[str]:
         rooms = await RoomRepository.get_all(db)
-        if rooms is None:
-            raise HTTPException(404, "Аудитория не найдена")
+        # if not rooms:
+        #     raise HTTPException(404, "Аудитории не найдены")
         return [RoomOutputSchema(**RoomSchema.from_orm(room).dict()) for room in rooms]
 
     @staticmethod
-    async def get_empty(db: AsyncSession, room_filter: RoomFilter) -> list[str]:
+    async def get_empty(db: AsyncSession, room_filter: RoomFilter) -> list[dict]:
         rooms = await RoomRepository.get_empty(db, room_filter)
-        if rooms is None:
-            raise HTTPException(404, "Аудитория не найдена")
-        return [RoomOutputSchema(**RoomSchema.from_orm(room).dict()).number for room in rooms]
+        # if rooms is None:
+        #     raise HTTPException(404, "Аудитории не найдены")
+        return [{"name": RoomOutputSchema(**RoomSchema.from_orm(room).dict()).number,
+                 "floor": None} for room in rooms]
 
     @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: RoomCreateSchema) -> RoomOutputSchema:

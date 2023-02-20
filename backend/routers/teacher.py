@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
+from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -34,7 +35,7 @@ async def create(
     summary="Получить всех преподавателей",
 )
 async def get_all(
-        lang: str = 'ru',
+        lang: str = "ru",
         db: AsyncSession = Depends(get_session),
         teacher_service: TeacherService = Depends(),
 ):
@@ -42,15 +43,15 @@ async def get_all(
 
 
 @router.get(
-    "/teachers/{name}",
-    response_model=list[str],
+    "/teachers",
+    response_model=TeacherOutputSchema,
     status_code=status.HTTP_200_OK,
-    description="Получить полные ФИО всеx преподавателей",
-    summary="Получить всех преподавателей",
+    description="Получить полное ФИО преподавателя",
+    summary="Получить ФИО преподавателя",
 )
 async def get_by_name(
         name: str,
-        lang: str = 'ru',
+        lang: str = "ru",
         db: AsyncSession = Depends(get_session),
         teacher_service: TeacherService = Depends(),
 ):
@@ -65,8 +66,8 @@ async def get_by_name(
     summary="Обновить информацию о преподавателе по id",
 )
 async def update(
-        guid,
         schemas: TeacherCreateSchema,
+        guid: UUID4,
         db: AsyncSession = Depends(get_session),
         teacher_service: TeacherService = Depends(),
 ):

@@ -49,9 +49,8 @@ class TeacherService:
         trans = [TeacherSchema.from_orm(teacher).trans for teacher in teachers]
         res = []
         for translate in trans:
-            for teacher_translate in translate:
-                if teacher_translate.lang == lang:
-                    res.append(teacher_translate.name)
+            if translate.lang == lang:
+                res.append(translate.name)
         return res
 
     @staticmethod

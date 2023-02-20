@@ -30,7 +30,7 @@ async def create(
 
 @router.get(
     "/rooms/empty",
-    response_model=list[str],
+    response_model=list[dict],
     status_code=status.HTTP_200_OK,
     description="Получить все аудитории, в которых не проводятся занятия в заданный период времени",
     summary="Получить пустые аудитории",
