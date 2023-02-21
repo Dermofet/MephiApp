@@ -31,6 +31,13 @@ class CorpsService:
         return CorpsOutputSchema(**CorpsSchema.from_orm(corps).dict())
 
     @staticmethod
+    async def get_all(db: AsyncSession) -> dict[str, list[str]]:
+        corps = await CorpsRepository.get_all(db)
+        res = [CorpsSchema.from_orm(corp).name for corp in corps]
+        res.sort()
+        return {"corps": res}
+
+    @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: CorpsCreateSchema) -> CorpsOutputSchema:
         corps = await CorpsRepository.update(db, guid, schemas)
         if corps is None:

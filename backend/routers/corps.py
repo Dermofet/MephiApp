@@ -24,3 +24,17 @@ async def create(
         corps_service: CorpsService = Depends(),
 ):
     return await corps_service.create(db=db, schemas=schemas)
+
+
+@router.get(
+    "/corps",
+    response_model=dict[str, list[str]],
+    status_code=status.HTTP_201_CREATED,
+    description="Получить корпус",
+    summary="Получить корпус",
+)
+async def get_all(
+        db: AsyncSession = Depends(get_session),
+        corps_service: CorpsService = Depends(),
+):
+    return await corps_service.get_all(db=db)

@@ -29,7 +29,7 @@ async def create(
 
 @router.get(
     "/groups",
-    response_model=list[str],
+    response_model=dict[str, list[str]],
     status_code=status.HTTP_200_OK,
     description="Получить все группы",
     summary="Получить все группы",

@@ -30,6 +30,11 @@ class CorpsRepository:
         return corps.scalar()
 
     @staticmethod
+    async def get_all(db: AsyncSession) -> list[CorpsModel]:
+        corps = await db.execute(select(CorpsModel))
+        return corps.scalars().unique().all()
+
+    @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: CorpsCreateSchema) -> CorpsModel:
         corps = await CorpsRepository.get_by_id(db, guid)
 

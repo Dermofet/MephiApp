@@ -44,14 +44,15 @@ class TeacherService:
         return TeacherOutputSchema(**TeacherSchema.from_orm(teacher).dict())
 
     @staticmethod
-    async def get_all(db: AsyncSession, lang: str) -> list[str]:
+    async def get_all(db: AsyncSession, lang: str) -> dict[str, list[str]]:
         teachers = await TeacherRepository.get_all(db, lang)
         trans = [TeacherSchema.from_orm(teacher).trans for teacher in teachers]
         res = []
         for translate in trans:
             if translate.lang == lang:
                 res.append(translate.name)
-        return res
+        res.sort()
+        return {"teachers": res}
 
     @staticmethod
     async def update(db: AsyncSession, schemas: TeacherCreateSchema) -> TeacherOutputSchema:
