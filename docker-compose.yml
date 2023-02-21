@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.8"
 services:
   db:
     container_name: db
@@ -25,8 +25,7 @@ services:
     build:
       context: .
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     volumes:
       - .:/app
     ports:
