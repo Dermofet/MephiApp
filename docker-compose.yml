@@ -13,7 +13,6 @@ services:
       - "5432:5432"
     networks:
       - app-network
-    network_mode: "bridge"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d schedule" ]
       interval: 5s
