@@ -28,7 +28,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - 8000:${BACKEND_PORT}
+      - "8000:${BACKEND_PORT}"
     environment:
       DEBUG: ${DEBUG}
 

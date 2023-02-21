@@ -29,7 +29,7 @@ async def create(
 @router.get(
     "/corps",
     response_model=dict[str, list[str]],
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
     description="Получить корпус",
     summary="Получить корпус",
 )
