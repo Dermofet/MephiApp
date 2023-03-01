@@ -1,6 +1,10 @@
 import asyncio
 import time
 
+from parsers.room_parser import RoomParser
+from parsers.schedule_parser import ScheduleParser
+from parsers.teachers_fullname_parser import TeachersFullnameParser
+from pool import Pool
 from set_info import (
     start_parse_academic,
     start_parse_corps,
@@ -10,11 +14,6 @@ from set_info import (
     start_parse_schedule,
     start_parse_teachers,
 )
-
-from parsing.parsers.room_parser import RoomParser
-from parsing.parsers.schedule_parser import ScheduleParser
-from parsing.parsers.teachers_fullname_parser import TeachersFullnameParser
-from parsing.pool import Pool
 
 
 def run(mode: str):

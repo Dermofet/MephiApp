@@ -1,15 +1,17 @@
 import json
 import os.path
+import sys
 
 import bs4
 import requests
 
-from parsing import config
+sys.path.append("..")
+import parsing
 
 
 class RoomParser:
     def __init__(self):
-        self.config = config
+        self.config = parsing.config
 
     def parse_room(self):
         html = requests.get(self.config.MEPHI_ROOM_URL).text

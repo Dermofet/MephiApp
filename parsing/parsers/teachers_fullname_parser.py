@@ -1,15 +1,17 @@
 import json
 import os
+import sys
 
 import bs4
 import requests
 
-from parsing import config
+sys.path.append("..")
+import parsing
 
 
 class TeachersFullnameParser:
     def __init__(self):
-        self.config = config
+        self.config = parsing.config
 
     def parse_teachers_fullname(self):
         self.setTeachersFullname(f"{os.getcwd()}\\teachers\\TeachersFullname.json",

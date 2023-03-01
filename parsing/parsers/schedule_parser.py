@@ -1,16 +1,18 @@
 import json
 import os.path
+import sys
 from copy import deepcopy
 
 import bs4
 import requests
 
-from parsing import config
+sys.path.append("..")
+import parsing
 
 
 class ScheduleParser:
     def __init__(self):
-        self.config = config
+        self.config = parsing.config
 
     def parse_schedule(self):
         for academic_name, academic_url in self.getAcademicTypes():

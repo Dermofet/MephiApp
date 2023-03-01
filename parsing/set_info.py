@@ -2,9 +2,9 @@ import json
 from os import getcwd
 from typing import Optional
 
-from parsing.parsers.schedule_parser import ScheduleParser
-from parsing.pool import Pool
-from parsing.task import PostTask, PutTask
+from parsers.schedule_parser import ScheduleParser
+from pool import Pool
+from task import PostTask, PutTask
 
 API_PREFIX = "http://127.0.0.1:8000/api/2.0"
  
