@@ -5,8 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from backend.database.connection import Base
-
-# from backend.database.models.association_tables import AT_lesson_teacher
+from backend.database.models.association_tables import AT_lesson_teacher
 
 
 class TeacherModel(Base):
@@ -18,7 +17,10 @@ class TeacherModel(Base):
 
     trans = relationship("TeacherTranslateModel", back_populates="teacher", lazy="joined", uselist=True,
                          primaryjoin="TeacherModel.guid == TeacherTranslateModel.teacher_guid")
-    lessons = relationship("LessonModel", back_populates="teacher", lazy="joined", uselist=True)
+    lessons = relationship("LessonModel", back_populates="teachers", lazy="joined", uselist=True,
+                           secondary=AT_lesson_teacher)
+    # lessons = relationship("LessonModel", back_populates="teacher", lazy="joined", uselist=True,
+    #                        secondary=AT_lesson_teacher)
 
     def __repr__(self):
         return f'<TeacherModel:\n' \

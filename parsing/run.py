@@ -86,15 +86,15 @@ def run(mode: str):
 
 
 if __name__ == '__main__':
-    # print("--PARSE INFO--: Schedule")
-    # run("parse_schedule")
-    # print("Completed: Schedule")
-    # print()
+    print("--PARSE INFO--: Schedule")
+    run("parse_schedule")
+    print("Completed: Schedule")
+    print()
 
-    # print("--PARSE INFO--: Rooms")
-    # run("parse_rooms")
-    # print("Completed: Rooms")
-    # print()
+    print("--PARSE INFO--: Rooms")
+    run("parse_rooms")
+    print("Completed: Rooms")
+    print()
 
     _ = time.time()
 

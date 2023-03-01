@@ -58,7 +58,7 @@ class ScheduleParser:
             for lesson in lessons.findAll("div", class_="list-group-item"):
                 time = lesson.find("div", class_="lesson-time").text.split(' — ')
                 lesson_dict['time_start'] = time[0].strip()
-                lesson_dict['time_end'] = time[1].strip() if time[1] is not None else None
+                lesson_dict['time_end'] = time[1].strip() if len(time) == 2 else None
 
                 lesson_dict["lesson"] = []
                 for elem in lesson.find("div", class_="lesson-lessons").findAll("div", recursive=False):
@@ -72,7 +72,7 @@ class ScheduleParser:
                                                                                            class_="text-nowrap").text
 
                     lesson_type = elem.find("div", class_="label label-default label-lesson")
-                    schedule_elem['lesson_type'] = lesson_type.text if lesson_type else None
+                    schedule_elem['lesson_type'] = lesson_type.text.lower() if lesson_type else None
 
                     weeks = elem.find("span", recursive=False)
                     if weeks["class"][1] == "lesson-square-0":
@@ -82,28 +82,6 @@ class ScheduleParser:
                     elif weeks["class"][1] == "lesson-square-2":
                         schedule_elem["weeks"] = 0
 
-                    strings = [text for text in elem.stripped_strings]
-
-                    has_subgroup = elem.find("div", class_="fa fa-exclamation-circle")
-                    elective_discipline = elem.find("div", class_="label label-gray")
-                    muted_text = elem.find("i", class_="text-muted")
-
-                    if muted_text is not None:
-                        schedule_elem['lesson_name'] = strings[1]
-                        schedule_elem['subgroup'] = None
-                    elif has_subgroup is not None and elective_discipline is not None:
-                        schedule_elem['lesson_name'] = strings[4]
-                        schedule_elem['subgroup'] = strings[3]
-                    elif has_subgroup is not None and elective_discipline is None:
-                        schedule_elem['lesson_name'] = strings[3]
-                        schedule_elem['subgroup'] = strings[2]
-                    elif has_subgroup is None and elective_discipline is not None:
-                        schedule_elem['lesson_name'] = strings[3]
-                        schedule_elem['subgroup'] = None
-                    else:
-                        schedule_elem['lesson_name'] = strings[2]
-                        schedule_elem['subgroup'] = None
-
                     schedule_elem['teacher_name'] = []
                     for teacher in elem.findAll("span", class_="text-nowrap"):
                         schedule_elem['teacher_name'].append(teacher.find("a").text.replace(' ', ' '))
@@ -112,7 +90,6 @@ class ScheduleParser:
                     schedule_elem["date_end"] = None
                     dates = elem.find("span", class_="lesson-dates")
                     if dates:
-
                         date = dates.text.replace(', ', ' — ').split(' — ')
                         if len(date) == 1:
                             schedule_elem["date_start"] = date[0].replace('\n(', '').replace(')\n', '')
@@ -120,6 +97,20 @@ class ScheduleParser:
                         else:
                             schedule_elem["date_start"] = date[0].replace('\n(', '').replace(')\n', '')
                             schedule_elem["date_end"] = date[1].replace('\n(', '').replace(')\n', '')
+
+                    for x in elem.select('div, span, i'):
+                        x.decompose()
+
+                    strings = [text for text in elem.stripped_strings]
+                    schedule_elem['lesson_name'] = strings[0]
+
+                    if len(strings) == 1:
+                        schedule_elem['subgroup'] = None
+                    else:
+                        if strings[1] != ',':
+                            schedule_elem['subgroup'] = strings[1]
+                        else:
+                            schedule_elem['subgroup'] = None
 
                     lesson_dict["lesson"].append(deepcopy(schedule_elem))
                 schedule[i]["lessons"].append(deepcopy(lesson_dict))

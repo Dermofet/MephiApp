@@ -1,12 +1,14 @@
+import time
 from datetime import date
 from typing import List
 
 from fastapi import HTTPException
 from pydantic import UUID4
-from sqlalchemy import and_, delete, or_, select
+from sqlalchemy import and_, delete, exists, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
+from backend.database.models.association_tables import AT_lesson_room
 from backend.database.models.corps import CorpsModel
 from backend.database.models.group import GroupModel
 from backend.database.models.lesson import LessonModel
@@ -41,25 +43,28 @@ class RoomRepository:
 
     @staticmethod
     async def get_empty(db: AsyncSession, room_filter: RoomFilter) -> List[RoomModel]:
-        rooms = await db.execute(select(RoomModel)
-        .join(
-            LessonModel, LessonModel.room_guid == RoomModel.guid
-        ).join(
-            CorpsModel, CorpsModel.guid == RoomModel.corps_guid
-        ).where(
-            LessonModel.time_start.between(room_filter.time_start, room_filter.time_end) &
-            LessonModel.time_end.between(room_filter.time_start, room_filter.time_end)
-        ).where(
-            CorpsModel.name == room_filter.corps
-        ).where(
-            or_(
-                LessonModel.date_start.is_(None),
-                and_(
-                    LessonModel.date_start >= room_filter.date,
-                    room_filter.date >= LessonModel.date_end,
-                ),
-            ),
-        ))
+        _ = time.time()
+        rooms = await db.execute(select(RoomModel.number)
+                                 .join(AT_lesson_room,
+                                       AT_lesson_room.c.room_guid == RoomModel.guid)
+                                 .join(LessonModel,
+                                       LessonModel.guid == AT_lesson_room.c.lesson_guid)
+                                 .join(CorpsModel,
+                                       CorpsModel.guid == RoomModel.corps_guid)
+                                 .where((LessonModel.time_start >= room_filter.time_start) &
+                                        (LessonModel.time_end <= room_filter.time_end) &
+                                        (CorpsModel.name == room_filter.corps) &
+                                        (
+                                                LessonModel.date_start.is_(None) |
+                                                exists().where(
+                                                    (LessonModel.date_start <= room_filter.date) &
+                                                    (room_filter.date <= LessonModel.date_end)
+                                                )
+                                        )
+                                        )
+                                 )
+
+        print(f'Time: {time.time() - _}')
         return rooms.scalars().unique().all()
 
     @staticmethod

@@ -1,3 +1,5 @@
+import time
+
 from fastapi import HTTPException, Response
 from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,9 +35,8 @@ class CorpsService:
     @staticmethod
     async def get_all(db: AsyncSession) -> dict[str, list[str]]:
         corps = await CorpsRepository.get_all(db)
-        res = [CorpsSchema.from_orm(corp).name for corp in corps]
-        res.sort()
-        return {"corps": res}
+        corps.sort()
+        return {"corps": corps}
 
     @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: CorpsCreateSchema) -> CorpsOutputSchema:

@@ -22,19 +22,19 @@ class LessonModel(Base):
 
     trans = relationship("LessonTranslateModel", back_populates="lesson", lazy="joined", uselist=True,
                          primaryjoin="LessonModel.guid == LessonTranslateModel.lesson_guid")
-    # groups = relationship("GroupModel", back_populates="lessons", lazy="joined", uselist=True,
-    #                       secondary=AT_lesson_group)
-    # teachers = relationship("TeacherModel", back_populates="lessons", lazy="joined", uselist=True,
-    #                         secondary=AT_lesson_teacher)
-    # rooms = relationship("RoomModel", back_populates="lessons", lazy="joined", uselist=True, secondary=AT_lesson_room)
+    groups = relationship("GroupModel", back_populates="lessons", lazy="joined", uselist=True,
+                          secondary=AT_lesson_group)
+    teachers = relationship("TeacherModel", back_populates="lessons", lazy="joined", uselist=True,
+                            secondary=AT_lesson_teacher)
+    rooms = relationship("RoomModel", back_populates="lessons", lazy="joined", uselist=True, secondary=AT_lesson_room)
 
-    group_guid = Column(UUID(as_uuid=True), ForeignKey("groups.guid"), nullable=True)
-    teacher_guid = Column(UUID(as_uuid=True), ForeignKey("teachers.guid"), nullable=True)
-    room_guid = Column(UUID(as_uuid=True), ForeignKey("rooms.guid"), nullable=True)
-
-    group = relationship("GroupModel", back_populates="lessons", lazy="joined")
-    teacher = relationship("TeacherModel", back_populates="lessons", lazy="joined")
-    room = relationship("RoomModel", back_populates="lessons", lazy="joined")
+    # group_guid = Column(UUID(as_uuid=True), ForeignKey("groups.guid"), nullable=True)
+    # teacher_guid = Column(UUID(as_uuid=True), ForeignKey("teachers.guid"), nullable=True)
+    # room_guid = Column(UUID(as_uuid=True), ForeignKey("rooms.guid"), nullable=True)
+    #
+    # group = relationship("GroupModel", back_populates="lessons", lazy="joined")
+    # teacher = relationship("TeacherModel", back_populates="lessons", lazy="joined")
+    # room = relationship("RoomModel", back_populates="lessons", lazy="joined")
 
     def __repr__(self):
         return f'<LessonModel:\n' \

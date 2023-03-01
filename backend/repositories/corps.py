@@ -31,8 +31,8 @@ class CorpsRepository:
 
     @staticmethod
     async def get_all(db: AsyncSession) -> list[CorpsModel]:
-        corps = await db.execute(select(CorpsModel))
-        return corps.scalars().unique().all()
+        corps = await db.execute(select(CorpsModel.name).distinct())
+        return corps.scalars().all()
 
     @staticmethod
     async def update(db: AsyncSession, guid: UUID4, schemas: CorpsCreateSchema) -> CorpsModel:

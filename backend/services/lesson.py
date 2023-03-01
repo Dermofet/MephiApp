@@ -35,14 +35,24 @@ class LessonService:
         if lesson is not None:
             raise HTTPException(409, detail="Занятие уже существует")
         else:
-            lesson = await LessonRepository.create(db, schemas)
-            await LessonTranslateRepository.create(db,
-                                                   LessonTranslateCreateSchema(
-                                                       type=schemas.type,
-                                                       name=schemas.name,
-                                                       subgroup=schemas.subgroup,
-                                                       lang=schemas.lang,
-                                                       lesson_guid=lesson.guid))
+            lesson = await LessonRepository.get_lesson(db, schemas)
+            if lesson is None:
+                lesson = await LessonRepository.create(db, schemas)
+                await LessonTranslateRepository.create(db,
+                                                       LessonTranslateCreateSchema(
+                                                           type=schemas.type,
+                                                           name=schemas.name,
+                                                           subgroup=schemas.subgroup,
+                                                           lang=schemas.lang,
+                                                           lesson_guid=lesson.guid))
+            else:
+                lesson = await LessonRepository.set_dependencies(db,
+                                                                 lesson,
+                                                                 group=schemas.group,
+                                                                 room=schemas.room,
+                                                                 teacher_name=schemas.teacher_name,
+                                                                 lang=schemas.lang)
+                await db.commit()
             await db.refresh(lesson)
         trans = lesson.trans
         for tr in trans:
@@ -73,14 +83,13 @@ class LessonService:
                 if tr.lang != lang:
                     lesson.trans.remove(tr)
 
-            if lesson.teacher is not None:
-                trans = lesson.teacher.trans
+            for teacher in lesson.teachers:
+                trans = teacher.trans
                 for tr in trans:
                     if tr.lang != lang:
-                        lesson.teacher.trans.remove(tr)
+                        teacher.trans.remove(tr)
 
         lessons = [LessonOutputSchema(**LessonSchema.from_orm(lesson).dict()) for lesson in lessons]
-        group = await GroupRepository.get_by_name(db, group)
         res = LessonsByGroupSchema(lessons=lessons, group=group, lang=lang)
         return res.dict()
 
