@@ -31,9 +31,8 @@ class GroupService:
     @staticmethod
     async def get_all(db: AsyncSession) -> dict[str, list[str]]:
         groups = await GroupRepository.get_all(db)
-        res = [GroupSchema.from_orm(group).name for group in groups]
-        res.sort()
-        return {"groups": res}
+        groups.sort()
+        return {"groups": groups}
 
     @staticmethod
     async def get_by_name(db: AsyncSession, name: str) -> GroupOutputSchema:

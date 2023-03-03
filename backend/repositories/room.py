@@ -51,8 +51,8 @@ class RoomRepository:
                                        LessonModel.guid == AT_lesson_room.c.lesson_guid)
                                  .join(CorpsModel,
                                        CorpsModel.guid == RoomModel.corps_guid)
-                                 .where((LessonModel.time_start >= room_filter.time_start) &
-                                        (LessonModel.time_end <= room_filter.time_end) &
+                                 .where((room_filter.time_end < LessonModel.time_start) &
+                                        (room_filter.time_start > LessonModel.time_end) &
                                         (CorpsModel.name == room_filter.corps) &
                                         (
                                                 LessonModel.date_start.is_(None) |

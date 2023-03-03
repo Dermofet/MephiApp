@@ -113,13 +113,13 @@ class LessonRepository:
         lesson_room_subq = (
             select(AT_lesson_room.c.lesson_guid)
             .where(AT_lesson_room.c.room_guid == room_subq)
-            .subquery()
+            .scalar_subquery()
         )
 
         lesson_group_subq = (
             select(AT_lesson_group.c.lesson_guid)
             .where(AT_lesson_group.c.group_guid == group_subq)
-            .subquery()
+            .scalar_subquery()
         )
 
         lesson_teacher_subq = (
@@ -167,7 +167,7 @@ class LessonRepository:
             select(RoomModel.guid)
             .where(RoomModel.number == schemas.room)
             .limit(1)
-            .subquery()
+            .scalar_subquery()
         )
 
         lesson_room_subq = (
@@ -178,6 +178,52 @@ class LessonRepository:
 
         lesson_query = (
             select(LessonModel)
+            .join(lesson_translate_subq, LessonModel.guid == lesson_translate_subq.c.lesson_guid)
+            .join(lesson_room_subq, LessonModel.guid == lesson_room_subq.c.lesson_guid)
+            .where(
+                (LessonModel.time_start == schemas.time_start) &
+                (LessonModel.time_end == schemas.time_end) &
+                (LessonModel.dot == schemas.dot) &
+                (LessonModel.weeks == schemas.weeks) &
+                (LessonModel.date_start == schemas.date_start) &
+                (LessonModel.date_end == schemas.date_end) &
+                (LessonModel.day == schemas.day)
+            )
+            .limit(1)
+        )
+
+        lesson = await db.execute(lesson_query)
+        return lesson.scalar()
+
+    @staticmethod
+    async def get_id(db: AsyncSession, schemas: LessonCreateSchema) -> UUID4:
+        lesson_translate_subq = (
+            select(LessonTranslateModel.lesson_guid)
+            .where(
+                (LessonTranslateModel.name == schemas.name) &
+                (LessonTranslateModel.subgroup == schemas.subgroup) &
+                (LessonTranslateModel.type == schemas.type) &
+                (LessonTranslateModel.lang == schemas.lang)
+            )
+            .limit(1)
+            .subquery()
+        )
+
+        room_subq = (
+            select(RoomModel.guid)
+            .where(RoomModel.number == schemas.room)
+            .limit(1)
+            .scalar_subquery()
+        )
+
+        lesson_room_subq = (
+            select(AT_lesson_room.c.lesson_guid)
+            .where(AT_lesson_room.c.room_guid == room_subq)
+            .subquery()
+        )
+
+        lesson_query = (
+            select(LessonModel.guid)
             .join(lesson_translate_subq, LessonModel.guid == lesson_translate_subq.c.lesson_guid)
             .join(lesson_room_subq, LessonModel.guid == lesson_room_subq.c.lesson_guid)
             .where(
@@ -210,8 +256,8 @@ class LessonRepository:
         return lessons.scalars().unique().all()
 
     @staticmethod
-    async def get_by_teacher(db: AsyncSession, teacher: str, lang: str, date_: date = date.today()) -> List[
-        LessonModel]:
+    async def get_by_teacher(db: AsyncSession, teacher: str, lang: str, date_: date = date.today()) -> \
+            List[LessonModel]:
         lessons = await db.execute(select(LessonModel)
                                    .join(LessonTranslateModel,
                                          LessonTranslateModel.lesson_guid == LessonModel.guid)
@@ -233,25 +279,41 @@ class LessonRepository:
         if lesson_translate is None:
             HTTPException(status_code=404, detail="Перевода занятия не существует")
 
-        group = await GroupRepository.get_by_name(db, schemas.group)
-        room = await RoomRepository.get_by_number(db, schemas.room)
-        teacher = await TeacherRepository.get_by_name(db, schemas.teacher_name, schemas.lang)
-
         await db.execute(update(LessonModel).where(LessonModel.guid == guid).values(time_start=schemas.time_start,
                                                                                     time_end=schemas.time_end,
                                                                                     dot=schemas.dot,
                                                                                     weeks=schemas.weeks,
                                                                                     date_start=schemas.date_start,
                                                                                     date_end=schemas.date_end,
-                                                                                    day=schemas.day,
-                                                                                    group_guid=group.guid,
-                                                                                    room_guid=room.guid,
-                                                                                    teacher_guid=teacher.guid))
+                                                                                    day=schemas.day))
         await db.execute(update(LessonModel).where(LessonTranslateModel.guid == lesson_translate.guid)
                          .values(type=schemas.type,
                                  name=schemas.name,
                                  subgroup=schemas.subgroup,
                                  lang=schemas.lang))
+        await db.commit()
+        await db.refresh(lesson)
+
+        return lesson
+
+    @staticmethod
+    async def update_translate(db: AsyncSession, schemas: LessonCreateSchema, guid: str) -> LessonModel:
+        lesson = await LessonRepository.get_by_id(db, guid)
+
+        if lesson is None:
+            HTTPException(status_code=404, detail="Занятие не найдено")
+
+        for trans in lesson.trans:
+            if trans.lang == schemas.lang:
+                HTTPException(status_code=404, detail="Занятие на этом языке существует")
+
+        trans = LessonTranslateModel(type=schemas.type,
+                                     name=schemas.name,
+                                     subgroup=schemas.subgroup,
+                                     lang=schemas.lang,
+                                     lesson_guid=lesson.guid)
+        lesson.trans.append(trans)
+
         await db.commit()
         await db.refresh(lesson)
 

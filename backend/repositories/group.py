@@ -26,8 +26,8 @@ class GroupRepository:
         return group.scalar()
 
     @staticmethod
-    async def get_all(db: AsyncSession) -> List[GroupModel]:
-        groups = await db.execute(select(GroupModel))
+    async def get_all(db: AsyncSession) -> List[str]:
+        groups = await db.execute(select(GroupModel.name))
         return groups.scalars().unique().all()
 
     @staticmethod

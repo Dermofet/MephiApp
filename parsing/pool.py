@@ -40,7 +40,7 @@ class Pool:
                     asyncio.create_task(self._worker(task))
             await asyncio.sleep(self.interval)
 
-    async def _worker(self, task: Union[PostTask, PutTask]):
+    async def _worker(self, task):
         async with self._sem:
             self._concurrent_workers += 1
             completed = await task.perform()

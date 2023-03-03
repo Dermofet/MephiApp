@@ -1,6 +1,8 @@
+import uuid
 from typing import List
+from uuid import UUID
 
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Depends, HTTPException, Path
 from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
@@ -38,12 +40,28 @@ async def create(
     summary="Получение занятия по id",
 )
 async def get(
-        guid: UUID4,
+        guid: str,
         lang: str = "ru",
         db: AsyncSession = Depends(get_session),
         lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.get(db=db, guid=guid, lang=lang)
+
+
+@router.get(
+    "/lessons",
+    response_model=UUID4,
+    response_description="Успешный возврат ID занятия",
+    status_code=status.HTTP_200_OK,
+    description="Получить ID занятия ",
+    summary="Получение id занятия",
+)
+async def get_id(
+        schemas: LessonCreateSchema,
+        db: AsyncSession = Depends(get_session),
+        lesson_service: LessonService = Depends(),
+):
+    return await lesson_service.get_guid(db=db, schemas=schemas)
 
 
 @router.get(
@@ -55,7 +73,6 @@ async def get(
     summary="Получение занятий по группе",
 )
 async def get_by_group(
-
         group: str,
         lang: str = "ru",
         db: AsyncSession = Depends(get_session),
@@ -96,6 +113,23 @@ async def update(
         lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.update(db=db, guid=guid, schemas=schemas)
+
+
+@router.put(
+    "/lesson-translated/{guid}",
+    response_model=LessonOutputSchema,
+    response_description="Успешное обновление занятия",
+    status_code=status.HTTP_200_OK,
+    description="Изменить занятие (добавить новый перевод)",
+    summary="Добавить перевод",
+)
+async def update_translate(
+        schemas: LessonCreateSchema,
+        guid: UUID4,
+        db: AsyncSession = Depends(get_session),
+        lesson_service: LessonService = Depends(),
+):
+    return await lesson_service.update_translate(db=db, schemas=schemas, guid=guid)
 
 
 @router.delete(

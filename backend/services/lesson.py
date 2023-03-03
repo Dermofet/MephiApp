@@ -72,6 +72,13 @@ class LessonService:
         return LessonOutputSchema(**LessonSchema.from_orm(lesson).dict())
 
     @staticmethod
+    async def get_guid(db: AsyncSession, schemas: LessonCreateSchema) -> UUID4:
+        lesson = await LessonRepository.get_id(db, schemas)
+        if lesson is None:
+            raise HTTPException(404, "Занятие не найдено")
+        return lesson
+
+    @staticmethod
     async def get_by_group(db: AsyncSession, group: str, lang: str) -> dict:
         lessons = await LessonRepository.get_by_group(db, group, lang)
         if not lessons:
@@ -125,6 +132,19 @@ class LessonService:
         for tr in trans:
             if tr.lang != schemas.lang:
                 lesson.trans.remove(tr)
+        return LessonOutputSchema(**LessonSchema.from_orm(lesson).dict())
+
+    @staticmethod
+    async def update_translate(db: AsyncSession, schemas: LessonCreateSchema, guid: UUID4) -> LessonOutputSchema:
+        lesson = await LessonRepository.update_translate(db, schemas, guid)
+        if lesson is None:
+            raise HTTPException(404, "Занятие не найдено")
+
+        trans = lesson.trans
+        for tr in trans:
+            if tr.lang != schemas.lang:
+                lesson.trans.remove(tr)
+
         return LessonOutputSchema(**LessonSchema.from_orm(lesson).dict())
 
     @staticmethod

@@ -14,6 +14,7 @@ from set_info import (
     start_parse_schedule,
     start_parse_teachers,
 )
+from translating.translator import start_parse_trans
 
 
 def run(mode: str):
@@ -82,54 +83,67 @@ def run(mode: str):
         except KeyboardInterrupt:
             loop.run_until_complete(pool.stop())
             loop.close()
+    elif mode == "trans_to_db":
+        loop = asyncio.get_event_loop()
+        pool = Pool(30)
+        try:
+            loop.run_until_complete(start_parse_trans(pool))
+        except KeyboardInterrupt:
+            loop.run_until_complete(pool.stop())
+            loop.close()
 
 
 if __name__ == '__main__':
-    print("--PARSE INFO--: Schedule")
-    run("parse_schedule")
-    print("Completed: Schedule")
-    print()
-
-    print("--PARSE INFO--: Rooms")
-    run("parse_rooms")
-    print("Completed: Rooms")
-    print()
+    # print("--PARSE INFO--: Schedule")
+    # run("parse_schedule")
+    # print("Completed: Schedule")
+    # print()
+    #
+    # print("--PARSE INFO--: Rooms")
+    # run("parse_rooms")
+    # print("Completed: Rooms")
+    # print()
 
     _ = time.time()
 
-    print("--SET INFO--: Corps")
-    run("corps_to_db")
-    print("Completed: Corps")
-    print()
+    # print("--SET INFO--: Corps")
+    # run("corps_to_db")
+    # print("Completed: Corps")
+    # print()
+    #
+    # print("--SET INFO--: Rooms")
+    # run("rooms_to_db")
+    # print("Completed: Rooms")
+    # print()
+    #
+    # print("--SET INFO--: Academic")
+    # run("academics_to_db")
+    # print("Completed: Academic")
+    # print()
+    #
+    # print("--SET INFO--: Groups")
+    # run("groups_to_db")
+    # print("Completed: Groups")
+    # print()
+    #
+    # print("--PARSE INFO--: Teachers")
+    # run("teachers_to_db")
+    # print("Completed: Teachers")
+    # print()
+    #
+    # print("--SET INFO--: Teachers fullname")
+    # run("fullname_to_db")
+    # print("Completed: Teachers fullname")
+    # print()
+    #
+    # print("--SET INFO--: Schedule")
+    # run("schedule_to_db")
+    # print("Completed: Schedule")
+    # print()
 
-    print("--SET INFO--: Rooms")
-    run("rooms_to_db")
-    print("Completed: Rooms")
-    print()
-
-    print("--SET INFO--: Academic")
-    run("academics_to_db")
-    print("Completed: Academic")
-    print()
-
-    print("--SET INFO--: Groups")
-    run("groups_to_db")
-    print("Completed: Groups")
-    print()
-
-    print("--PARSE INFO--: Teachers")
-    run("teachers_to_db")
-    print("Completed: Teachers")
-    print()
-
-    print("--SET INFO--: Teachers fullname")
-    run("fullname_to_db")
-    print("Completed: Teachers fullname")
-    print()
-
-    print("--SET INFO--: Schedule")
-    run("schedule_to_db")
-    print("Completed: Schedule")
+    print("--SET INFO--: Translated schedule")
+    run("trans_to_db")
+    print("Completed: Translated schedule")
     print()
 
     print(f'Time: {time.time() - _}')
