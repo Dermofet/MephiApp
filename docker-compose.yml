@@ -87,7 +87,7 @@ services:
       - db
     environment:
       C_FORCE_ROOT: ${C_FORCE_ROOT}
-      CELERY_BROKER_URL: ${celery_broker_url}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
     command: celery -A celery_parsing.connection.celery worker --loglevel=info
 
 volumes:

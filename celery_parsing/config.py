@@ -26,11 +26,11 @@ class Config(_Settings):
 
     # Celery
     C_FORCE_ROOT: bool
-    celery_broker_url: str
+    CELERY_BROKER_URL: str
 
     SQLALCHEMY_DATABASE_URI: Optional[AsyncPostgresDsn]
 
-    @validator("celery_broker_url")
+    @validator("CELERY_BROKER_URL")
     def print_brocker_url(cls, value):
         print(f'CELERY_BROKER_URL = {value}')
 

@@ -1,11 +1,10 @@
 from celery import Celery
 
-from . import config
+from celery_parsing import config
 
 # Celery
-print(config.celery_broker_url)
+print(config.CELERY_BROKER_URL)
 celery = Celery('celery', broker=config.celery_broker_url)
-celery.logger = get_task_logger(__name__)
 
 # Подключение к RabbitMQ
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
