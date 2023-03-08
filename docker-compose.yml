@@ -63,7 +63,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   pgadmin:
-    container_name: pgadmin4_container
+    container_name: pgadmin4
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
@@ -73,22 +73,22 @@ services:
     networks:
       - app-network
 
-#  parsers:
-#    container_name: parsers
-#    build:
-#      context: ./parsers
-#    volumes:
-#      - ./parsers:/parsers
-#    ports:
-#      - "6000:6000"
-#    environment:
-#      MEPHI_AUTH_URL: ${MEPHI_AUTH_URL}
-#      MEPHI_SCHEDULE_URL: ${MEPHI_SCHEDULE_URL}
-#      HOME_MEPHI_URL: ${HOME_MEPHI_URL}
-#      USERNAME: ${USERNAME}
-#      PASSWORD: ${PASSWORD}
-#    networks:
-#      - app-network
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.11
+    ports:
+      - "5672:5672"
+
+  celery:
+    container_name: celery
+    build: .
+    depends_on:
+      - rabbitmq
+      - db
+    environment:
+      C_FORCE_ROOT: ${C_FORCE_ROOT}
+      CELERY_BROKER_URL: ${celery_broker_url}
+    command: celery -A celery_parsing.connection.celery worker --loglevel=info
 
 volumes:
   app-db-data:
