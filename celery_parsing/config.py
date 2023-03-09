@@ -22,17 +22,13 @@ class Config(_Settings):
     POSTGRES_SERVER: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
-    POSTGRES_DB: strc
+    POSTGRES_DB: str
 
     # Celery
     C_FORCE_ROOT: bool
     CELERY_BROKER_URL: str
 
     SQLALCHEMY_DATABASE_URI: Optional[AsyncPostgresDsn]
-
-    @validator("CELERY_BROKER_URL")
-    def print_brocker_url(cls, value):
-        print(f'CELERY_BROKER_URL = {value}')
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_async_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:

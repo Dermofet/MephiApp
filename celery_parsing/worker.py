@@ -1,4 +1,13 @@
+from connection import celery
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from backend.database.connection import get_session
+from backend.database.models.academic import AcademicModel
+from backend.database.models.corps import CorpsModel
+from backend.database.models.group import GroupModel
+from backend.database.models.lesson import LessonModel
+from backend.database.models.room import RoomModel
+from backend.database.models.teacher import TeacherModel
 from backend.repositories.academic import AcademicRepository
 from backend.repositories.corps import CorpsRepository
 from backend.repositories.group import GroupRepository
@@ -11,8 +20,6 @@ from backend.schemas.group import GroupCreateSchema
 from backend.schemas.lesson import LessonCreateSchema
 from backend.schemas.room import RoomCreateSchema
 from backend.schemas.teacher import TeacherCreateSchema
-
-from .connection import celery
 
 
 class Worker:
@@ -51,7 +58,7 @@ class Worker:
     # Group create
     @staticmethod
     @celery.task
-    async def group_create(schemas: GroupCreateSchema, academic_guid: UUID4) -> GroupModel:
+    async def group_create(schemas: GroupCreateSchema) -> GroupModel:
         async with get_session() as db:
             group = await GroupRepository.get_by_name(db, schemas.name)
 
@@ -67,7 +74,7 @@ class Worker:
     # Room create
     @staticmethod
     @celery.task
-    async def room_create(schemas: RoomCreateSchema, corps_guid) -> RoomModel:
+    async def room_create(schemas: RoomCreateSchema) -> RoomModel:
         async with get_session() as db:
             room = await RoomRepository.get_by_number(db, schemas.number)
 

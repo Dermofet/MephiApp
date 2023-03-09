@@ -75,9 +75,12 @@ services:
 
   rabbitmq:
     container_name: rabbitmq
-    image: rabbitmq:3.11
+    image: rabbitmq:3.10.7-management
     ports:
       - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
 
   celery:
     container_name: celery
@@ -89,6 +92,8 @@ services:
       C_FORCE_ROOT: ${C_FORCE_ROOT}
       CELERY_BROKER_URL: ${CELERY_BROKER_URL}
     command: celery -A celery_parsing.connection.celery worker --loglevel=info
+    networks:
+      - app-network
 
 volumes:
   app-db-data:
