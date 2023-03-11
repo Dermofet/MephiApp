@@ -28,9 +28,9 @@ class TeacherRepository:
 
     @staticmethod
     async def get_all(db: AsyncSession, lang: str) -> List[str]:
-        teachers_translate = await db.execute(select(TeacherModel.trans.name)
-                                              .join(TeacherTranslateModel,
-                                                    TeacherModel.guid == TeacherTranslateModel.teacher_guid)
+        teachers_translate = await db.execute(select(TeacherTranslateModel.name)
+                                              .join(TeacherModel,
+                                                    TeacherTranslateModel.teacher_guid == TeacherModel.guid)
                                               .where(TeacherTranslateModel.lang == lang))
         return teachers_translate.scalars().unique().all()
 
