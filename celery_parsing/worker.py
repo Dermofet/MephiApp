@@ -1,4 +1,3 @@
-from connection import celery
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.connection import get_session
@@ -25,7 +24,6 @@ from backend.schemas.teacher import TeacherCreateSchema
 class Worker:
     # Academic create
     @staticmethod
-    @celery.task
     async def academic_create(schemas: AcademicCreateSchema) -> AcademicModel:
         async with get_session() as db:
             academic = AcademicRepository.get_by_name(db, schemas.name)
@@ -41,7 +39,6 @@ class Worker:
 
     # Corps create
     @staticmethod
-    @celery.task
     async def corps_create(schemas: CorpsCreateSchema) -> CorpsModel:
         async with get_session() as db:
             corps = await CorpsRepository.get_by_name(db, schemas.name)
@@ -57,7 +54,6 @@ class Worker:
 
     # Group create
     @staticmethod
-    @celery.task
     async def group_create(schemas: GroupCreateSchema) -> GroupModel:
         async with get_session() as db:
             group = await GroupRepository.get_by_name(db, schemas.name)
@@ -73,7 +69,6 @@ class Worker:
 
     # Room create
     @staticmethod
-    @celery.task
     async def room_create(schemas: RoomCreateSchema) -> RoomModel:
         async with get_session() as db:
             room = await RoomRepository.get_by_number(db, schemas.number)
@@ -89,7 +84,6 @@ class Worker:
 
     # Teacher create
     @staticmethod
-    @celery.task
     async def teacher_create(schemas: TeacherCreateSchema) -> TeacherModel:
         async with get_session() as db:
             teacher = await TeacherRepository.get_by_name(db, schemas.name, schemas.lang)
@@ -105,7 +99,6 @@ class Worker:
 
     # Lesson create
     @staticmethod
-    @celery.task
     async def lesson_create(schemas: LessonCreateSchema) -> LessonModel:
         async with get_session() as db:
             lesson = await LessonRepository.get_unique(db, schemas)
@@ -135,7 +128,6 @@ class Worker:
         return lesson.guid
 
     @staticmethod
-    @celery.task
     async def set_dependencies(db: AsyncSession,
                                lesson: LessonModel,
                                group: str,
@@ -157,7 +149,6 @@ class Worker:
         return lesson
 
     @staticmethod
-    @celery.task
     async def teacher_update(schemas: TeacherCreateSchema) -> None:
         async with get_session() as db:
             teacher = await TeacherRepository.get_by_name(db, name=schemas.name, lang=schemas.lang)

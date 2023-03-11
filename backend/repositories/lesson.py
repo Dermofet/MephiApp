@@ -68,6 +68,10 @@ class LessonRepository:
         return lesson
 
     @staticmethod
+    async def bulk_insert(db: AsyncSession, data: list) -> None:
+        await db.execute(insert(LessonModel).values(data))
+
+    @staticmethod
     async def get_by_id(db: AsyncSession, guid: UUID4) -> LessonModel:
         lesson = await db.execute(select(LessonModel).where(LessonModel.guid == guid).limit(1))
         return lesson.scalar()
@@ -124,8 +128,8 @@ class LessonRepository:
 
         lesson_teacher_subq = (
             select(AT_lesson_teacher.c.lesson_guid)
-            .where(AT_lesson_teacher.c.teacher_guid == teacher_translate_subq)
-            .subquery()
+            .where(AT_lesson_teacher.c.teacher_guid == teacher_translate_subq.scalar_subquery())
+            .scalar_subquery()
         )
 
         lesson_query = (

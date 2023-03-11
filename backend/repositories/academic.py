@@ -17,6 +17,10 @@ class AcademicRepository:
         return academic
 
     @staticmethod
+    async def bulk_insert(db: AsyncSession, data: list) -> None:
+        await db.execute(insert(AcademicModel).values(data))
+
+    @staticmethod
     async def get_by_id(db: AsyncSession, guid: UUID4) -> AcademicModel:
         academic = await db.execute(select(AcademicModel).where(AcademicModel.guid == guid).limit(1))
         return academic.scalar()

@@ -24,7 +24,4 @@ COPY . /app/
 
 ENV PYTHONPATH ".."
 
-#RUN mkdir /etc/docker/
-#RUN echo '{\n    "dns": ["8.8.8.8", "8.8.8.4", "192.168.2.1"]\n}' >> /etc/docker/daemon.json
-
 CMD ["bash", "./entrypoint.sh"]

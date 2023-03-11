@@ -20,6 +20,10 @@ class CorpsRepository:
         return corps
 
     @staticmethod
+    async def bulk_insert(db: AsyncSession, data: list) -> None:
+        await db.execute(insert(CorpsModel).values(data))
+
+    @staticmethod
     async def get_by_id(db: AsyncSession, guid: UUID4) -> CorpsModel:
         corps = await db.execute(select(CorpsModel).where(CorpsModel.guid == guid).limit(1))
         return corps.scalar()

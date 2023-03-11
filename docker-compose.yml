@@ -73,27 +73,29 @@ services:
     networks:
       - app-network
 
-  rabbitmq:
-    container_name: rabbitmq
-    image: rabbitmq:3.10.7-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - app-network
-
-  celery:
-    container_name: celery
-    build: .
-    depends_on:
-      - rabbitmq
-      - db
-    environment:
-      C_FORCE_ROOT: ${C_FORCE_ROOT}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
-    command: celery -A celery_parsing.connection.celery worker --loglevel=info
-    networks:
-      - app-network
+#  rabbitmq:
+#    container_name: rabbitmq
+#    image: rabbitmq:3.10.7-management
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"
+#    networks:
+#      - app-network
+#
+#  celery:
+#    container_name: celery
+#    build:
+#      context: 'celery_parsing'
+#    volumes:
+#      - .:/app/celery_parsing
+#    depends_on:
+#      - rabbitmq
+#      - db
+#    environment:
+#      C_FORCE_ROOT: ${C_FORCE_ROOT}
+#      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+#    networks:
+#      - app-network
 
 volumes:
   app-db-data:

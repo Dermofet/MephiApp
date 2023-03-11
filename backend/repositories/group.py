@@ -21,6 +21,10 @@ class GroupRepository:
         return group
 
     @staticmethod
+    async def bulk_insert(db: AsyncSession, data: list) -> None:
+        await db.execute(insert(GroupModel).values(data))
+
+    @staticmethod
     async def get_by_id(db: AsyncSession, guid: UUID4) -> GroupModel:
         group = await db.execute(select(GroupModel).where(GroupModel.guid == guid).limit(1))
         return group.scalar()

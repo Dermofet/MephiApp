@@ -29,7 +29,7 @@ def run(mode: str):
         parser.parse_teachers_fullname()
     elif mode == "schedule_to_db":
         loop = asyncio.get_event_loop()
-        pool = Pool(30)
+        pool = Pool(5000)
         try:
             loop.run_until_complete(start_parse_schedule(pool))
         except KeyboardInterrupt:
@@ -37,7 +37,7 @@ def run(mode: str):
             loop.close()
     elif mode == "rooms_to_db":
         loop = asyncio.get_event_loop()
-        pool = Pool(30)
+        pool = Pool(5000)
         try:
             loop.run_until_complete(start_parse_room(pool))
         except KeyboardInterrupt:
@@ -45,7 +45,7 @@ def run(mode: str):
             loop.close()
     elif mode == "corps_to_db":
         loop = asyncio.get_event_loop()
-        pool = Pool(30)
+        pool = Pool(5000)
         try:
             loop.run_until_complete(start_parse_corps(pool))
         except KeyboardInterrupt:
@@ -53,7 +53,7 @@ def run(mode: str):
             loop.close()
     elif mode == "academics_to_db":
         loop = asyncio.get_event_loop()
-        pool = Pool(30)
+        pool = Pool(5000)
         try:
             loop.run_until_complete(start_parse_academic(pool))
         except KeyboardInterrupt:
@@ -61,7 +61,7 @@ def run(mode: str):
             loop.close()
     elif mode == "groups_to_db":
         loop = asyncio.get_event_loop()
-        pool = Pool(30)
+        pool = Pool(5000)
         try:
             loop.run_until_complete(start_parse_groups(pool))
         except KeyboardInterrupt:
@@ -69,7 +69,7 @@ def run(mode: str):
             loop.close()
     elif mode == "teachers_to_db":
         loop = asyncio.get_event_loop()
-        pool = Pool(30)
+        pool = Pool(5000)
         try:
             loop.run_until_complete(start_parse_teachers(pool))
         except KeyboardInterrupt:
@@ -77,7 +77,7 @@ def run(mode: str):
             loop.close()
     elif mode == "fullname_to_db":
         loop = asyncio.get_event_loop()
-        pool = Pool(30)
+        pool = Pool(5000)
         try:
             loop.run_until_complete(start_parse_fullname(pool))
         except KeyboardInterrupt:
@@ -85,7 +85,7 @@ def run(mode: str):
             loop.close()
     elif mode == "trans_to_db":
         loop = asyncio.get_event_loop()
-        pool = Pool(30)
+        pool = Pool(5000)
         try:
             loop.run_until_complete(start_parse_trans(pool))
         except KeyboardInterrupt:
@@ -106,44 +106,44 @@ if __name__ == '__main__':
 
     _ = time.time()
 
-    # print("--SET INFO--: Corps")
-    # run("corps_to_db")
-    # print("Completed: Corps")
-    # print()
-    #
-    # print("--SET INFO--: Rooms")
-    # run("rooms_to_db")
-    # print("Completed: Rooms")
-    # print()
-    #
-    # print("--SET INFO--: Academic")
-    # run("academics_to_db")
-    # print("Completed: Academic")
-    # print()
-    #
-    # print("--SET INFO--: Groups")
-    # run("groups_to_db")
-    # print("Completed: Groups")
-    # print()
-    #
-    # print("--PARSE INFO--: Teachers")
-    # run("teachers_to_db")
-    # print("Completed: Teachers")
-    # print()
-    #
-    # print("--SET INFO--: Teachers fullname")
-    # run("fullname_to_db")
-    # print("Completed: Teachers fullname")
-    # print()
-    #
-    # print("--SET INFO--: Schedule")
-    # run("schedule_to_db")
-    # print("Completed: Schedule")
-    # print()
-
-    print("--SET INFO--: Translated schedule")
-    run("trans_to_db")
-    print("Completed: Translated schedule")
+    print("--SET INFO--: Corps")
+    run("corps_to_db")
+    print("Completed: Corps")
     print()
+
+    print("--SET INFO--: Rooms")
+    run("rooms_to_db")
+    print("Completed: Rooms")
+    print()
+
+    print("--SET INFO--: Academic")
+    run("academics_to_db")
+    print("Completed: Academic")
+    print()
+
+    print("--SET INFO--: Groups")
+    run("groups_to_db")
+    print("Completed: Groups")
+    print()
+
+    print("--PARSE INFO--: Teachers")
+    run("teachers_to_db")
+    print("Completed: Teachers")
+    print()
+
+    print("--SET INFO--: Teachers fullname")
+    run("fullname_to_db")
+    print("Completed: Teachers fullname")
+    print()
+
+    print("--SET INFO--: Schedule")
+    run("schedule_to_db")
+    print("Completed: Schedule")
+    print()
+
+    # print("--SET INFO--: Translated schedule")
+    # run("trans_to_db")
+    # print("Completed: Translated schedule")
+    # print()
 
     print(f'Time: {time.time() - _}')
