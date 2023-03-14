@@ -7,7 +7,7 @@ from pool import Pool
 from task import PostTask, PutTask
 
 API_PREFIX = "http://127.0.0.1:8000/api/2.0"
- 
+
 
 def parse_academic() -> list[PostTask]:
     res = []
@@ -223,7 +223,10 @@ def parse_teachers_fullname() -> list[PostTask]:
                     "fullname": fullname
                 }
                 json_fullname = json.dumps(_teacher_, ensure_ascii=False)
-
+                res.append(PutTask(tid=i,
+                                   str_json=json_fullname,
+                                   url=API_PREFIX + '/teachers',
+                                   description='Teachers PUT'))
     except FileNotFoundError as err:
         print(f'File TeachersFullname.json was not found. {getcwd()}')
     return res

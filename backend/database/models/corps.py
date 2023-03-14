@@ -14,3 +14,8 @@ class CorpsModel(Base):
     name = Column(String(300), unique=True)
     rooms = relationship("RoomModel", back_populates="corps", primaryjoin="CorpsModel.guid == RoomModel.corps_guid",
                          uselist=True, lazy="selectin")
+
+    def __repr__(self):
+        return f'\n\nguid: {self.guid}\n' \
+               f'name: {self.name}\n' \
+               f'rooms: {self.rooms}'

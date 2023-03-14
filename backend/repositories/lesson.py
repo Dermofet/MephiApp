@@ -5,7 +5,7 @@ from typing import List
 
 from fastapi import HTTPException
 from pydantic import UUID4
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, exists, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.models.association_tables import *
@@ -114,30 +114,12 @@ class LessonRepository:
             .subquery()
         )
 
-        lesson_room_subq = (
-            select(AT_lesson_room.c.lesson_guid)
-            .where(AT_lesson_room.c.room_guid == room_subq)
-            .scalar_subquery()
-        )
-
-        lesson_group_subq = (
-            select(AT_lesson_group.c.lesson_guid)
-            .where(AT_lesson_group.c.group_guid == group_subq)
-            .scalar_subquery()
-        )
-
-        lesson_teacher_subq = (
-            select(AT_lesson_teacher.c.lesson_guid)
-            .where(AT_lesson_teacher.c.teacher_guid == teacher_translate_subq.scalar_subquery())
-            .scalar_subquery()
-        )
-
         lesson_query = (
             select(LessonModel)
+            .join(AT_lesson_room, LessonModel.guid == AT_lesson_room.c.lesson_guid)
+            .join(AT_lesson_group, LessonModel.guid == AT_lesson_group.c.lesson_guid)
+            .join(AT_lesson_teacher, LessonModel.guid == AT_lesson_teacher.c.lesson_guid)
             .join(lesson_translate_subq, LessonModel.guid == lesson_translate_subq.c.lesson_guid)
-            .join(lesson_group_subq, LessonModel.guid == lesson_group_subq.c.lesson_guid)
-            .join(lesson_room_subq, LessonModel.guid == lesson_room_subq.c.lesson_guid)
-            .join(lesson_teacher_subq, LessonModel.guid == lesson_teacher_subq.c.lesson_guid)
             .where(
                 (LessonModel.time_start == schemas.time_start) &
                 (LessonModel.time_end == schemas.time_end) &
@@ -145,7 +127,10 @@ class LessonRepository:
                 (LessonModel.weeks == schemas.weeks) &
                 (LessonModel.date_start == schemas.date_start) &
                 (LessonModel.date_end == schemas.date_end) &
-                (LessonModel.day == schemas.day)
+                (LessonModel.day == schemas.day) &
+                (AT_lesson_room.c.room_guid == room_subq) &
+                (AT_lesson_group.c.group_guid == group_subq) &
+                (AT_lesson_teacher.c.teacher_guid == teacher_translate_subq)
             )
             .limit(1)
         )
@@ -164,7 +149,7 @@ class LessonRepository:
                 (LessonTranslateModel.lang == schemas.lang)
             )
             .limit(1)
-            .subquery()
+            .scalar_subquery()
         )
 
         room_subq = (
@@ -177,13 +162,20 @@ class LessonRepository:
         lesson_room_subq = (
             select(AT_lesson_room.c.lesson_guid)
             .where(AT_lesson_room.c.room_guid == room_subq)
-            .subquery()
+            .limit(1)
+            .scalar_subquery()
         )
 
         lesson_query = (
             select(LessonModel)
-            .join(lesson_translate_subq, LessonModel.guid == lesson_translate_subq.c.lesson_guid)
-            .join(lesson_room_subq, LessonModel.guid == lesson_room_subq.c.lesson_guid)
+            .join(
+                lesson_translate_subq,
+                LessonModel.guid == lesson_translate_subq
+            )
+            .join(
+                lesson_room_subq,
+                LessonModel.guid == lesson_room_subq
+            )
             .where(
                 (LessonModel.time_start == schemas.time_start) &
                 (LessonModel.time_end == schemas.time_end) &
@@ -196,8 +188,8 @@ class LessonRepository:
             .limit(1)
         )
 
-        lesson = await db.execute(lesson_query)
-        return lesson.scalar()
+        lesson = await db.scalar(lesson_query)
+        return lesson
 
     @staticmethod
     async def get_id(db: AsyncSession, schemas: LessonCreateSchema) -> UUID4:

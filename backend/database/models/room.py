@@ -18,7 +18,6 @@ class RoomModel(Base):
 
     corps = relationship("CorpsModel", back_populates="rooms", lazy="joined", uselist=False)
     lessons = relationship("LessonModel", back_populates="rooms", lazy="joined", uselist=True, secondary=AT_lesson_room)
-    # lessons = relationship("LessonModel", back_populates="room", lazy="joined", uselist=True, secondary=AT_lesson_room)
 
     def __repr__(self):
         return f'<RoomModel:\n' \
