@@ -1,12 +1,11 @@
+from api.backend.config import config
+from api.backend.database.connection import get_session
+from api.backend.schemas.group import GroupCreateSchema, GroupOutputSchema
+from api.backend.services.group import GroupService
 from fastapi import APIRouter, Depends
 from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-
-from backend.config import config
-from backend.database.connection import get_session
-from backend.schemas.group import GroupCreateSchema, GroupOutputSchema
-from backend.services.group import GroupService
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 

@@ -1,14 +1,13 @@
+from api.backend.config import config
+from api.backend.database.connection import init_db
+from api.backend.routers.academic import router as academic_router
+from api.backend.routers.corps import router as corps_router
+from api.backend.routers.group import router as group_router
+from api.backend.routers.lesson import router as lesson_router
+from api.backend.routers.room import router as room_router
+from api.backend.routers.teacher import router as teacher_router
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-
-from backend.config import config
-from backend.database.connection import init_db
-from backend.routers.academic import router as academic_router
-from backend.routers.corps import router as corps_router
-from backend.routers.group import router as group_router
-from backend.routers.lesson import router as lesson_router
-from backend.routers.room import router as room_router
-from backend.routers.teacher import router as teacher_router
 
 tags_metadata = [
     {"name": "group", "description": "Работа с группами"},
@@ -29,6 +28,7 @@ app = FastAPI(
 
 @app.on_event("startup")
 async def init_models():
+    print("App start")
     await init_db()
 
 

@@ -1,11 +1,10 @@
+from api.backend.config import config
+from api.backend.database.connection import get_session
+from api.backend.schemas.academic import AcademicCreateSchema, AcademicOutputSchema
+from api.backend.services.academic import AcademicService
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-
-from backend.config import config
-from backend.database.connection import get_session
-from backend.schemas.academic import AcademicCreateSchema, AcademicOutputSchema
-from backend.services.academic import AcademicService
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 

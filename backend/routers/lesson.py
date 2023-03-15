@@ -2,15 +2,14 @@ import uuid
 from typing import List
 from uuid import UUID
 
+from api.backend.config import config
+from api.backend.database.connection import get_session
+from api.backend.schemas.lesson import LessonCreateSchema, LessonOutputSchema, LessonSchema
+from api.backend.services.lesson import LessonService
 from fastapi import APIRouter, Depends, HTTPException, Path
 from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-
-from backend.config import config
-from backend.database.connection import get_session
-from backend.schemas.lesson import LessonCreateSchema, LessonOutputSchema, LessonSchema
-from backend.services.lesson import LessonService
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 

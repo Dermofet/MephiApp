@@ -1,14 +1,16 @@
 import uuid
 
-from app.backend.database.connection import Base
-from app.backend.database.models.association_tables import AT_lesson_teacher
 from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
+from backend.database.connection import Base
+from backend.database.models.association_tables import AT_lesson_teacher
+
 
 class TeacherModel(Base):
     __tablename__ = "teachers"
+    # __table_args__ = {'extend_existing': True}
 
     guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True, index=True, unique=True)
     online_url = Column(String, nullable=True, unique=True)
@@ -18,8 +20,6 @@ class TeacherModel(Base):
                          primaryjoin="TeacherModel.guid == TeacherTranslateModel.teacher_guid")
     lessons = relationship("LessonModel", back_populates="teachers", lazy="joined", uselist=True,
                            secondary=AT_lesson_teacher)
-    # lessons = relationship("LessonModel", back_populates="teacher", lazy="joined", uselist=True,
-    #                        secondary=AT_lesson_teacher)
 
     def __repr__(self):
         return f'<TeacherModel:\n' \

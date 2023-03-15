@@ -2,23 +2,19 @@ import asyncio
 import time
 import traceback
 
-from app.backend.config import config
-from app.backend.database.connection import get_session
-from bulk_insert import *
+from bulk_insert import (
+    bulk_insert_academic,
+    bulk_insert_corps,
+    bulk_insert_groups,
+    bulk_insert_room,
+    bulk_insert_schedule,
+    bulk_insert_teachers_fullname,
+)
 from parsers.room_parser import RoomParser
 from parsers.schedule_parser import ScheduleParser
 from parsers.teachers_fullname_parser import TeachersFullnameParser
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
 
-engine = create_async_engine(
-    "postgresql+asyncpg://postgres:postgres@db/schedule",
-    echo=config.DEBUG,
-    pool_size=20,
-    max_overflow=30,
-    pool_timeout=60
-)
-async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+from backend.database.connection import get_session
 
 
 async def set_corps():

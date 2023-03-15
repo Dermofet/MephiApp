@@ -1,11 +1,10 @@
+from api.backend.config import config
+from api.backend.database.connection import get_session
+from api.backend.schemas.corps import CorpsCreateSchema, CorpsOutputSchema
+from api.backend.services.corps import CorpsService
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-
-from backend.config import config
-from backend.database.connection import get_session
-from backend.schemas.corps import CorpsCreateSchema, CorpsOutputSchema
-from backend.services.corps import CorpsService
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 

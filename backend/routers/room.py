@@ -1,13 +1,12 @@
+from api.backend.config import config
+from api.backend.database.connection import get_session
+from api.backend.filters.room import RoomFilter
+from api.backend.schemas.room import RoomCreateSchema, RoomOutputSchema
+from api.backend.services.room import RoomService
 from fastapi import APIRouter, Depends, Path
 from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-
-from backend.config import config
-from backend.database.connection import get_session
-from backend.filters.room import RoomFilter
-from backend.schemas.room import RoomCreateSchema, RoomOutputSchema
-from backend.services.room import RoomService
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 

@@ -1,12 +1,11 @@
+from api.backend.config import config
+from api.backend.database.connection import get_session
+from api.backend.schemas.teacher import TeacherCreateSchema, TeacherOutputSchema
+from api.backend.services.teacher import TeacherService
 from fastapi import APIRouter, Depends, Path
 from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-
-from backend.config import config
-from backend.database.connection import get_session
-from backend.schemas.teacher import TeacherCreateSchema, TeacherOutputSchema
-from backend.services.teacher import TeacherService
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 
