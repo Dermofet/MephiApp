@@ -1,12 +1,11 @@
 import uuid
 
+from app.backend.database.connection import Base
+from app.backend.database.models.association_tables import AT_lesson_room
+from app.backend.database.models.corps import CorpsModel
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-
-from backend.database.connection import Base
-from backend.database.models.association_tables import AT_lesson_room
-from backend.database.models.corps import CorpsModel
 
 
 class RoomModel(Base):

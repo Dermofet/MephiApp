@@ -1,11 +1,10 @@
 import uuid
 
+from app.backend.database.connection import Base
+from app.backend.database.models.association_tables import AT_lesson_group
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-
-from backend.database.connection import Base
-from backend.database.models.association_tables import AT_lesson_group
 
 
 class GroupModel(Base):

@@ -1,10 +1,9 @@
+from app.backend.config.config import get_config
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import DropTable
-
-from backend.config.config import get_config
 
 config = get_config()
 engine = create_async_engine(
@@ -24,12 +23,11 @@ def _compile_drop_table(element, compiler, **kwargs):
 
 
 async def get_session() -> AsyncSession:
-    print(config.SQLALCHEMY_DATABASE_URI)
     async with async_session() as session:
         return session
 
 
 async def init_db() -> None:
     async with engine.begin() as connect:
-        # await connect.run_sync(Base.metadata.drop_all)
+        await connect.run_sync(Base.metadata.drop_all)
         await connect.run_sync(Base.metadata.create_all)

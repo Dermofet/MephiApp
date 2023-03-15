@@ -6,7 +6,7 @@ import bs4
 import requests
 
 sys.path.append("..")
-import parsing
+import config
 
 
 class TeachersFullnameParser:

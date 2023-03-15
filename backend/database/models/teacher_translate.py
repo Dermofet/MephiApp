@@ -1,10 +1,9 @@
 import uuid
 
+from app.backend.database.connection import Base
 from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-
-from backend.database.connection import Base
 
 
 class TeacherTranslateModel(Base):
