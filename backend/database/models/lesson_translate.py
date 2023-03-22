@@ -1,3 +1,4 @@
+import copy
 import uuid
 
 from sqlalchemy import Column, ForeignKey, String
@@ -29,3 +30,20 @@ class LessonTranslateModel(Base):
                f' subgroup: {self.subgroup}\n' \
                f' lang: {self.lang}\n' \
                f' lesson_guid: {self.lesson_guid}>'
+
+    def __eq__(self, other):
+        if isinstance(other, LessonTranslateModel):
+            return self.name == other.name and self.type == other.type and self.lang == other.lang and \
+                   self.subgroup == other.subgroup
+        return False
+
+    def __hash__(self):
+        return hash(str(self.name) + str(self.subgroup) + str(self.lang) + str(self.type))
+
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, copy.deepcopy(v, memo))
+        return result

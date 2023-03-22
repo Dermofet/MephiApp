@@ -1,3 +1,4 @@
+import copy
 import uuid
 
 from sqlalchemy import Column, ForeignKey, Integer, String
@@ -19,12 +20,27 @@ class GroupModel(Base):
     academic = relationship("AcademicModel", back_populates="groups", lazy="joined")
     lessons = relationship("LessonModel", back_populates="groups", lazy="joined", uselist=True,
                            secondary=AT_lesson_group)
-    # lessons = relationship("LessonModel", back_populates="group", lazy="joined", uselist=True,
-    #                        secondary=AT_lesson_group)
 
     def __repr__(self):
-        return f'<GroupModel:\n' \
-               f' guid: {self.guid}\n' \
-               f' name: {self.name}\n' \
-               f' course: {self.course}\n' \
-               f' academic_guid: {self.academic_guid}>'
+        return f'<GroupModel: {self.name}>'
+
+    def __eq__(self, other):
+        if isinstance(other, GroupModel):
+            return self.name == other.name
+        return False
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+
+        for k, v in self.__dict__.items():
+            if k == 'academic':
+                setattr(result, k, v)
+            else:
+                setattr(result, k, copy.deepcopy(v, memo))
+
+        return result

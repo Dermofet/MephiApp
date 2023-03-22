@@ -1,3 +1,4 @@
+import copy
 import uuid
 
 from sqlalchemy import Column, ForeignKey, Integer, String
@@ -20,6 +21,20 @@ class RoomModel(Base):
     lessons = relationship("LessonModel", back_populates="rooms", lazy="joined", uselist=True, secondary=AT_lesson_room)
 
     def __repr__(self):
-        return f'<RoomModel:\n' \
-               f' guid: {self.guid}\n' \
-               f' number: {self.number}>'
+        return f'<RoomModel: {self.number}>'
+
+    def __eq__(self, other):
+        if isinstance(other, RoomModel):
+            return self.number == other.number
+        return False
+
+    def __hash__(self):
+        return hash(self.number)
+
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, copy.deepcopy(v, memo))
+        return result

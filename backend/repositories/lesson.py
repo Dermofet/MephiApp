@@ -5,7 +5,7 @@ from typing import List
 
 from fastapi import HTTPException
 from pydantic import UUID4
-from sqlalchemy import delete, exists, insert, select, update
+from sqlalchemy import and_, between, delete, exists, insert, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.models.association_tables import *
@@ -66,10 +66,6 @@ class LessonRepository:
             lesson.teachers.append(teacher)
 
         return lesson
-
-    @staticmethod
-    async def bulk_insert(db: AsyncSession, data: list) -> None:
-        await db.execute(insert(LessonModel).values(data))
 
     @staticmethod
     async def get_by_id(db: AsyncSession, guid: UUID4) -> LessonModel:
@@ -255,13 +251,18 @@ class LessonRepository:
     async def get_by_teacher(db: AsyncSession, teacher: str, lang: str, date_: date = date.today()) -> \
             List[LessonModel]:
         lessons = await db.execute(select(LessonModel)
-                                   .join(LessonTranslateModel,
-                                         LessonTranslateModel.lesson_guid == LessonModel.guid)
+                                   .join(AT_lesson_teacher, AT_lesson_teacher.c.lesson_guid == LessonModel.guid)
                                    .join(TeacherTranslateModel,
-                                         TeacherTranslateModel.teacher_guid == LessonModel.teacher_guid)
+                                         TeacherTranslateModel.teacher_guid == AT_lesson_teacher.c.teacher_guid)
                                    .where(TeacherTranslateModel.name == teacher and
-                                          LessonTranslateModel.lang == lang and
-                                          (LessonModel.date_start <= date_ <= LessonModel.date_end)))
+                                          TeacherTranslateModel.lang == lang and
+                                          and_(
+                                              LessonModel.date_start is not None,
+                                              and_(
+                                                  LessonModel.date_end is not None,
+                                                  between(date_, LessonModel.date_start, LessonModel.date_end)
+                                              )
+                                          )))
         return lessons.scalars().unique().all()
 
     @staticmethod

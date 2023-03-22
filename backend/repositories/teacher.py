@@ -36,10 +36,11 @@ class TeacherRepository:
 
     @staticmethod
     async def get_by_name(db: AsyncSession, name: str, lang: str) -> TeacherModel:
+        print(name)
         teacher = await db.execute(select(TeacherModel)
                                    .join(TeacherTranslateModel,
                                          TeacherTranslateModel.teacher_guid == TeacherModel.guid)
-                                   .where(TeacherTranslateModel.name == name,
+                                   .where(TeacherTranslateModel.name == name and
                                           TeacherTranslateModel.lang == lang).limit(1))
         return teacher.scalar()
 

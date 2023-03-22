@@ -6,12 +6,12 @@ import bs4
 import requests
 
 sys.path.append("..")
-import parsing
+import config
 
 
 class RoomParser:
     def __init__(self):
-        self.config = parsing.config
+        self.config = config
 
     def parse_room(self):
         html = requests.get(self.config.MEPHI_ROOM_URL).text

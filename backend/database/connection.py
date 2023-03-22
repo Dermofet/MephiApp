@@ -24,12 +24,11 @@ def _compile_drop_table(element, compiler, **kwargs):
 
 
 async def get_session() -> AsyncSession:
-    print(config.SQLALCHEMY_DATABASE_URI)
     async with async_session() as session:
         return session
 
 
 async def init_db() -> None:
     async with engine.begin() as connect:
-        # await connect.run_sync(Base.metadata.drop_all)
+        await connect.run_sync(Base.metadata.drop_all)
         await connect.run_sync(Base.metadata.create_all)

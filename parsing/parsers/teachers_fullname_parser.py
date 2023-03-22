@@ -6,12 +6,12 @@ import bs4
 import requests
 
 sys.path.append("..")
-import parsing
+import config
 
 
 class TeachersFullnameParser:
     def __init__(self):
-        self.config = parsing.config
+        self.config = config
 
     def parse_teachers_fullname(self):
         self.setTeachersFullname(f"{os.getcwd()}\\teachers\\TeachersFullname.json",

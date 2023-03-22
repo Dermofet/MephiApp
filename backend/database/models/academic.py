@@ -1,4 +1,5 @@
 import uuid
+from copy import deepcopy
 
 from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
@@ -14,4 +15,14 @@ class AcademicModel(Base):
     name = Column(String(100), unique=True)
 
     groups = relationship("GroupModel", back_populates="academic",
-                          primaryjoin='AcademicModel.guid == GroupModel.academic_guid')
+                          primaryjoin='AcademicModel.guid == GroupModel.academic_guid', lazy='joined')
+
+    def __deepcopy__(self, memo):
+        result = AcademicModel
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            if k == '_sa_instance_state':
+                setattr(result, k, None)
+            else:
+                setattr(result, k, copy.deepcopy(v, memo))
+        return result

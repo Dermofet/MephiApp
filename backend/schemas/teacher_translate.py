@@ -1,7 +1,10 @@
+from copy import deepcopy
 from typing import Optional
 
 from pydantic import UUID4, BaseModel, Field
 from sqlalchemy.orm import Session
+
+from backend.database.models.teacher_translate import TeacherTranslateModel
 
 
 class TeacherTranslateBaseSchema(BaseModel):
@@ -19,7 +22,24 @@ class TeacherTranslateOutputSchema(TeacherTranslateBaseSchema):
 
 
 class TeacherTranslateSchema(TeacherTranslateBaseSchema):
-    guid: UUID4 = Field(description="ID")
+    guid: Optional[UUID4] = Field(description="ID")
+
+    def clone(self):
+        return TeacherTranslateSchema(
+            guid=self.guid,
+            name=self.name,
+            fullname=self.fullname,
+            lang=self.lang
+        )
+
+    def to_model(self, teacher_guid: UUID4):
+        return TeacherTranslateModel(
+            guid=self.guid,
+            name=self.name,
+            fullname=self.fullname,
+            lang=self.lang,
+            teacher_guid=teacher_guid
+        )
 
     class Config:
         orm_mode = True

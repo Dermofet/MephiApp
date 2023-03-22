@@ -6,13 +6,12 @@ from copy import deepcopy
 import bs4
 import requests
 
-sys.path.append("..")
-import parsing
+from parsing import config
 
 
 class ScheduleParser:
     def __init__(self):
-        self.config = parsing.config
+        self.config = config
 
     def parse_schedule(self):
         for academic_name, academic_url in self.getAcademicTypes():

@@ -1,3 +1,5 @@
+import copy
+import datetime
 from copy import deepcopy
 from datetime import date, time
 from typing import List, Optional, Union
@@ -5,6 +7,7 @@ from typing import List, Optional, Union
 from pydantic import UUID4, BaseModel, Field, ValidationError, validator
 from sqlalchemy.orm import Session
 
+from backend.database.models.lesson import LessonModel
 from backend.database.models.lesson_translate import LessonTranslateModel
 from backend.schemas.group import GroupOutputSchema, GroupSchema
 from backend.schemas.lesson_translate import LessonTranslateOutputSchema, LessonTranslateSchema
@@ -88,7 +91,7 @@ class LessonOutputSchema(LessonBaseSchema):
 
 
 class LessonSchema(LessonBaseSchema):
-    guid: UUID4 = Field(description="ID")
+    guid: Optional[UUID4] = Field(description="ID")
     time_start: str = Field(description="Время начала занятия")
     time_end: str = Field(description="Время конца занятия")
     date_start: Optional[str] = Field(description="Дата начала занятия")
@@ -98,14 +101,85 @@ class LessonSchema(LessonBaseSchema):
     teachers: list[TeacherSchema] = Field(description="Список преподавателей, которые находятся на занятии")
     rooms: list[RoomSchema] = Field(description="Список аудиторий, в которой проводится занятие")
 
+    def clone(self):
+        return LessonSchema(
+            guid=self.guid,
+            time_start=self.time_start,
+            time_end=self.time_end,
+            date_start=self.date_start,
+            date_end=self.date_end,
+            dot=self.dot,
+            weeks=self.weeks,
+            day=self.day,
+            trans=[self.trans.clone()],
+            groups=[group.clone() for group in self.groups],
+            teachers=[teacher.clone() for teacher in self.teachers],
+            rooms=[room.clone() for room in self.rooms]
+        )
+
+    def to_model(self):
+        date_start = self.date_start.split('.') \
+                if self.date_start is not None else None
+
+        if date_start is not None:
+            date_start.reverse()
+            date_start = datetime.datetime.strptime("-".join(date_start),
+                                                    '%Y-%m-%d').date()
+
+        date_end = self.date_start.split('.') \
+            if self.date_start is not None else None
+
+        if date_end is not None:
+            date_end.reverse()
+            date_end = datetime.datetime.strptime("-".join(date_end), '%Y-%m-%d').date()
+
+        return LessonModel(
+            guid=self.guid,
+            time_start=datetime.datetime.strptime(self.time_start, "%H:%M").time(),
+            time_end=datetime.datetime.strptime(self.time_end, "%H:%M").time(),
+            date_start=date_start,
+            date_end=date_end,
+            dot=self.dot,
+            weeks=self.weeks,
+            day=self.day,
+            trans=[self.trans.to_model()],
+            groups=[group.to_model() for group in self.groups],
+            teachers=[teacher.to_model() for teacher in self.teachers],
+            rooms=[room.to_model() for room in self.rooms]
+        )
+
+    def __eq__(self, other):
+        if isinstance(other, LessonSchema):
+            self_rooms = set(room.number for room in self.rooms)
+            other_rooms = set(room.number for room in other.rooms)
+            self_trans = set(self.trans)
+            other_trans = set(other.trans)
+            return (self.time_start == other.time_start and
+                    self.time_end == other.time_end and
+                    self.dot == other.dot and
+                    self.weeks == other.weeks and
+                    self.date_start == other.date_start and
+                    self.date_end == other.date_end and
+                    self.day == other.day and
+                    self_rooms == other_rooms and
+                    self_trans == other_trans)
+        return False
+
+    def __hash__(self):
+        self_rooms = [str(room.number) for room in self.rooms]
+        self_trans = str(self.trans.name) + str(self.trans.subgroup) + str(self.trans.lang) + str(self.trans.type)
+        return hash(str(self.time_start) + str(self.time_end) + str(self.dot) + str(self.weeks) + str(self.date_start)
+                    + str(self.date_end) + str(self.day) + "".join(self_rooms) + self_trans)
+
     @validator("trans", pre=True)
     def check_trans(cls, trans):
         if isinstance(trans, list):
             for tr in trans:
-                if isinstance(tr, LessonTranslateModel):
+                if isinstance(tr, (LessonTranslateModel, LessonTranslateSchema)):
                     return tr
                 else:
-                    raise ValueError(f"trans содержит {type(tr)}, должен быть LessonTranslateSchema")
+                    raise ValueError(f"trans содержит {type(tr)}, "
+                                     f"должен быть LessonTranslateModel или LessonTranslateSchema.")
         else:
             raise ValueError(f"trans - {type(trans)}, должен быть list")
 
@@ -203,7 +277,6 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
                 "teacher_fullname": teacher.trans.fullname
             } for teacher in lesson.teachers]
             _rooms_ = set(room.number for room in lesson.rooms)
-            # print(lesson.groups)
             _groups_ = set(group.name for group in lesson.groups)
             _lesson_group_ = {
                 "name": lesson.trans.name,
@@ -234,51 +307,6 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
             if not flag:
                 _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
                 res["schedule"][day].append(deepcopy(_lesson_))
-
-            # if len(res["schedule"][day]) == 0:
-            #     if _teachers_:
-            #         _lesson_group_["teachers"] = _teachers_
-            #     if _rooms_:
-            #         _lesson_group_["rooms"] = _rooms_
-            #     if _groups_:
-            #         _lesson_group_["groups"] = _groups_
-            #     _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
-            #     res["schedule"][day].append(deepcopy(_lesson_))
-            #
-            # if len(res["schedule"][day]) != 0:
-            #     for i in range(len(res["schedule"][day])):
-            #         if lesson.time_start == res["schedule"][day][i]["time_start"]:
-            #             flag = True
-            #             for j in range(len(res["schedule"][day][i]["lesson_group"])):
-            #                 if res["schedule"][day][i]["lesson_group"][j]["name"] == lesson.trans.name and \
-            #                         res["schedule"][day][i]["lesson_group"][j]["subgroup"] == lesson.trans.subgroup and \
-            #                         res["schedule"][day][i]["lesson_group"][j]["type"] == lesson.trans.type and \
-            #                         res["schedule"][day][i]["lesson_group"][j]["dot"] == lesson.dot and \
-            #                         res["schedule"][day][i]["lesson_group"][j]["weeks"] == lesson.weeks and \
-            #                         res["schedule"][day][i]["lesson_group"][j]["date_start"] == lesson.date_start and \
-            #                         res["schedule"][day][i]["lesson_group"][j]["date_end"] == lesson.date_end:
-            #                     if _teachers_:
-            #                         res["schedule"][day][i]["lesson_group"][j]["teachers"].append(deepcopy(_teacher_))
-            #                     if _room_ is not None:
-            #                         res["schedule"][day][i]["lesson_group"][j]["rooms"].add(deepcopy(_room_))
-            #                     flag = Flase
-            #                     break
-            #
-            #             if flag:
-            #                 if _teacher_["teacher_name"] is not None:
-            #                     _lesson_group_["teachers"].append(deepcopy(_teacher_))
-            #                 if _room_ is not None:
-            #                     _lesson_group_["rooms"].add(deepcopy(_room_))
-            #                 res["schedule"][day][i]["lesson_group"].append(deepcopy(_lesson_group_))
-            #
-            #         if i == len(res["schedule"][day]) - 1:
-            #             if _teacher_["teacher_name"] is not None:
-            #                 _lesson_group_["teachers"].append(deepcopy(_teacher_))
-            #             if _room_ is not None:
-            #                 _lesson_group_["rooms"].add(deepcopy(_room_))
-            #             _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
-            #             res["schedule"][day].append(deepcopy(_lesson_))
-            #             return res
         return res
 
 
@@ -308,8 +336,12 @@ class LessonsByTeacherSchema(LessonsByBaseSchema):
                 "time_end": lesson.time_end,
                 "lesson_group": []
             }
-            _group_ = lesson.group.name if lesson.group is not None else None
-            _room_ = lesson.room.number if lesson.room is not None else None
+            _teachers_ = [{
+                "teacher_name": teacher.trans.name,
+                "teacher_fullname": teacher.trans.fullname
+            } for teacher in lesson.teachers]
+            _rooms_ = set(room.number for room in lesson.rooms)
+            _groups_ = set(group.name for group in lesson.groups)
             _lesson_group_ = {
                 "name": lesson.trans.name,
                 "subgroup": lesson.trans.subgroup,
@@ -318,47 +350,59 @@ class LessonsByTeacherSchema(LessonsByBaseSchema):
                 "weeks": lesson.weeks,
                 "date_start": lesson.date_start,
                 "date_end": lesson.date_end,
-                "groups": set(),
-                "rooms": set()
+                "groups": _groups_,
+                "rooms": _rooms_,
+                "teachers": _teachers_
             }
 
             day = associative_dict[lesson.day]
-            if len(res["schedule"][day]) == 0:
-                if _group_ is not None:
-                    _lesson_group_["groups"].add(deepcopy(_group_))
-                if _room_ is not None:
-                    _lesson_group_["rooms"].add(deepcopy(_room_))
-                _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
-                res["schedule"][day].insert(0, deepcopy(_lesson_))
-            else:
-                for i in range(len(res["schedule"][day])):
-                    if lesson.time_start == res["schedule"][day][i]["time_start"]:
-                        flag1 = False
-                        for j in range(len(res["schedule"][day][i]["lesson_group"])):
-                            if res["schedule"][day][i]["lesson_group"][j]["name"] == lesson.trans.name and \
-                                    res["schedule"][day][i]["lesson_group"][j]["subgroup"] == lesson.trans.subgroup and \
-                                    res["schedule"][day][i]["lesson_group"][j]["type"] == lesson.trans.type and \
-                                    res["schedule"][day][i]["lesson_group"][j]["dot"] == lesson.dot and \
-                                    res["schedule"][day][i]["lesson_group"][j]["date_start"] == lesson.date_start and \
-                                    res["schedule"][day][i]["lesson_group"][j]["date_end"] == lesson.date_end:
-                                if _group_ is not None:
-                                    _lesson_group_["groups"].add(deepcopy(_group_))
-                                if _room_ is not None:
-                                    _lesson_group_["rooms"].add(deepcopy(_room_))
-                                flag1 = True
-                                break
 
-                        if not flag1:
-                            if _group_ is not None:
-                                _lesson_group_["groups"].add(deepcopy(_group_))
-                            if _room_ is not None:
-                                _lesson_group_["rooms"].add(deepcopy(_room_))
-                            res["schedule"][day][i]["lesson_group"].append(deepcopy(_lesson_group_))
-                    elif i == len(res["schedule"][day]) - 1:
-                        if _group_ is not None:
-                            _lesson_group_["groups"].add(deepcopy(_group_))
-                        if _room_ is not None:
-                            _lesson_group_["rooms"].add(deepcopy(_room_))
-                        _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
-                        res["schedule"][day].append(deepcopy(_lesson_))
+            flag = False
+            for i in range(len(res["schedule"][day])):
+                if lesson.time_start == res["schedule"][day][i]["time_start"]:
+                    res["schedule"][day][i]["lesson_group"].append(deepcopy(_lesson_group_))
+                    flag = True
+                    break
+
+            if not flag:
+                _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
+                res["schedule"][day].append(deepcopy(_lesson_))
+            # if len(res["schedule"][day]) == 0:
+            #     if _group_ is not None:
+            #         _lesson_group_["groups"].add(deepcopy(_group_))
+            #     if _room_ is not None:
+            #         _lesson_group_["rooms"].add(deepcopy(_room_))
+            #     _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
+            #     res["schedule"][day].insert(0, deepcopy(_lesson_))
+            # else:
+            #     for i in range(len(res["schedule"][day])):
+            #         if lesson.time_start == res["schedule"][day][i]["time_start"]:
+            #             flag1 = False
+            #             for j in range(len(res["schedule"][day][i]["lesson_group"])):
+            #                 if res["schedule"][day][i]["lesson_group"][j]["name"] == lesson.trans.name and \
+            #                         res["schedule"][day][i]["lesson_group"][j]["subgroup"] == lesson.trans.subgroup and \
+            #                         res["schedule"][day][i]["lesson_group"][j]["type"] == lesson.trans.type and \
+            #                         res["schedule"][day][i]["lesson_group"][j]["dot"] == lesson.dot and \
+            #                         res["schedule"][day][i]["lesson_group"][j]["date_start"] == lesson.date_start and \
+            #                         res["schedule"][day][i]["lesson_group"][j]["date_end"] == lesson.date_end:
+            #                     if _group_ is not None:
+            #                         _lesson_group_["groups"].add(deepcopy(_group_))
+            #                     if _room_ is not None:
+            #                         _lesson_group_["rooms"].add(deepcopy(_room_))
+            #                     flag1 = True
+            #                     break
+            #
+            #             if not flag1:
+            #                 if _group_ is not None:
+            #                     _lesson_group_["groups"].add(deepcopy(_group_))
+            #                 if _room_ is not None:
+            #                     _lesson_group_["rooms"].add(deepcopy(_room_))
+            #                 res["schedule"][day][i]["lesson_group"].append(deepcopy(_lesson_group_))
+            #         elif i == len(res["schedule"][day]) - 1:
+            #             if _group_ is not None:
+            #                 _lesson_group_["groups"].add(deepcopy(_group_))
+            #             if _room_ is not None:
+            #                 _lesson_group_["rooms"].add(deepcopy(_room_))
+            #             _lesson_["lesson_group"].append(deepcopy(_lesson_group_))
+            #             res["schedule"][day].append(deepcopy(_lesson_))
         return res

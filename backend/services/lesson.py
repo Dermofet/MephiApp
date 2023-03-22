@@ -112,11 +112,13 @@ class LessonService:
                 if tr.lang != lang:
                     lesson.trans.remove(tr)
 
-            if lesson.teacher is not None:
-                trans = lesson.teacher.trans
-                for tr in trans:
-                    if tr.lang != lang:
-                        lesson.teacher.trans.remove(tr)
+            if lesson.teachers is not None:
+                buf = lesson.teachers
+                for t in buf:
+                    trans = t.trans
+                    for tr in trans:
+                        if tr.lang != lang:
+                            lesson.teacher.trans.remove(tr)
 
         lessons = [LessonOutputSchema(**LessonSchema.from_orm(lesson).dict()) for lesson in lessons]
         teacher = await TeacherRepository.get_by_name(db, teacher, lang)

@@ -1,3 +1,4 @@
+import copy
 import uuid
 
 from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String, Time
@@ -39,20 +40,29 @@ class LessonModel(Base):
                f' date_end: {self.date_end}\n' \
                f' day: {self.day}\n' \
                f' trans: {self.trans}\n' \
-               f' group: {self.group}\n' \
-               f' teacher: {self.teacher}\n' \
-               f' room: {self.room}>'
+               f' groups: {self.groups}\n' \
+               f' teachers: {self.teachers}\n' \
+               f' rooms: {self.rooms}>'
 
     def __eq__(self, other):
-        if isinstance(other, LessonModel):
-            self_rooms = set(room.number for room in self.rooms)
-            other_rooms = set(room.number for room in other.rooms)
-            return self.time_start == other.time_start and self.time_end == other.time_end and self.dot == other.dot and \
-                self.weeks == other.weeks and self.date_start == other.date_start and self.date_end == other.date_end and \
-                self.day == other.day and self_rooms == other_rooms
-        return False
+        if type(other) is type(self):
+            self_rooms = set(self.rooms)
+            other_rooms = set(other.rooms)
+            return (self.time_start == other.time_start and
+                    self.time_end == other.time_end and
+                    self.dot == other.dot and
+                    self.weeks == other.weeks and
+                    self.date_start == other.date_start and
+                    self.date_end == other.date_end and
+                    self.day == other.day and
+                    self_rooms == other_rooms and
+                    self.trans[0].name == other.trans[0].name and
+                    self.trans[0].subgroup == other.trans[0].subgroup and
+                    self.trans[0].type == other.trans[0].type and
+                    self.trans[0].lang == other.trans[0].lang)
 
     def __hash__(self):
-        self_rooms = set(room.number for room in self.rooms)
-        return hash((self.time_start, self.time_end, self.dot, self.weeks, self.date_start, self.date_end, self.day,
-                     self_rooms))
+        self_rooms = [str(room.number) for room in self.rooms]
+        self_trans = [str(tr.name) + str(tr.subgroup) + str(tr.lang) + str(tr.type) for tr in self.trans]
+        return hash(str(self.time_start) + str(self.time_end) + str(self.dot) + str(self.weeks) + str(self.date_start)
+                    + str(self.date_end) + str(self.day) + "".join(self_rooms) + "".join(self_trans))
