@@ -12,11 +12,3 @@ class RoomFilter(Filter):
     corps: str = Field(description="Корпус, в которой находится аудитория")
     date: Date = Field(description="Дата, когда аудитория свободна")
     week: int = Field(description="Четность недели")
-
-{
-  "time_start": "11:15",
-  "time_end": "12:45",
-  "corps": "Корпус Б",
-  "date": "2023-02-19",
-  "week": 0
-}

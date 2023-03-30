@@ -1,15 +1,14 @@
-from fastapi import HTTPException, Response
-from pydantic import UUID4
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from backend.repositories.teacher import TeacherRepository
-from backend.repositories.teacher_translate import TeacherTranslateRepository
-from backend.schemas.teacher import TeacherCreateSchema, TeacherOutputSchema, TeacherSchema
-from backend.schemas.teacher_translate import (
+from api.backend.repositories.teacher import TeacherRepository
+from api.backend.repositories.teacher_translate import TeacherTranslateRepository
+from api.backend.schemas.teacher import TeacherCreateSchema, TeacherOutputSchema, TeacherSchema
+from api.backend.schemas.teacher_translate import (
     TeacherTranslateCreateSchema,
     TeacherTranslateOutputSchema,
     TeacherTranslateSchema,
 )
+from fastapi import HTTPException, Response
+from pydantic import UUID4
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class TeacherService:

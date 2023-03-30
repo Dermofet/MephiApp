@@ -11,6 +11,7 @@ from backend.database.models.association_tables import AT_lesson_group
 
 class GroupModel(Base):
     __tablename__ = "groups"
+    __table_args__ = {'extend_existing': True}
 
     guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True, index=True, unique=True)
     name = Column(String(10), unique=True)

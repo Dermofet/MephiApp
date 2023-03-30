@@ -1,20 +1,19 @@
 from typing import List, Optional
 
-from fastapi import HTTPException
-from pydantic import UUID4
-from sqlalchemy import delete, select, update
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from backend.database.models.lesson import LessonModel
-from backend.database.models.lesson_translate import LessonTranslateModel
-from backend.repositories.group import GroupRepository
-from backend.repositories.room import RoomRepository
-from backend.repositories.teacher import TeacherRepository
-from backend.schemas.lesson_translate import (
+from api.backend.database.models.lesson import LessonModel
+from api.backend.database.models.lesson_translate import LessonTranslateModel
+from api.backend.repositories.group import GroupRepository
+from api.backend.repositories.room import RoomRepository
+from api.backend.repositories.teacher import TeacherRepository
+from api.backend.schemas.lesson_translate import (
     LessonTranslateCreateSchema,
     LessonTranslateOutputSchema,
     LessonTranslateSchema,
 )
+from fastapi import HTTPException
+from pydantic import UUID4
+from sqlalchemy import delete, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class LessonTranslateRepository:

@@ -11,6 +11,7 @@ from backend.database.models.association_tables import AT_lesson_teacher
 
 class TeacherModel(Base):
     __tablename__ = "teachers"
+    # __table_args__ = {'extend_existing': True}
 
     guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True, index=True, unique=True)
     online_url = Column(String, nullable=True, unique=True)

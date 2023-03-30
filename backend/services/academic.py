@@ -1,9 +1,8 @@
+from api.backend.repositories.academic import AcademicRepository
+from api.backend.schemas.academic import AcademicCreateSchema, AcademicOutputSchema, AcademicSchema
 from fastapi import HTTPException, Response
 from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from backend.repositories.academic import AcademicRepository
-from backend.schemas.academic import AcademicCreateSchema, AcademicOutputSchema, AcademicSchema
 
 
 class AcademicService:

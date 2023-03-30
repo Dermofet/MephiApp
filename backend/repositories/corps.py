@@ -1,13 +1,12 @@
 from datetime import date
 
+from api.backend.database.models.corps import CorpsModel
+from api.backend.database.models.lesson import LessonModel
+from api.backend.schemas.corps import CorpsCreateSchema, CorpsOutputSchema
 from fastapi import HTTPException
 from pydantic import UUID4
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from backend.database.models.corps import CorpsModel
-from backend.database.models.lesson import LessonModel
-from backend.schemas.corps import CorpsCreateSchema, CorpsOutputSchema
 
 
 class CorpsRepository:

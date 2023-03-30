@@ -1,6 +1,6 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
-WORKDIR /app/
+WORKDIR /api/
 
 RUN apt-get update && apt-get install -y libgl1-mesa-dev
 
@@ -14,13 +14,13 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH="$PATH:$POETRY_HOME/bin"
 
 # Copy poetry.lock* in case it doesn't exist in the repo
-COPY pyproject.toml poetry.lock* /app/
+COPY pyproject.toml poetry.lock* /api/
 
 # Allow installing dev dependencies to run tests
 ARG INSTALL_DEV=false
 RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; else poetry install --no-root --no-dev ; fi"
 
-COPY . /app/
+COPY . /api/
 
 ENV PYTHONPATH ".."
 

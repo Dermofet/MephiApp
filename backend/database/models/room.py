@@ -12,6 +12,7 @@ from backend.database.models.corps import CorpsModel
 
 class RoomModel(Base):
     __tablename__ = "rooms"
+    # __table_args__ = {'extend_existing': True}
 
     guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True, index=True, unique=True)
     number = Column(String(150), nullable=False)
