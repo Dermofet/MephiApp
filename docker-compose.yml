@@ -73,17 +73,6 @@ services:
     networks:
       - app-network
 
-#  parsing:
-#    build:
-#      dockerfile: ./parsing/Dockerfile
-#    container_name: parsing
-#    depends_on:
-#      - db
-#    volumes:
-#      - ./parsing:/app/parsing
-#    networks:
-#      - app-network
-
 volumes:
   app-db-data:
 

@@ -35,14 +35,13 @@ class TeacherRepository:
         return teachers_translate.scalars().unique().all()
 
     @staticmethod
-    async def get_by_name(db: AsyncSession, name: str, lang: str) -> TeacherModel:
-        print(name)
+    async def get_by_name(db: AsyncSession, name: str) -> TeacherModel:
         teacher = await db.execute(select(TeacherModel)
                                    .join(TeacherTranslateModel,
                                          TeacherTranslateModel.teacher_guid == TeacherModel.guid)
-                                   .where(TeacherTranslateModel.name == name and
-                                          TeacherTranslateModel.lang == lang).limit(1))
-        return teacher.scalar()
+                                   .where(TeacherTranslateModel.name == name).limit(1))
+        teacher = teacher.scalar()
+        return teacher
 
     @staticmethod
     async def get_unique(db: AsyncSession, schemas: TeacherCreateSchema) -> TeacherModel:

@@ -24,7 +24,7 @@ class Config(_Settings):
     MEPHI_TEACHERS_URL: str
 
     # Translating
-    LANGS: list[str]
+    FOREIGN_LANGS: list[str]
 
     # Postgres
     POSTGRES_SERVER: str

@@ -37,14 +37,16 @@ class TeacherService:
 
     @staticmethod
     async def get_by_name(db: AsyncSession, name: str, lang: str) -> TeacherOutputSchema:
-        teacher = await TeacherRepository.get_by_name(db, name, lang)
-        print(TeacherOutputSchema(**TeacherSchema.from_orm(teacher).dict()))
+        lang = "ru" if lang == "ru" else "en"
+        teacher = await TeacherRepository.get_by_name(db, name)
+        teacher.trans = [tr for tr in teacher.trans if tr.lang == lang]
         if teacher is None:
             raise HTTPException(404, "Преподаватель не найден")
         return TeacherOutputSchema(**TeacherSchema.from_orm(teacher).dict())
 
     @staticmethod
     async def get_all(db: AsyncSession, lang: str) -> dict[str, list[str]]:
+        lang = "ru" if lang == "ru" else "en"
         teachers = await TeacherRepository.get_all(db, lang)
         teachers.sort()
         return {"teachers": teachers}

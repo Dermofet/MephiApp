@@ -1,7 +1,9 @@
+import asyncio
 import copy
 import datetime
 import json
 import os
+import time
 import traceback
 from copy import deepcopy
 from os import getcwd
@@ -11,6 +13,9 @@ import sqlalchemy
 from parsers.schedule_parser import ScheduleParser
 from sqlalchemy import join, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from translate_schedule import translate_lessons
+from translate_teachers import translate_teachers
+from WrapLessonModel import WrapLessonModel
 
 from backend.database.models.academic import AcademicModel
 from backend.database.models.association_tables import *
@@ -291,7 +296,7 @@ async def bulk_insert_corps(db: AsyncSession) -> None:
         await db.rollback()
 
 
-async def bulk_insert_teachers_fullname(db: AsyncSession) -> None:
+async def bulk_insert_teachers(db: AsyncSession) -> None:
     try:
         async with db.begin():
             print(f'Teachers inserting')
@@ -322,6 +327,42 @@ async def bulk_insert_teachers_fullname(db: AsyncSession) -> None:
             db.add_all(res)
             await db.commit()
             print('Committed changes')
+    except FileNotFoundError:
+        print(f'File TeachersFullname.json was not found.')
+    except sqlalchemy.exc.IntegrityError as e:
+        print(f'Error: {str(e)}')
+        await db.rollback()
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        await db.rollback()
+
+
+async def bulk_translated_teachers(db: AsyncSession, langs: list[str]):
+    try:
+        teachers = await db.execute(select(TeacherModel))
+        teachers = teachers.scalars().unique().all()
+        await translate_teachers(db, teachers, langs)
+        print(f'Inserting {len(teachers)} items')
+        await db.commit()
+        print('Committed changes')
+    except FileNotFoundError:
+        print(f'File TeachersFullname.json was not found.')
+    except sqlalchemy.exc.IntegrityError as e:
+        print(f'Error: {str(e)}')
+        await db.rollback()
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        await db.rollback()
+
+
+async def bulk_translated_schedule(db: AsyncSession, langs: list[str]):
+    try:
+        lessons = await db.execute(select(LessonModel))
+        lessons = lessons.scalars().unique().all()
+        await translate_lessons(db, lessons, langs)
+        print(f'Inserting {len(lessons)} items')
+        await db.commit()
+        print('Committed changes')
     except FileNotFoundError:
         print(f'File TeachersFullname.json was not found.')
     except sqlalchemy.exc.IntegrityError as e:

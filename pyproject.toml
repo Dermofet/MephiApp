@@ -19,6 +19,8 @@ requests = "^2.28.1"
 beautifulsoup4 = "^4.11.1"
 lxml = "^4.9.1"
 fastapi_filter = { version = "^0.5.1", python = "^3.9.16"}
+#gpytranslate= "^1.5.1"
+aiohttp = "^3.8.4"
 
 
 [tool.poetry.dev-dependencies]

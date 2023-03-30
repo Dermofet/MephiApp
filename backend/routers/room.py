@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.config import config
-from backend.database.connection import get_session
+from backend.database.connection import get_session_yield
 from backend.filters.room import RoomFilter
 from backend.schemas.room import RoomCreateSchema, RoomOutputSchema
 from backend.services.room import RoomService
@@ -22,7 +22,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 )
 async def create(
         schemas: RoomCreateSchema,
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         room_service: RoomService = Depends()
 ):
     return await room_service.create(db=db, schemas=schemas)
@@ -37,7 +37,7 @@ async def create(
 )
 async def get_empty(
         room_filter: RoomFilter = FilterDepends(RoomFilter),
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         room_service: RoomService = Depends()
 ):
     return await room_service.get_empty(db, room_filter)

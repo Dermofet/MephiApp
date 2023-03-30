@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.config import config
-from backend.database.connection import get_session
+from backend.database.connection import get_session_yield
 from backend.schemas.corps import CorpsCreateSchema, CorpsOutputSchema
 from backend.services.corps import CorpsService
 
@@ -20,7 +20,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 )
 async def create(
         schemas: CorpsCreateSchema,
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         corps_service: CorpsService = Depends(),
 ):
     return await corps_service.create(db=db, schemas=schemas)
@@ -34,7 +34,7 @@ async def create(
     summary="Получить корпус",
 )
 async def get_all(
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         corps_service: CorpsService = Depends(),
 ):
     return await corps_service.get_all(db=db)

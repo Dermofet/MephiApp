@@ -23,12 +23,17 @@ def _compile_drop_table(element, compiler, **kwargs):
     return compiler.visit_drop_table(element) + " CASCADE"
 
 
-async def get_session() -> AsyncSession:
+async def get_session_yield() -> AsyncSession:
+    async with async_session() as session:
+        yield session
+
+
+async def get_session_return() -> AsyncSession:
     async with async_session() as session:
         return session
 
 
 async def init_db() -> None:
     async with engine.begin() as connect:
-        await connect.run_sync(Base.metadata.drop_all)
+        # await connect.run_sync(Base.metadata.drop_all)
         await connect.run_sync(Base.metadata.create_all)

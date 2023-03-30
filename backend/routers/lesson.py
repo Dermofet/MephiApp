@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.config import config
-from backend.database.connection import get_session
+from backend.database.connection import get_session_yield
 from backend.schemas.lesson import LessonCreateSchema, LessonOutputSchema, LessonSchema
 from backend.services.lesson import LessonService
 
@@ -25,7 +25,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 )
 async def create(
         schemas: LessonCreateSchema,
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.create(db=db, schemas=schemas)
@@ -42,7 +42,7 @@ async def create(
 async def get(
         guid: str,
         lang: str = "ru",
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.get(db=db, guid=guid, lang=lang)
@@ -58,7 +58,7 @@ async def get(
 )
 async def get_id(
         schemas: LessonCreateSchema,
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.get_guid(db=db, schemas=schemas)
@@ -75,7 +75,7 @@ async def get_id(
 async def get_by_group(
         group: str,
         lang: str = "ru",
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.get_by_group(db=db, group=group, lang=lang)
@@ -92,7 +92,7 @@ async def get_by_group(
 async def get_by_teacher(
         teacher: str,
         lang: str = "ru",
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.get_by_teacher(db=db, teacher=teacher, lang=lang)
@@ -109,7 +109,7 @@ async def get_by_teacher(
 async def update(
         schemas: LessonCreateSchema,
         guid: UUID4,
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.update(db=db, guid=guid, schemas=schemas)
@@ -126,7 +126,7 @@ async def update(
 async def update_translate(
         schemas: LessonCreateSchema,
         guid: UUID4,
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.update_translate(db=db, schemas=schemas, guid=guid)
@@ -141,7 +141,7 @@ async def update_translate(
 )
 async def delete(
         guid: UUID4,
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         lesson_service: LessonService = Depends(),
 ):
     return await lesson_service.delete(db=db, guid=guid)

@@ -84,17 +84,11 @@ class LessonService:
         if not lessons:
             raise HTTPException(404, "Занятий не найдено")
 
+        teacher_lang = "ru" if lang == "ru" else "en"
         for lesson in lessons:
-            trans = lesson.trans
-            for tr in trans:
-                if tr.lang != lang:
-                    lesson.trans.remove(tr)
-
+            lesson.trans = [tr for tr in lesson.trans if tr.lang == lang]
             for teacher in lesson.teachers:
-                trans = teacher.trans
-                for tr in trans:
-                    if tr.lang != lang:
-                        teacher.trans.remove(tr)
+                teacher.trans = [tr for tr in teacher.trans if tr.lang == teacher_lang]
 
         lessons = [LessonOutputSchema(**LessonSchema.from_orm(lesson).dict()) for lesson in lessons]
         res = LessonsByGroupSchema(lessons=lessons, group=group, lang=lang)
@@ -106,23 +100,17 @@ class LessonService:
         if not lessons:
             raise HTTPException(404, "Занятий не найдено")
 
-        for lesson in lessons:
-            trans = lesson.trans
-            for tr in trans:
-                if tr.lang != lang:
-                    lesson.trans.remove(tr)
+        teacher_lang = "ru" if lang == "ru" else "en"
+        teacher_model = await TeacherRepository.get_by_name(db, teacher)
+        teacher_model.trans = [tr for tr in teacher_model.trans if tr.lang == teacher_lang]
 
-            if lesson.teachers is not None:
-                buf = lesson.teachers
-                for t in buf:
-                    trans = t.trans
-                    for tr in trans:
-                        if tr.lang != lang:
-                            lesson.teacher.trans.remove(tr)
+        for lesson in lessons:
+            lesson.trans = [tr for tr in lesson.trans if tr.lang == lang]
+            for teacher_ in lesson.teachers:
+                teacher_.trans = [tr for tr in teacher_.trans if tr.lang == teacher_lang]
 
         lessons = [LessonOutputSchema(**LessonSchema.from_orm(lesson).dict()) for lesson in lessons]
-        teacher = await TeacherRepository.get_by_name(db, teacher, lang)
-        res = LessonsByTeacherSchema(lessons=lessons, teacher=teacher, lang=lang)
+        res = LessonsByTeacherSchema(lessons=lessons, teacher=teacher_model, lang=lang)
         return res.dict()
 
     @staticmethod

@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.config import config
-from backend.database.connection import get_session
+from backend.database.connection import get_session_yield
 from backend.schemas.teacher import TeacherCreateSchema, TeacherOutputSchema
 from backend.services.teacher import TeacherService
 
@@ -21,7 +21,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 )
 async def create(
         schemas: TeacherCreateSchema,
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         teacher_service: TeacherService = Depends(),
 ):
     return await teacher_service.create(db=db, schemas=schemas)
@@ -36,7 +36,7 @@ async def create(
 )
 async def get_all(
         lang: str = "ru",
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         teacher_service: TeacherService = Depends(),
 ):
     return await teacher_service.get_all(db, lang)
@@ -52,7 +52,7 @@ async def get_all(
 async def get_by_name(
         name: str,
         lang: str = "ru",
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         teacher_service: TeacherService = Depends(),
 ):
     return await teacher_service.get_by_name(db, name=name, lang=lang)
@@ -68,7 +68,7 @@ async def get_by_name(
 async def update(
         schemas: TeacherCreateSchema,
         guid: UUID4,
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         teacher_service: TeacherService = Depends(),
 ):
     return await teacher_service.update_by_id(db, guid, schemas)
@@ -83,7 +83,7 @@ async def update(
 )
 async def update(
         schemas: TeacherCreateSchema,
-        db: AsyncSession = Depends(get_session),
+        db: AsyncSession = Depends(get_session_yield),
         teacher_service: TeacherService = Depends(),
 ):
     return await teacher_service.update(db, schemas)

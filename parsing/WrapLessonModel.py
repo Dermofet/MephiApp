@@ -1,3 +1,6 @@
+from backend.database.models.lesson import LessonModel
+
+
 class WrapLessonModel:
     lesson: LessonModel
     groups: set
