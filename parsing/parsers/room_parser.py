@@ -5,8 +5,7 @@ import sys
 import bs4
 import requests
 
-sys.path.append("..")
-import config
+from parsing import config
 
 
 class RoomParser:
