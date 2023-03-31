@@ -13,7 +13,7 @@ class LessonTranslateModel(Base):
     __tablename__ = "lesson_translate"
     __table_args__ = {'extend_existing': True}
 
-    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True, index=True, unique=True)
+    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
     type = Column(String(10), nullable=True)
     name = Column(String)
     subgroup = Column(String(200), nullable=True)

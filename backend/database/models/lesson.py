@@ -13,7 +13,7 @@ class LessonModel(Base):
     __tablename__ = "lessons"
     __table_args__ = {'extend_existing': True}
 
-    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True, index=True, unique=True)
+    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
     time_start = Column(Time)
     time_end = Column(Time)
     dot = Column(Boolean, default=False)

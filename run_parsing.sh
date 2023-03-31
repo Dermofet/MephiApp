@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose exec backend python /app/parsing/run_parsing.py
+docker-compose exec backend python /api/parsing/run_parsing.py

@@ -35,5 +35,5 @@ async def get_session_return() -> AsyncSession:
 
 async def init_db() -> None:
     async with engine.begin() as connect:
-        # await connect.run_sync(Base.metadata.drop_all)
-        await connect.run_sync(Base.metadata.create_all)
+        await connect.run_sync(Base.metadata.drop_all, checkfirst=True)
+        await connect.run_sync(Base.metadata.create_all, checkfirst=True)

@@ -13,7 +13,7 @@ class GroupModel(Base):
     __tablename__ = "groups"
     __table_args__ = {'extend_existing': True}
 
-    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True, index=True, unique=True)
+    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
     name = Column(String(10), unique=True)
     course = Column(Integer)
     academic_guid = Column(UUID(as_uuid=True), ForeignKey("academics.guid"))
@@ -32,16 +32,3 @@ class GroupModel(Base):
 
     def __hash__(self):
         return hash(self.name)
-
-    def __deepcopy__(self, memo):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo[id(self)] = result
-
-        for k, v in self.__dict__.items():
-            if k == 'academic':
-                setattr(result, k, v)
-            else:
-                setattr(result, k, copy.deepcopy(v, memo))
-
-        return result

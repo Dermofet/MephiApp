@@ -12,9 +12,9 @@ from backend.database.models.corps import CorpsModel
 
 class RoomModel(Base):
     __tablename__ = "rooms"
-    # __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True}
 
-    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True, index=True, unique=True)
+    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
     number = Column(String(150), nullable=False)
     corps_guid = Column(UUID(as_uuid=True), ForeignKey("corps.guid"))
 
@@ -31,11 +31,3 @@ class RoomModel(Base):
 
     def __hash__(self):
         return hash(self.number)
-
-    def __deepcopy__(self, memo):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo[id(self)] = result
-        for k, v in self.__dict__.items():
-            setattr(result, k, copy.deepcopy(v, memo))
-        return result
