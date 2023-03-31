@@ -1,10 +1,11 @@
-from api.backend.repositories.academic import AcademicRepository
-from api.backend.repositories.group import GroupRepository
-from api.backend.schemas.academic import AcademicCreateSchema
-from api.backend.schemas.group import GroupCreateSchema, GroupOutputSchema, GroupSchema
 from fastapi import HTTPException, Response
 from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.repositories.academic import AcademicRepository
+from backend.repositories.group import GroupRepository
+from backend.schemas.academic import AcademicCreateSchema
+from backend.schemas.group import GroupCreateSchema, GroupOutputSchema, GroupSchema
 
 
 class GroupService:

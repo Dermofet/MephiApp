@@ -1,11 +1,12 @@
 from typing import List
 
-from api.backend.database.models.teacher_translate import TeacherTranslateModel
-from api.backend.schemas.teacher_translate import TeacherTranslateCreateSchema
 from fastapi import HTTPException
 from pydantic import UUID4
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.database.models.teacher_translate import TeacherTranslateModel
+from backend.schemas.teacher_translate import TeacherTranslateCreateSchema
 
 
 class TeacherTranslateRepository:

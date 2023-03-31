@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("/app")
+sys.path.append("/api")
 
 from parsers.room_parser import RoomParser
 from parsers.schedule_parser import ScheduleParser

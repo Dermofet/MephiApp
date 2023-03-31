@@ -1,10 +1,11 @@
 import time
 
-from api.backend.repositories.corps import CorpsRepository
-from api.backend.schemas.corps import CorpsCreateSchema, CorpsOutputSchema, CorpsSchema
 from fastapi import HTTPException, Response
 from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.repositories.corps import CorpsRepository
+from backend.schemas.corps import CorpsCreateSchema, CorpsOutputSchema, CorpsSchema
 
 
 class CorpsService:

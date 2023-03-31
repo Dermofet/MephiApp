@@ -1,30 +1,31 @@
 from typing import List
 
-from api.backend.database.models.association_tables import *
-from api.backend.database.models.lesson import LessonModel
-from api.backend.repositories.group import GroupRepository
-from api.backend.repositories.lesson import LessonRepository
-from api.backend.repositories.lesson_translate import LessonTranslateRepository
-from api.backend.repositories.room import RoomRepository
-from api.backend.repositories.teacher import TeacherRepository
-from api.backend.repositories.teacher_translate import TeacherTranslateRepository
-from api.backend.schemas.lesson import (
+from fastapi import HTTPException, Response
+from pydantic import UUID4
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.database.models.association_tables import *
+from backend.database.models.lesson import LessonModel
+from backend.repositories.group import GroupRepository
+from backend.repositories.lesson import LessonRepository
+from backend.repositories.lesson_translate import LessonTranslateRepository
+from backend.repositories.room import RoomRepository
+from backend.repositories.teacher import TeacherRepository
+from backend.repositories.teacher_translate import TeacherTranslateRepository
+from backend.schemas.lesson import (
     LessonCreateSchema,
     LessonOutputSchema,
     LessonsByGroupSchema,
     LessonsByTeacherSchema,
     LessonSchema,
 )
-from api.backend.schemas.lesson_translate import (
+from backend.schemas.lesson_translate import (
     LessonTranslateCreateSchema,
     LessonTranslateOutputSchema,
     LessonTranslateSchema,
 )
-from api.backend.schemas.teacher import TeacherSchema
-from fastapi import HTTPException, Response
-from pydantic import UUID4
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from backend.schemas.teacher import TeacherSchema
 
 
 class LessonService:

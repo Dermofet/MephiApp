@@ -2,18 +2,19 @@ import time
 from datetime import date
 from typing import List
 
-from api.backend.database.models.association_tables import AT_lesson_room
-from api.backend.database.models.corps import CorpsModel
-from api.backend.database.models.group import GroupModel
-from api.backend.database.models.lesson import LessonModel
-from api.backend.database.models.room import RoomModel
-from api.backend.filters.room import RoomFilter
-from api.backend.schemas.room import RoomCreateSchema, RoomOutputSchema
 from fastapi import HTTPException
 from pydantic import UUID4
 from sqlalchemy import and_, delete, exists, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
+
+from backend.database.models.association_tables import AT_lesson_room
+from backend.database.models.corps import CorpsModel
+from backend.database.models.group import GroupModel
+from backend.database.models.lesson import LessonModel
+from backend.database.models.room import RoomModel
+from backend.filters.room import RoomFilter
+from backend.schemas.room import RoomCreateSchema, RoomOutputSchema
 
 
 class RoomRepository:

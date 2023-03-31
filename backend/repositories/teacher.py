@@ -1,14 +1,15 @@
 import time
 from typing import List
 
-from api.backend.database.models.teacher import TeacherModel
-from api.backend.database.models.teacher_translate import TeacherTranslateModel
-from api.backend.repositories.teacher_translate import TeacherTranslateRepository
-from api.backend.schemas.teacher import TeacherCreateSchema
 from fastapi import HTTPException
 from pydantic import UUID4
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.database.models.teacher import TeacherModel
+from backend.database.models.teacher_translate import TeacherTranslateModel
+from backend.repositories.teacher_translate import TeacherTranslateRepository
+from backend.schemas.teacher import TeacherCreateSchema
 
 
 class TeacherRepository:

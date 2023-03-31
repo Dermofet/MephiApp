@@ -1,13 +1,14 @@
 from typing import List
 
-from api.backend.database.models.group import GroupModel
-from api.backend.repositories.academic import AcademicRepository
-from api.backend.schemas.academic import AcademicCreateSchema
-from api.backend.schemas.group import GroupCreateSchema, GroupOutputSchema
 from fastapi import HTTPException
 from pydantic import UUID4
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.database.models.group import GroupModel
+from backend.repositories.academic import AcademicRepository
+from backend.schemas.academic import AcademicCreateSchema
+from backend.schemas.group import GroupCreateSchema, GroupOutputSchema
 
 
 class GroupRepository:

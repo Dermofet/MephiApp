@@ -3,7 +3,7 @@ import sys
 import time
 import traceback
 
-sys.path.append("/app")
+sys.path.append("/api")
 
 from bulk_insert import *
 from parsers.room_parser import RoomParser

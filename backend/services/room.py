@@ -1,13 +1,14 @@
 from datetime import date
 
-from api.backend.filters.room import RoomFilter
-from api.backend.repositories.corps import CorpsRepository
-from api.backend.repositories.room import RoomRepository
-from api.backend.schemas.corps import CorpsCreateSchema
-from api.backend.schemas.room import RoomCreateSchema, RoomOutputSchema, RoomSchema
 from fastapi import HTTPException, Response
 from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.filters.room import RoomFilter
+from backend.repositories.corps import CorpsRepository
+from backend.repositories.room import RoomRepository
+from backend.schemas.corps import CorpsCreateSchema
+from backend.schemas.room import RoomCreateSchema, RoomOutputSchema, RoomSchema
 
 
 class RoomService:
