@@ -1,24 +1,17 @@
-import asyncio
-import copy
 import datetime
 import json
-import os
-import time
 import traceback
 from copy import deepcopy
 from os import getcwd
-from typing import Optional
 
 import sqlalchemy
-from parsers.schedule_parser import ScheduleParser
-from sqlalchemy import join, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from translate_schedule import translate_lessons
 from translate_teachers import translate_teachers
 from WrapLessonModel import WrapLessonModel
 
 from backend.database.models.academic import AcademicModel
-from backend.database.models.association_tables import *
 from backend.database.models.corps import CorpsModel
 from backend.database.models.group import GroupModel
 from backend.database.models.lesson import LessonModel
@@ -26,6 +19,7 @@ from backend.database.models.lesson_translate import LessonTranslateModel
 from backend.database.models.room import RoomModel
 from backend.database.models.teacher import TeacherModel
 from backend.database.models.teacher_translate import TeacherTranslateModel
+from parsing.parsers.schedule_parser import ScheduleParser
 
 
 async def bulk_insert_academic(db: AsyncSession) -> None:
@@ -46,6 +40,7 @@ async def bulk_insert_academic(db: AsyncSession) -> None:
 
 
 async def bulk_insert_groups(db: AsyncSession) -> None:
+    __academic__ = None
     try:
         async with db.begin():
             print(f'Groups inserting')
@@ -58,6 +53,7 @@ async def bulk_insert_groups(db: AsyncSession) -> None:
             res = []
             parser = ScheduleParser()
             for academic in parser.getAcademicTypes():
+                __academic__ = academic[0]
                 with open(f'{getcwd()}/parsing/schedule/{academic[0]}.json', 'r', encoding='utf-8') as fp:
                     dict_json = json.loads(fp.read().replace("'", '\''))
                     for course in dict_json['courses']:
@@ -72,7 +68,7 @@ async def bulk_insert_groups(db: AsyncSession) -> None:
             await db.commit()
             print('Committed changes')
     except FileNotFoundError:
-        print(f'File {academic[0]}.json was not found.')
+        print(f'File {__academic__}.json was not found.')
     except sqlalchemy.exc.IntegrityError as e:
         print(f'Error: {str(e)}')
         await db.rollback()
@@ -82,6 +78,7 @@ async def bulk_insert_groups(db: AsyncSession) -> None:
 
 
 async def bulk_insert_schedule(db: AsyncSession) -> None:
+    __academic__ = None
     try:
         async with db.begin():
             print(f'Schedule inserting')
@@ -89,6 +86,7 @@ async def bulk_insert_schedule(db: AsyncSession) -> None:
             res_lessons = set()
             parser = ScheduleParser()
             for academic in parser.getAcademicTypes():
+                __academic__ = academic[0]
                 with open(f'{getcwd()}/parsing/schedule/{academic[0]}.json', 'r', encoding='utf-8') as fp:
                     dict_json = json.loads(fp.read().replace("'", '\''))
                     for course in dict_json['courses']:
@@ -227,7 +225,7 @@ async def bulk_insert_schedule(db: AsyncSession) -> None:
             await db.commit()
             print('Committed changes')
     except FileNotFoundError:
-        print(f'File {academic[0]}.json was not found.')
+        print(f'File {__academic__}.json was not found.')
     except sqlalchemy.exc.IntegrityError as e:
         print(f'Error: {str(e)}')
         await db.rollback()
@@ -248,7 +246,7 @@ async def bulk_insert_room(db: AsyncSession) -> None:
                 corps[row[0]] = row[1]
 
             res = []
-            with open(f'{getcwd()}/parsing/rooms/rooms.json', 'r', encoding='utf-8') as fp:
+            with open(f'{getcwd()}/parsing/schedule/rooms/rooms.json', 'r', encoding='utf-8') as fp:
                 dict_json = json.loads(fp.read().replace("'", '\''))
                 for room in dict_json['rooms']:
                     res.append(RoomModel(
@@ -256,32 +254,6 @@ async def bulk_insert_room(db: AsyncSession) -> None:
                         corps_guid=corps[room['corps']]
                     ))
 
-            print(f'Inserting {len(res)} items')
-            db.add_all(res)
-            await db.commit()
-            print('Committed changes')
-    except FileNotFoundError:
-        print(f'File {academic[0]}.json was not found.')
-    except sqlalchemy.exc.IntegrityError as e:
-        print(f'Error: {str(e)}')
-        await db.rollback()
-    except Exception as e:
-        print(f'Error: {str(e)}')
-        await db.rollback()
-
-
-async def bulk_insert_corps(db: AsyncSession) -> None:
-    try:
-        async with db.begin():
-            print(f'Corps inserting')
-            buf = set()
-            with open(f'{getcwd()}/parsing/rooms/rooms.json', 'r', encoding='utf-8') as fp:
-                print(f'Filename: rooms.json')
-                dict_json = json.loads(fp.read().replace("'", '\''))
-                for corps in dict_json['corps']:
-                    buf.add(corps['name'])
-
-            res = [CorpsModel(name=item) for item in buf]
             print(f'Inserting {len(res)} items')
             db.add_all(res)
             await db.commit()
@@ -296,12 +268,38 @@ async def bulk_insert_corps(db: AsyncSession) -> None:
         await db.rollback()
 
 
+async def bulk_insert_corps(db: AsyncSession) -> None:
+    try:
+        async with db.begin():
+            print(f'Corps inserting')
+            buf = set()
+            with open(f'{getcwd()}/parsing/schedule/rooms/rooms.json', 'r', encoding='utf-8') as fp:
+                print(f'Filename: rooms.json')
+                dict_json = json.loads(fp.read().replace("'", '\''))
+                for corps in dict_json['corps']:
+                    buf.add(corps['name'])
+
+            res = [CorpsModel(name=item) for item in buf]
+            print(f'Inserting {len(res)} items')
+            db.add_all(res)
+            await db.commit()
+            print('Committed changes')
+    except FileNotFoundError:
+        print(f'File {getcwd()}/rooms/rooms.jsonn was not found.')
+    except sqlalchemy.exc.IntegrityError as e:
+        print(f'Error: {str(e)}')
+        await db.rollback()
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        await db.rollback()
+
+
 async def bulk_insert_teachers(db: AsyncSession) -> None:
     try:
         async with db.begin():
             print(f'Teachers inserting')
             teachers = set()
-            with open(f'{getcwd()}/parsing/teachers/TeachersFullname.json', 'r', encoding='utf-8') as fp:
+            with open(f'{getcwd()}/parsing/schedule/teachers/TeachersFullname.json', 'r', encoding='utf-8') as fp:
                 dict_json = json.loads(fp.read().replace("'", '\''))
                 for fullname in dict_json['teachers_fullname']:
                     teachers.add(fullname)
@@ -345,8 +343,6 @@ async def bulk_translated_teachers(db: AsyncSession, langs: list[str]):
         print(f'Inserting {len(teachers)} items')
         await db.commit()
         print('Committed changes')
-    except FileNotFoundError:
-        print(f'File TeachersFullname.json was not found.')
     except sqlalchemy.exc.IntegrityError as e:
         print(f'Error: {str(e)}')
         await db.rollback()
@@ -363,8 +359,6 @@ async def bulk_translated_schedule(db: AsyncSession, langs: list[str]):
         print(f'Inserting {len(lessons)} items')
         await db.commit()
         print('Committed changes')
-    except FileNotFoundError:
-        print(f'File TeachersFullname.json was not found.')
     except sqlalchemy.exc.IntegrityError as e:
         print(f'Error: {str(e)}')
         await db.rollback()

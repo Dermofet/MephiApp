@@ -2,7 +2,6 @@ import asyncio
 from typing import List
 
 from aiohttp import ClientSession
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.models.teacher import TeacherModel
 from backend.database.models.teacher_translate import TeacherTranslateModel

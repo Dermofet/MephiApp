@@ -1,10 +1,7 @@
 import asyncio
-import time
-from contextlib import asynccontextmanager
 from typing import List
 
 from aiohttp import ClientSession
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.models.lesson import LessonModel
 from backend.database.models.lesson_translate import LessonTranslateModel

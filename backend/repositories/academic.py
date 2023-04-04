@@ -4,7 +4,7 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.models.academic import AcademicModel
-from backend.schemas.academic import AcademicCreateSchema, AcademicOutputSchema
+from backend.schemas.academic import AcademicCreateSchema
 
 
 class AcademicRepository:

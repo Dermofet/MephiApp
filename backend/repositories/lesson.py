@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from datetime import date, time
+from datetime import date
 from typing import List
 
 from fastapi import HTTPException
 from pydantic import UUID4
-from sqlalchemy import and_, between, delete, exists, insert, or_, select, update
+from sqlalchemy import and_, between, delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.models.association_tables import AT_lesson_group, AT_lesson_room, AT_lesson_teacher
@@ -13,13 +13,12 @@ from backend.database.models.group import GroupModel
 from backend.database.models.lesson import LessonModel
 from backend.database.models.lesson_translate import LessonTranslateModel
 from backend.database.models.room import RoomModel
-from backend.database.models.teacher import TeacherModel
 from backend.database.models.teacher_translate import TeacherTranslateModel
 from backend.repositories.group import GroupRepository
 from backend.repositories.lesson_translate import LessonTranslateRepository
 from backend.repositories.room import RoomRepository
 from backend.repositories.teacher import TeacherRepository
-from backend.schemas.lesson import LessonCreateSchema, LessonOutputSchema, LessonSchema
+from backend.schemas.lesson import LessonCreateSchema
 
 
 class LessonRepository:

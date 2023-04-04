@@ -1,18 +1,10 @@
-from typing import List
-
 from fastapi import HTTPException, Response
 from pydantic import UUID4
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.database.models.association_tables import *
-from backend.database.models.lesson import LessonModel
-from backend.repositories.group import GroupRepository
 from backend.repositories.lesson import LessonRepository
 from backend.repositories.lesson_translate import LessonTranslateRepository
-from backend.repositories.room import RoomRepository
 from backend.repositories.teacher import TeacherRepository
-from backend.repositories.teacher_translate import TeacherTranslateRepository
 from backend.schemas.lesson import (
     LessonCreateSchema,
     LessonOutputSchema,
@@ -20,12 +12,7 @@ from backend.schemas.lesson import (
     LessonsByTeacherSchema,
     LessonSchema,
 )
-from backend.schemas.lesson_translate import (
-    LessonTranslateCreateSchema,
-    LessonTranslateOutputSchema,
-    LessonTranslateSchema,
-)
-from backend.schemas.teacher import TeacherSchema
+from backend.schemas.lesson_translate import LessonTranslateCreateSchema
 
 
 class LessonService:

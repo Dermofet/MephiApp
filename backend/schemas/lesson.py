@@ -1,11 +1,9 @@
-import copy
 import datetime
 from copy import deepcopy
 from datetime import date, time
-from typing import List, Optional, Union
+from typing import Optional
 
 from pydantic import UUID4, BaseModel, Field, ValidationError, validator
-from sqlalchemy.orm import Session
 
 from backend.database.models.lesson import LessonModel
 from backend.database.models.lesson_translate import LessonTranslateModel

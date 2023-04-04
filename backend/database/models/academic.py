@@ -1,5 +1,4 @@
 import uuid
-from copy import deepcopy
 
 from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID

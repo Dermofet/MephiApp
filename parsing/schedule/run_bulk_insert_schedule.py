@@ -1,17 +1,16 @@
 import asyncio
 import sys
 import time
-import traceback
 
 sys.path.append("/api")
 
-from bulk_insert import *
-from parsers.room_parser import RoomParser
-from parsers.schedule_parser import ScheduleParser
-from parsers.teachers_fullname_parser import TeachersFullnameParser
+from bulk_insert_schedule import *
 
-from backend.database.connection import get_session_return
+from backend.database.connection import get_session_return, get_session_yield
 from parsing import config
+from parsing.parsers.room_parser import RoomParser
+from parsing.parsers.schedule_parser import ScheduleParser
+from parsing.parsers.teachers_fullname_parser import TeachersFullnameParser
 
 
 async def set_corps():

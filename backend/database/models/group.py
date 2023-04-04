@@ -1,4 +1,3 @@
-import copy
 import uuid
 
 from sqlalchemy import Column, ForeignKey, Integer, String

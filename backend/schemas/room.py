@@ -1,10 +1,6 @@
-from copy import deepcopy
-from datetime import date as Date
-from datetime import time as Time
 from typing import Optional
 
 from pydantic import UUID4, BaseModel, Field
-from sqlalchemy.orm import Session
 
 from backend.database.models.room import RoomModel
 from backend.schemas.corps import CorpsOutputSchema, CorpsSchema

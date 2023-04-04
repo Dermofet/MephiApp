@@ -1,8 +1,6 @@
-from copy import deepcopy
 from typing import Optional
 
 from pydantic import UUID4, BaseModel, Field, validator
-from sqlalchemy.orm import Session
 
 from backend.database.models.teacher import TeacherModel
 from backend.database.models.teacher_translate import TeacherTranslateModel

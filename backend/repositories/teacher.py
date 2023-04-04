@@ -1,4 +1,3 @@
-import time
 from typing import List
 
 from fastapi import HTTPException
@@ -8,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.models.teacher import TeacherModel
 from backend.database.models.teacher_translate import TeacherTranslateModel
-from backend.repositories.teacher_translate import TeacherTranslateRepository
 from backend.schemas.teacher import TeacherCreateSchema
 
 

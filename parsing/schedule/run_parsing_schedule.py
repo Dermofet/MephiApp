@@ -2,9 +2,9 @@ import sys
 
 sys.path.append("/api")
 
-from parsers.room_parser import RoomParser
-from parsers.schedule_parser import ScheduleParser
-from parsers.teachers_fullname_parser import TeachersFullnameParser
+from parsing.parsers.room_parser import RoomParser
+from parsing.parsers.schedule_parser import ScheduleParser
+from parsing.parsers.teachers_fullname_parser import TeachersFullnameParser
 
 
 def parse_all():
