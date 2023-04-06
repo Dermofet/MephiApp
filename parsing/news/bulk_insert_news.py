@@ -54,7 +54,7 @@ async def bulk_insert_news(db: AsyncSession) -> None:
             await db.commit()
             print('Committed changes')
     except FileNotFoundError:
-        print(f'File {os.getcwd()}/news.json was not found.')
+        print(f'File {os.getcwd()}/parsing/news/news.json was not found.')
     except sqlalchemy.exc.IntegrityError as e:
         print(f'Error: {str(e)}')
         await db.rollback()

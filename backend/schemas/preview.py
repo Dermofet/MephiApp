@@ -3,12 +3,13 @@ from typing import Optional
 
 from pydantic import UUID4, BaseModel, Field, HttpUrl, validator
 
+from backend.schemas.news import NewsOutputSchema, NewsSchema
+
 
 class PreviewBaseSchema(BaseModel):
     url: Optional[HttpUrl] = Field(description="Ссылка на картинку")
     text: str = Field(description="Текст превью")
     date: datetime.date = Field(description="Дата публикации новости")
-    news_guid: UUID4 = Field(description="ID новости в системе")
 
     @validator("date", pre=True)
     def change_date_start(cls, value):
@@ -21,10 +22,12 @@ class PreviewBaseSchema(BaseModel):
 
 class PreviewOutputSchema(PreviewBaseSchema):
     date: Optional[str] = Field(description="Дата публикации новости")
+    news: NewsOutputSchema = Field(description="Новость")
 
 
 class PreviewSchema(PreviewBaseSchema):
     date: Optional[str] = Field(description="Дата публикации новости")
+    news: NewsSchema = Field(description="Новость")
 
     @validator("date", pre=True)
     def change_date_start(cls, value):
