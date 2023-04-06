@@ -2,11 +2,11 @@ import datetime
 import json
 import os
 
+import sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.models.news import NewsModel
 from backend.database.models.news_image import NewsImageModel
-from backend.database.models.preview import PreviewModel
 
 
 async def bulk_insert_news(db: AsyncSession) -> None:
@@ -31,23 +31,14 @@ async def bulk_insert_news(db: AsyncSession) -> None:
                         else:
                             news_image_models.append(buf_news_img)
 
-                    preview_model = PreviewModel(
-                        url=news_record["preview_img"],
-                        text=news_record["preview_text"],
-                        date=datetime.datetime.strptime(news_record["date"], "%d.%m.%Y").date(),
-                        tag=news_record["tag"]
-                    )
-                    if preview_model in preview:
-                        preview_model = preview.intersection(preview_model).pop()
-                        print("PreviewModel exists")
-                    else:
-                        preview.add(preview_model)
-
                     news.add(NewsModel(
                         news_id=news_record["id"],
-                        news_text=news_record["news_text"],
-                        news_imgs=news_image_models,
-                        preview=preview_model))
+                        text=news_record["news_text"],
+                        imgs=news_image_models,
+                        title=news_record["preview_text"],
+                        preview_url=news_record["preview_img"],
+                        date=datetime.datetime.strptime(news_record["date"], "%d.%m.%Y").date(),
+                        tag=news_record["tag"]))
 
             print(f'Inserting {len(news)} items')
             db.add_all(news)

@@ -8,7 +8,6 @@ from backend.routers.corps import router as corps_router
 from backend.routers.group import router as group_router
 from backend.routers.lesson import router as lesson_router
 from backend.routers.news import router as news_router
-from backend.routers.preview import router as preview_router
 from backend.routers.room import router as room_router
 from backend.routers.teacher import router as teacher_router
 
@@ -19,7 +18,6 @@ tags_metadata = [
     {"name": "teacher", "description": "Работа с преподавателями"},
     {"name": "academic", "description": "Работа с учеными званиями"},
     {"name": "corps", "description": "Работа с корпусами"},
-    {"name": "preview", "description": "Работа с превью"},
     {"name": "news", "description": "Работа с новостями"}
 ]
 app = FastAPI(
@@ -51,5 +49,4 @@ app.include_router(group_router, tags=["group"])
 app.include_router(teacher_router, tags=["teacher"])
 app.include_router(academic_router, tags=["academic"])
 app.include_router(corps_router, tags=["corps"])
-app.include_router(preview_router, tags=["preview"])
 app.include_router(news_router, tags=["news"])

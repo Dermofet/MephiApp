@@ -13,10 +13,14 @@ class NewsModel(Base):
 
     guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
     news_id = Column(String(50), unique=True)
-    news_text = Column(Text)
 
-    news_imgs = relationship("NewsImageModel", back_populates="news", lazy="joined", uselist=True)
-    preview = relationship("PreviewModel", back_populates="news", lazy="joined", uselist=False)
+    title = Column(String)
+    preview_url = Column(String, nullable=True)
+    date = Column(Date)
+    text = Column(Text)
+    tag = Column(String(100))
+
+    imgs = relationship("NewsImageModel", back_populates="news", lazy="joined", uselist=True)
 
     def hash(self):
         return hash(self.news_id)

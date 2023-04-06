@@ -19,12 +19,13 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
     summary="Получить новости",
 )
 async def get_all(
-        offset: int,
+        tag: str = "Главные новости",
+        offset: int = 0,
         limit: int = 100,
         db: AsyncSession = Depends(get_session_yield),
         news_service: NewsService = Depends()
 ):
-    return await news_service.get_all(db, offset, limit)
+    return await news_service.get_all(db, tag, offset, limit)
 
 
 @router.get(

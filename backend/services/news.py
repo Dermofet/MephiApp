@@ -15,8 +15,8 @@ class NewsService:
         return NewsOutputSchema(**NewsSchema.from_orm(news).dict())
 
     @staticmethod
-    async def get_all(db: AsyncSession, offset: int, limit: int = 100) -> dict[str, list[NewsOutputSchema]]:
-        news = await NewsRepository.get_all(db, offset, limit)
+    async def get_all(db: AsyncSession, tag: str, offset: int, limit: int = 100) -> dict[str, list[NewsOutputSchema]]:
+        news = await NewsRepository.get_all(db, tag, offset, limit)
         return {"news": [NewsOutputSchema(**NewsSchema.from_orm(_).dict()) for _ in news]}
 
     @staticmethod

@@ -15,7 +15,7 @@ class NewsImageModel(Base):
     text = Column(Text, nullable=True)
     news_guid = Column(UUID(as_uuid=True), ForeignKey("news.guid"))
 
-    news = relationship("NewsModel", back_populates="news_imgs", lazy="joined")
+    news = relationship("NewsModel", back_populates="imgs", lazy="joined")
 
     def __hash__(self):
         return hash(str(self.url) + str(self.text))

@@ -1,7 +1,7 @@
 from typing import List
 
 from pydantic import UUID4
-from sqlalchemy import delete, select
+from sqlalchemy import delete, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.models.news import NewsModel
@@ -15,8 +15,9 @@ class NewsRepository:
         return news.scalar()
 
     @staticmethod
-    async def get_all(db: AsyncSession, offset: int, limit: int = 100) -> List[NewsModel]:
-        news = await db.execute(select(NewsModel).offset(offset).limit(limit))
+    async def get_all(db: AsyncSession, tag: str, offset: int, limit: int = 100) -> List[NewsModel]:
+        news = await db.execute(select(NewsModel).where(NewsModel.tag == tag)
+                                .order_by(desc(NewsModel.date)).offset(offset).limit(limit))
         return news.scalars().unique().all()
 
     @staticmethod
