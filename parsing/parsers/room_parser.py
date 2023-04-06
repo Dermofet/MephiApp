@@ -34,7 +34,7 @@ class RoomParser:
         print(f'Count corps = {len(box.findAll("h3", class_="light"))}')
         print(f"Count rooms = {i}")
 
-        self.setInfoToFile((res_corps, res_rooms), f'{os.getcwd()}\\rooms\\rooms.json', mode='w', encoding='utf-8', indent=3,
+        self.setInfoToFile((res_corps, res_rooms), f'{os.getcwd()}/rooms/rooms.json', mode='w', encoding='utf-8', indent=3,
                            ensure_ascii=False)
 
     @staticmethod

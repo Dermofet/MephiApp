@@ -17,7 +17,7 @@ class ScheduleParser:
         for academic_name, academic_url in self.getAcademicTypes():
             print(f'{academic_name}:')
             groups_list = self.getGroupList(academic_url)
-            self.setInfoToFile(groups_list, f'{os.getcwd()}\\schedule\\{academic_name}.json', mode='w',
+            self.setInfoToFile(groups_list, f'{os.getcwd()}/schedule/{academic_name}.json', mode='w',
                                encoding='utf-8', indent=3, ensure_ascii=False)
 
     def getAcademicTypes(self):
@@ -119,7 +119,7 @@ class ScheduleParser:
         return schedule
 
     def setInfoToFile(self, dict_json, filename, mode, encoding, indent, ensure_ascii):
-        dict_dump = {"name": filename.split("\\")[-1].split(".")[0],
+        dict_dump = {"name": filename.split("/")[-1].split(".")[0],
                      "lang": "ru",
                      "courses": []
                      }

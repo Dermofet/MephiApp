@@ -13,7 +13,7 @@ class TeachersFullnameParser:
         self.config = config
 
     def parse_teachers_fullname(self):
-        self.setTeachersFullname(f"{os.getcwd()}\\teachers\\TeachersFullname.json",
+        self.setTeachersFullname(f"{os.getcwd()}/teachers/TeachersFullname.json",
                                  obj=self.getTeachersFullname(),
                                  mode='w', encoding='utf-8', indent=3, ensure_ascii=False)
 

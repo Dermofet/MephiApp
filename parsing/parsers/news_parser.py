@@ -29,7 +29,7 @@ class NewsParser:
         print(f"Total time: {time.time() - _}")
 
     async def parse_all_news(self):
-        async with ClientSession() as session:
+        async with ClientSession(trust_env=True) as session:
             tags = await self.parse_tags(session, self.config.MEPHI_NEWS_PAGE_URL)
             tasks = []
             for tag in tags:
@@ -48,7 +48,7 @@ class NewsParser:
             for n in news:
                 print(n)
                 res += n
-            self.toFile(obj=res, filename=f'{os.getcwd()}\\news\\news.json', mode='w', encoding='utf-8', indent=3,
+            self.toFile(obj=res, filename=f'{os.getcwd()}/news/news.json', mode='w', encoding='utf-8', indent=3,
                         ensure_ascii=False)
 
     async def parse_tags(self, session: ClientSession, url: str):
