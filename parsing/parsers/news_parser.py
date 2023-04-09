@@ -7,7 +7,11 @@ from copy import deepcopy
 
 import bs4
 from aiohttp import ClientSession
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.database.connection import get_session_return
+from backend.repositories.news import NewsRepository
+from backend.schemas.news import NewsSchema
 from parsing import config
 
 
@@ -38,7 +42,8 @@ class NewsParser:
                 print(f"Tag '{tag['name']}' contains {page_count} pages")
                 for i in range(page_count):
                     tasks.append(self.parse_news_page(session,
-                                                      url=f'{self.config.MEPHI_NEWS_PAGE_URL}?category={tag["value"]}&page={i}',
+                                                      url=f'{self.config.MEPHI_NEWS_PAGE_URL}'
+                                                          f'?category={tag["value"]}&page={i}',
                                                       tag=tag['name']))
             print(f"Total pages {len(tasks)}")
             news = await asyncio.gather(*tasks)
@@ -46,9 +51,8 @@ class NewsParser:
 
             res = []
             for n in news:
-                print(n)
                 res += n
-            self.toFile(obj=res, filename=f'{os.getcwd()}/news/news.json', mode='w', encoding='utf-8', indent=3,
+            self.toFile(obj=res, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8', indent=3,
                         ensure_ascii=False)
 
     async def parse_tags(self, session: ClientSession, url: str):
@@ -79,34 +83,46 @@ class NewsParser:
 
             result = []
             for preview in page.find("div", class_="view-content").findAll("div", class_="views-row"):
-                preview_fields = preview.select(".field-content")
-
-                if len(preview_fields) == 4:
-                    news_data = {
-                        "preview_img": preview_fields[0].find("img")['src'],
-                        "preview_text": preview_fields[3].find("a").text,
-                        "date": preview_fields[1].find("span", class_="date-display-single").text,
-                        "tag": tag
-                    }
-                    news_url = self.config.MEPHI_URL + preview_fields[3].find("a")['href']
-                else:
-                    news_data = {
-                        "preview_img": None,
-                        "preview_text": preview_fields[2].find("a").text,
-                        "date": preview_fields[0].find("span", class_="date-display-single").text,
-                        "tag": tag
-                    }
-                    news_url = self.config.MEPHI_URL + preview_fields[2].find("a")['href']
-
-                news = await self.parse_news(session, news_url)
-                news_data.update(news)
-
-                result.append(news_data)
-                self.count += 1
-                print(self.count)
+                try:
+                    result.append(self.parse_full_news(session, preview, tag))
+                    self.count += 1
+                    print(self.count)
+                except Exception as e:
+                    print(f"Get an error: {e}")
             return result
 
         except (Exception,) as e:
+            print(e)
+
+    async def parse_full_news(self, session, preview, tag: str):
+        news_data, news_url = await self.parse_preview(preview, tag)
+        news = await self.parse_news(session, news_url)
+        news_data.update(news)
+        return news_data
+
+    async def parse_preview(self, preview, tag: str):
+        try:
+            preview_fields = preview.select(".field-content")
+
+            if len(preview_fields) == 4:
+                news_data = {
+                    "preview_img": preview_fields[0].find("img")['src'],
+                    "preview_text": preview_fields[3].find("a").text,
+                    "date": preview_fields[1].find("span", class_="date-display-single").text,
+                    "tag": tag
+                }
+                news_url = self.config.MEPHI_URL + preview_fields[3].find("a")['href']
+            else:
+                news_data = {
+                    "preview_img": None,
+                    "preview_text": preview_fields[2].find("a").text,
+                    "date": preview_fields[0].find("span", class_="date-display-single").text,
+                    "tag": tag
+                }
+                news_url = self.config.MEPHI_URL + preview_fields[2].find("a")['href']
+
+            return news_data, news_url
+        except Exception as e:
             print(e)
 
     async def parse_news(self, session: ClientSession, url: str):
@@ -114,11 +130,10 @@ class NewsParser:
             html = await self.get_html(session, url)
             soup = bs4.BeautifulSoup(html, "lxml")
 
-            result = {
-                "id": url.split("news/")[1],
-                "news_text": "",
-                "news_imgs": []
-            }
+            text = soup.find("div", class_="field-item even")
+            result = {"id": url.split("news/")[1],
+                      "news_text": text.prettify() if text is not None else "",
+                      "news_imgs": []}
 
             for field in soup.findAll("p"):
                 if field.find("img") is not None:
@@ -128,20 +143,78 @@ class NewsParser:
                             "text": field.text.replace(' ', ' ') if field.text != ' ' else ""
                         }
                     )
-
-                if field.text == " ":
-                    continue
-
+                #
+                #     if field.text == " ":
+                #         continue
+                #
                 if field.has_attr('class') and "rtecenter" in field['class'] and field.find("img") is not None:
                     result["news_imgs"][-1]["text"] = field.text.replace(' ', ' ') if field.text != ' ' else ""
-                else:
-                    result["news_text"] += field.text.replace(' ', ' ') + "\n"
+            #     else:
+            #         result["news_text"] += field.text.replace(' ', ' ') + "\n"
 
             return result
         except Exception as err:
+            print(err, url)
+
+    def parse_new_news(self):
+        _ = time.time()
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.get_new_news())
+        print(f"Total time: {time.time() - _}")
+
+    async def get_new_news(self):
+        try:
+            async with ClientSession(trust_env=True) as session:
+                tags = await self.parse_tags(session, self.config.MEPHI_NEWS_PAGE_URL)
+                db: AsyncSession = await get_session_return()
+                async with db.begin():
+                    tasks = []
+                    for tag in tags:
+                        page_count = await self.parse_count_pages(session, f'{self.config.MEPHI_NEWS_PAGE_URL}'
+                                                                           f'?category={tag["value"]}')
+                        found_in_db = False
+                        for i in range(page_count):
+                            if found_in_db:
+                                break
+
+                            html = await self.get_html(session, f'{self.config.MEPHI_NEWS_PAGE_URL}'
+                                                                f'?category={tag["value"]}&page={i}')
+                            soup = bs4.BeautifulSoup(html, "lxml")
+                            for preview in soup.find("div", class_="view-content").findAll("div", class_="views-row"):
+                                news_id = await self.get_news_id(preview)
+                                news = await NewsRepository.get_by_news_id(db, news_id)
+                                if not news:
+                                    print("b")
+                                    tasks.append(self.parse_full_news(session, preview, tag["name"]))
+                                else:
+                                    print(NewsSchema.from_orm(news).title)
+                                    found_in_db = True
+
+                await db.close()
+                print(tasks)
+                print(f"Total pages {len(tasks)}")
+                news = await asyncio.gather(*tasks)
+                print("Parsing completed")
+
+                print(news)
+                self.toFile(obj=news, filename=f'{os.getcwd()}/parsing/news/new_news.json', mode='w', encoding='utf-8',
+                            indent=3, ensure_ascii=False)
+
+                old_news = self.fromFile(filename=f'{os.getcwd()}/parsing/news/news.json', mode="r", encoding='utf-8')
+                news += old_news
+                self.toFile(obj=news, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8',
+                            indent=3, ensure_ascii=False)
+
+        except Exception as err:
             print(err)
-            print(url)
-            print()
+
+    async def get_news_id(self, preview):
+        preview_fields = preview.select(".field-content")
+        if len(preview_fields) == 4:
+            news_url = self.config.MEPHI_URL + preview_fields[3].find("a")['href']
+        else:
+            news_url = self.config.MEPHI_URL + preview_fields[2].find("a")['href']
+        return news_url.split("news/")[1]
 
     @staticmethod
     def toFile(obj: object, filename: str, mode: str, encoding: str, indent: int, ensure_ascii: bool):
@@ -149,5 +222,14 @@ class NewsParser:
             with open(filename, mode=mode, encoding=encoding) as fp:
                 json.dump(obj, fp, ensure_ascii=ensure_ascii, indent=indent, default=str)
             print("Data set to file")
+        except Exception as e:
+            print(e)
+
+    @staticmethod
+    def fromFile(filename: str, mode: str, encoding: str):
+        try:
+            with open(filename, mode=mode, encoding=encoding) as fp:
+                res = json.load(fp)
+                return res
         except Exception as e:
             print(e)

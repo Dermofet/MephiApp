@@ -2,7 +2,7 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
 WORKDIR /api/
 
-RUN apt-get update && apt-get install -y libgl1-mesa-dev
+RUN apt-get update && apt-get install -y libgl1-mesa-dev && apt-get -y install cron
 
 ENV POETRY_HOME="/opt/poetry" \
     POETRY_NO_INTERACTION=1 \
@@ -19,6 +19,8 @@ COPY pyproject.toml poetry.lock* /api/
 # Allow installing dev dependencies to run tests
 ARG INSTALL_DEV=false
 RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; else poetry install --no-root --no-dev ; fi"
+
+RUN echo "*/20 * * * * python3 /api/parsing/news/run_parsing_new_news.py" >> /etc/crontab
 
 COPY . /api/
 

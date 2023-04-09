@@ -12,7 +12,8 @@ engine = create_async_engine(
     echo=config.DEBUG,
     pool_size=20,
     max_overflow=30,
-    pool_timeout=60
+    pool_timeout=60,
+    pool_recycle=900
 )
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 Base = declarative_base()

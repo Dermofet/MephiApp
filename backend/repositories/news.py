@@ -15,6 +15,11 @@ class NewsRepository:
         return news.scalar()
 
     @staticmethod
+    async def get_by_news_id(db: AsyncSession, news_id: str) -> NewsModel:
+        news = await db.execute(select(NewsModel).where(NewsModel.news_id == news_id).limit(1))
+        return news.scalar()
+
+    @staticmethod
     async def get_all(db: AsyncSession, tag: str, offset: int, limit: int = 100) -> List[NewsModel]:
         news = await db.execute(select(NewsModel).where(NewsModel.tag == tag)
                                 .order_by(desc(NewsModel.date)).offset(offset).limit(limit))

@@ -9,13 +9,13 @@ from backend.database.models.news import NewsModel
 from backend.database.models.news_image import NewsImageModel
 
 
-async def bulk_insert_news(db: AsyncSession) -> None:
+async def bulk_insert_new_news(db: AsyncSession) -> None:
     try:
         async with db.begin():
             print(f'News inserting')
             news = set()
             news_image = set()
-            with open(f'{os.getcwd()}/parsing/news/news.json', 'r', encoding='utf-8') as fp:
+            with open(f'{os.getcwd()}/parsing/news/new_news.json', 'r', encoding='utf-8') as fp:
                 dict_json = json.loads(fp.read().replace("'", '\''))
                 for news_record in dict_json:
                     news_image_models = []
@@ -43,6 +43,7 @@ async def bulk_insert_news(db: AsyncSession) -> None:
             db.add_all(news)
             await db.commit()
             print('Committed changes')
+            os.remove(f'{os.getcwd()}/parsing/news/new_news.json')
     except FileNotFoundError:
         print(f'File {os.getcwd()}/parsing/news/news.json was not found.')
     except sqlalchemy.exc.IntegrityError as e:
