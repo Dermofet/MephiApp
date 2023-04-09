@@ -4,6 +4,7 @@ import traceback
 from copy import deepcopy
 from os import getcwd
 
+import aiohttp
 import sqlalchemy
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,7 +27,8 @@ async def bulk_insert_academic(db: AsyncSession) -> None:
     try:
         async with db.begin():
             parser = ScheduleParser()
-            res = set(AcademicModel(name=academic[0]) for academic in parser.getAcademicTypes())
+            async with aiohttp.ClientSession() as session:
+                res = set(AcademicModel(name=academic[0]) for academic in await parser.getAcademicTypes(session))
             print(f'Inserting {len(res)} items')
             db.add_all(res)
             await db.commit()
@@ -50,19 +52,20 @@ async def bulk_insert_groups(db: AsyncSession) -> None:
             for row in rows:
                 academics[row[0]] = row[1]
 
-            res = []
+            res = set()
             parser = ScheduleParser()
-            for academic in parser.getAcademicTypes():
+            async with aiohttp.ClientSession() as session:
+                academic_types = await parser.getAcademicTypes(session)
+            for academic in academic_types:
                 __academic__ = academic[0]
                 with open(f'{getcwd()}/parsing/schedule/{academic[0]}.json', 'r', encoding='utf-8') as fp:
                     dict_json = json.loads(fp.read().replace("'", '\''))
-                    for course in dict_json['courses']:
-                        for group in course['groups']:
-                            res.append(GroupModel(
-                                name=group['name'],
-                                course=course['name'],
-                                academic_guid=academics[dict_json['name']]
-                            ))
+                    for lesson in dict_json:
+                        res.add(GroupModel(
+                            name=lesson['group'],
+                            course=lesson['course'],
+                            academic_guid=academics[lesson['academic']]
+                        ))
             print(f'Inserting {len(res)} items')
             db.add_all(res)
             await db.commit()
@@ -85,70 +88,68 @@ async def bulk_insert_schedule(db: AsyncSession) -> None:
             i = 0
             res_lessons = set()
             parser = ScheduleParser()
-            for academic in parser.getAcademicTypes():
+            async with aiohttp.ClientSession() as session:
+                academic_types = await parser.getAcademicTypes(session)
+            for academic in academic_types:
                 __academic__ = academic[0]
                 with open(f'{getcwd()}/parsing/schedule/{academic[0]}.json', 'r', encoding='utf-8') as fp:
                     dict_json = json.loads(fp.read().replace("'", '\''))
-                    for course in dict_json['courses']:
-                        for group in course['groups']:
-                            for day in group['schedule']:
-                                for lesson in day['lessons']:
-                                    for lesson_var in lesson['lesson']:
-                                        teacher_schema = set()
-                                        for teacher in lesson_var['teacher_name']:
-                                            teacher_schema.add(teacher)
-                                        room_schema = lesson_var['room']
-                                        group_schema = {group['name']}
+                    for lesson in dict_json:
+                        teacher_schema = set()
+                        for teacher in lesson['teacher_name']:
+                            teacher_schema.add(teacher)
+                        room_schema = lesson['room']
+                        group_schema = {lesson['group']}
 
-                                        time_start = datetime.datetime.strptime(lesson['time_start'], "%H:%M").time()
-                                        time_end = datetime.datetime.strptime(lesson['time_end'], "%H:%M").time()
+                        time_start = datetime.datetime.strptime(lesson['time_start'], "%H:%M").time()
+                        time_end = datetime.datetime.strptime(lesson['time_end'], "%H:%M").time()
 
-                                        date_start = lesson_var['date_start'].split('.') \
-                                            if lesson_var['date_start'] is not None else None
+                        date_start = lesson['date_start'].split('.') \
+                            if lesson['date_start'] is not None else None
 
-                                        if date_start is not None:
-                                            date_start.reverse()
-                                            date_start = datetime.datetime.strptime("-".join(date_start),
-                                                                                    '%Y-%m-%d').date()
+                        if date_start is not None:
+                            date_start.reverse()
+                            date_start = datetime.datetime.strptime("-".join(date_start),
+                                                                    '%Y-%m-%d').date()
 
-                                        date_end = lesson_var['date_end'].split('.') \
-                                            if lesson_var['date_end'] is not None else None
+                        date_end = lesson['date_end'].split('.') \
+                            if lesson['date_end'] is not None else None
 
-                                        if date_end is not None:
-                                            date_end.reverse()
-                                            date_end = datetime.datetime.strptime("-".join(date_end), '%Y-%m-%d').date()
+                        if date_end is not None:
+                            date_end.reverse()
+                            date_end = datetime.datetime.strptime("-".join(date_end), '%Y-%m-%d').date()
 
-                                        lesson_schema = WrapLessonModel(LessonModel(
-                                            time_start=time_start,
-                                            time_end=time_end,
-                                            dot=lesson_var['dot'],
-                                            weeks=lesson_var['weeks'],
-                                            day=day['day'],
-                                            date_start=date_start,
-                                            date_end=date_end,
-                                            teachers=[],
-                                            groups=[],
-                                            rooms=[],
-                                            trans=[LessonTranslateModel(
-                                                name=lesson_var['lesson_name'],
-                                                subgroup=lesson_var['subgroup'],
-                                                lang='ru',
-                                                type=lesson_var['lesson_type']
-                                            )]
-                                        ), teachers=deepcopy(teacher_schema),
-                                            groups=deepcopy(group_schema),
-                                            rooms=room_schema)
+                        lesson_schema = WrapLessonModel(LessonModel(
+                            time_start=time_start,
+                            time_end=time_end,
+                            dot=lesson['dot'],
+                            weeks=lesson['weeks'],
+                            day=lesson['day'],
+                            date_start=date_start,
+                            date_end=date_end,
+                            teachers=[],
+                            groups=[],
+                            rooms=[],
+                            trans=[LessonTranslateModel(
+                                name=lesson['lesson_name'],
+                                subgroup=lesson['subgroup'],
+                                lang='ru',
+                                type=lesson['lesson_type']
+                            )]
+                        ), teachers=deepcopy(teacher_schema),
+                            groups=deepcopy(group_schema),
+                            rooms=room_schema)
 
-                                        i += 1
+                        i += 1
 
-                                        if lesson_schema in res_lessons:
-                                            for l in res_lessons:
-                                                if l == lesson_schema:
-                                                    lesson_schema.teachers.update(l.teachers)
-                                                    lesson_schema.groups.update(l.groups)
-                                                    res_lessons.remove(l)
-                                                    break
-                                        res_lessons.add(lesson_schema)
+                        if lesson_schema in res_lessons:
+                            for l in res_lessons:
+                                if l == lesson_schema:
+                                    lesson_schema.teachers.update(l.teachers)
+                                    lesson_schema.groups.update(l.groups)
+                                    res_lessons.remove(l)
+                                    break
+                        res_lessons.add(lesson_schema)
 
             groups_sc = await db.execute(select(GroupModel))
             groups_sc = groups_sc.unique().scalars().all()

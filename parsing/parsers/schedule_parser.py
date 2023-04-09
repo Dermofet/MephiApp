@@ -20,8 +20,8 @@ class ScheduleParser:
             for academic_name, academic_url in await self.getAcademicTypes(session):
                 print(f'{academic_name}:')
                 groups_list = await self.getGroupList(session, academic_url)
-                await self.setInfoToFile(session, groups_list, f'{os.getcwd()}/parsing/schedule/{academic_name}.json', mode='w',
-                                         encoding='utf-8', indent=3, ensure_ascii=False)
+                await self.setInfoToFile(session, groups_list, f'{os.getcwd()}/parsing/schedule/{academic_name}.json',
+                                         mode='w', encoding='utf-8', indent=3, ensure_ascii=False)
 
     async def getAcademicTypes(self, session):
         async with session.get(self.config.MEPHI_SCHEDULE_URL) as response:
@@ -49,7 +49,7 @@ class ScheduleParser:
         return res
 
     @staticmethod
-    async def getGroupInfo(session, url: str, academic, group, course, lang):
+    async def getGroupInfo(session, url, academic, group, course, lang):
         async with session.get(url) as response:
             html = await response.text()
         soup = bs4.BeautifulSoup(html, "lxml")
@@ -64,10 +64,11 @@ class ScheduleParser:
                         'academic': academic,
                         'group': group,
                         'course': course,
-                        'lang': lang
+                        'lang': lang,
+                        'day': day
                     }
 
-                    time = lesson.find("div", class_="lesson-time").text.split(' — ')
+                    time = lesson.find("div", class_="lesson-time").text.split(' — ')
                     schedule_elem['time_start'] = time[0].strip()
                     schedule_elem['time_end'] = time[1].strip() if len(time) == 2 else None
 
@@ -132,8 +133,8 @@ class ScheduleParser:
         tasks = []
         for course in dict_json:
             for group in course["groups"]:
-                tasks.append(self.getGroupInfo(session, group["url"], filename.split("/")[-1].split(".")[0], group,
-                                               course, "ru"))
+                tasks.append(self.getGroupInfo(session, group["url"], filename.split("/")[-1].split(".")[0], group["name"],
+                                               course['course'], "ru"))
 
         print(f"Total groups: {len(tasks)}")
         lessons = await asyncio.gather(*tasks)
@@ -141,7 +142,6 @@ class ScheduleParser:
         res = []
         for lesson in lessons:
             res += lesson
-
         print("Parsing completed")
 
         with open(filename, mode, encoding=encoding) as fp:
