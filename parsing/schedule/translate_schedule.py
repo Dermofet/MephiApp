@@ -49,10 +49,10 @@ async def translate_lesson_types(session: ClientSession, langs: List[str]):
         aud_type = await translate_field(session, "Аудиторная работа", src_lang="ru", dest_lang=lang)
         preset_values[lang] = {
                 "type": {
-                    "Пр": practice_type,
-                    "Лек": lecture_type,
-                    "Лаб": lab_type,
-                    "Ауд": aud_type
+                    "практика": practice_type.lower(),
+                    "лекция": lecture_type.lower(),
+                    "лабораторная работа": lab_type.lower(),
+                    "аудиторная работа": aud_type.lower()
                 }
             }
     return preset_values

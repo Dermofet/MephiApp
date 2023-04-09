@@ -84,7 +84,7 @@ class NewsParser:
             result = []
             for preview in page.find("div", class_="view-content").findAll("div", class_="views-row"):
                 try:
-                    result.append(self.parse_full_news(session, preview, tag))
+                    result.append(await self.parse_full_news(session, preview, tag))
                     self.count += 1
                     print(self.count)
                 except Exception as e:
@@ -97,6 +97,7 @@ class NewsParser:
     async def parse_full_news(self, session, preview, tag: str):
         news_data, news_url = await self.parse_preview(preview, tag)
         news = await self.parse_news(session, news_url)
+        news_data["preview_img"] = news["news_imgs"][0]["img"] if news["news_imgs"] else None
         news_data.update(news)
         return news_data
 
@@ -135,22 +136,16 @@ class NewsParser:
                       "news_text": text.prettify() if text is not None else "",
                       "news_imgs": []}
 
+            for img in soup.find("div", class_="region region-content").findAll("img"):
+                result["news_imgs"].append(
+                    {
+                        "img": self.config.MEPHI_URL + img['src'],
+                        "text": img.parent.text.replace(' ', ' ') if img.parent.text != ' ' else ""
+                    }
+                )
             for field in soup.findAll("p"):
-                if field.find("img") is not None:
-                    result["news_imgs"].append(
-                        {
-                            "img": self.config.MEPHI_URL + field.find("img")['src'],
-                            "text": field.text.replace(' ', ' ') if field.text != ' ' else ""
-                        }
-                    )
-                #
-                #     if field.text == " ":
-                #         continue
-                #
                 if field.has_attr('class') and "rtecenter" in field['class'] and field.find("img") is not None:
                     result["news_imgs"][-1]["text"] = field.text.replace(' ', ' ') if field.text != ' ' else ""
-            #     else:
-            #         result["news_text"] += field.text.replace(' ', ' ') + "\n"
 
             return result
         except Exception as err:
