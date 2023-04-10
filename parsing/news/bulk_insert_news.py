@@ -39,16 +39,19 @@ async def bulk_insert_news(db: AsyncSession) -> None:
                         date=datetime.datetime.strptime(news_record["date"], "%d.%m.%Y").date(),
                         tag=news_record["tag"]))
 
-        print(f'Inserting {len(news)} items')
-        db.add_all(news)
-        await db.commit()
-        print('Committed changes')
+            try:
+                print(f'Inserting {len(news)} items')
+                db.add_all(news)
+                await db.commit()
+                print('Committed changes')
+            except Exception as e:
+                print("Error: " + e)
     except FileNotFoundError:
         print(f'File {os.getcwd()}/parsing/news/news.json was not found.')
     except sqlalchemy.exc.IntegrityError as e:
         print(f'Error: {str(e)}')
-        await db.rollback()
+        # await db.rollback()
     except Exception as e:
         print("ERRRORRO")
         print(f'Error: {str(e)}')
-        await db.rollback()
+        # await db.rollback()
