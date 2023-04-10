@@ -49,5 +49,6 @@ async def bulk_insert_news(db: AsyncSession) -> None:
         print(f'Error: {str(e)}')
         await db.rollback()
     except Exception as e:
+        print("ERRRORRO")
         print(f'Error: {str(e)}')
         await db.rollback()
