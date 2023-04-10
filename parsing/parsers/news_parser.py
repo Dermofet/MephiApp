@@ -139,7 +139,7 @@ class NewsParser:
             for img in soup.find("div", class_="region region-content").findAll("img"):
                 result["news_imgs"].append(
                     {
-                        "img": self.config.MEPHI_URL + img['src'],
+                        "img": img['src'] if "https" in img['src'] else self.config.MEPHI_URL + img['src'],
                         "text": img.parent.text.replace(' ', ' ') if img.parent.text != ' ' else ""
                     }
                 )
