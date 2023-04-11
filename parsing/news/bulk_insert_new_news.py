@@ -42,6 +42,11 @@ async def bulk_insert_new_news(db: AsyncSession) -> None:
             db.add_all(news)
             await db.commit()
             print('Committed changes')
+
+            old_news = self.fromFile(filename=f'{os.getcwd()}/parsing/news/news.json', mode="r", encoding='utf-8')
+            news += old_news
+            self.toFile(obj=news, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8',
+                        indent=3, ensure_ascii=False)
             os.remove(f'{os.getcwd()}/parsing/news/new_news.json')
     except FileNotFoundError:
         print(f'File {os.getcwd()}/parsing/news/news.json was not found.')
