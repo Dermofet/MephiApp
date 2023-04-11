@@ -181,11 +181,10 @@ class NewsParser:
                                 if not news:
                                     tasks.append(self.parse_full_news(session, preview, tag["name"]))
                                 else:
-                                    print(NewsSchema.from_orm(news).title)
                                     found_in_db = True
 
                 await db.close()
-                print(f"Total pages {len(tasks)}")
+                print(f"Total news {len(tasks)}")
                 news = await asyncio.gather(*tasks)
                 print("Parsing completed")
 

@@ -45,9 +45,9 @@ async def bulk_insert_new_news(db: AsyncSession) -> None:
             os.remove(f'{os.getcwd()}/parsing/news/new_news.json')
     except FileNotFoundError:
         print(f'File {os.getcwd()}/parsing/news/news.json was not found.')
-    except sqlalchemy.exc.IntegrityError as e:
-        print(f'Error: {str(e)}')
-        await db.rollback()
-    except Exception as e:
-        print(f'Error: {str(e)}')
-        await db.rollback()
+    # except sqlalchemy.exc.IntegrityError as e:
+    #     print(f'Error: {str(e)}')
+    #     await db.rollback()
+    # except Exception as e:
+    #     print(f'Error: {str(e)}')
+    #     await db.rollback()
