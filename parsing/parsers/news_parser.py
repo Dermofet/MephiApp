@@ -191,10 +191,10 @@ class NewsParser:
                 self.toFile(obj=news, filename=f'{os.getcwd()}/parsing/news/new_news.json', mode='w', encoding='utf-8',
                             indent=3, ensure_ascii=False)
 
-                # old_news = self.fromFile(filename=f'{os.getcwd()}/parsing/news/news.json', mode="r", encoding='utf-8')
-                # news += old_news
-                # self.toFile(obj=news, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8',
-                #             indent=3, ensure_ascii=False)
+                old_news = self.fromFile(filename=f'{os.getcwd()}/parsing/news/news.json', mode="r", encoding='utf-8')
+                news += old_news
+                self.toFile(obj=news, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8',
+                            indent=3, ensure_ascii=False)
 
         except Exception as err:
             print(err)
