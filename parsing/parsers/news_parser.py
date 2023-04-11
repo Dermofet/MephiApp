@@ -179,7 +179,6 @@ class NewsParser:
                                 news_id = await self.get_news_id(preview)
                                 news = await NewsRepository.get_by_news_id(db, news_id)
                                 if not news:
-                                    print("b")
                                     tasks.append(self.parse_full_news(session, preview, tag["name"]))
                                 else:
                                     print(NewsSchema.from_orm(news).title)
