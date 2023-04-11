@@ -26,7 +26,6 @@ async def bulk_insert_new_news(db: AsyncSession) -> None:
                         )
                         if buf_news_img in news_image:
                             news_image_models.append(news_image.intersection(buf_news_img).pop())
-                            print("NewsImageModel exists")
                         else:
                             news_image_models.append(buf_news_img)
 

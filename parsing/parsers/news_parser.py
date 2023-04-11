@@ -185,12 +185,10 @@ class NewsParser:
                                     found_in_db = True
 
                 await db.close()
-                print(tasks)
                 print(f"Total pages {len(tasks)}")
                 news = await asyncio.gather(*tasks)
                 print("Parsing completed")
 
-                print(news)
                 self.toFile(obj=news, filename=f'{os.getcwd()}/parsing/news/new_news.json', mode='w', encoding='utf-8',
                             indent=3, ensure_ascii=False)
 
