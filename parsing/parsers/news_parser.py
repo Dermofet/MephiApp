@@ -52,8 +52,8 @@ class NewsParser:
             res = []
             for n in news:
                 res += n
-            self.toFile(obj=res, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8', indent=3,
-                        ensure_ascii=False)
+            self.toFile(obj=res, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8',
+                        indent=3, ensure_ascii=False)
 
     async def parse_tags(self, session: ClientSession, url: str):
         html = await self.get_html(session, url)
@@ -97,8 +97,8 @@ class NewsParser:
     async def parse_full_news(self, session, preview, tag: str):
         news_data, news_url = await self.parse_preview(preview, tag)
         news = await self.parse_news(session, news_url)
-        news_data["preview_img"] = news["news_imgs"][0]["img"] if news["news_imgs"] else None
-        news_data.update(news)
+        news_data["preview_img"] = news[1] if news[1] != "" else None
+        news_data.update(news[0])
         return news_data
 
     async def parse_preview(self, preview, tag: str):
@@ -132,22 +132,38 @@ class NewsParser:
             soup = bs4.BeautifulSoup(html, "lxml")
 
             text = soup.find("div", class_="field-item even")
-            result = {"id": url.split("news/")[1],
-                      "news_text": text.prettify() if text is not None else "",
-                      "news_imgs": []}
+            preview_url = ""
+            for i, field in enumerate(text.findAll("p", class_="rtecenter")):
+                if field.find("img") is not None:
+                    preview_url = field.find("img")['src'] if "https" in field.find("img")['src'] \
+                        else self.config.MEPHI_URL + field.find("img")['src']
+                    if len(text.findAll("p", class_="rtecenter")) > i + 1:
+                        if text.findAll("p", class_="rtecenter")[i+1].find("img") is None:
+                            text.findAll("p", class_="rtecenter")[i+1].extract()
+                    field.extract()
 
-            for img in soup.find("div", class_="region region-content").findAll("img"):
-                result["news_imgs"].append(
-                    {
-                        "img": img['src'] if "https" in img['src'] else self.config.MEPHI_URL + img['src'],
-                        "text": img.parent.text.replace(' ', ' ') if img.parent.text != ' ' else ""
-                    }
-                )
-            for field in soup.findAll("p"):
-                if field.has_attr('class') and "rtecenter" in field['class'] and field.find("img") is not None:
-                    result["news_imgs"][-1]["text"] = field.text.replace(' ', ' ') if field.text != ' ' else ""
+            imgs = soup.find("div", class_="region region-content").find("div", id="block-views-modern-gallery-block")
+            if imgs is not None:
+                content = soup.new_tag("div", class_="content")
+                content.append(text)
+                content.append(imgs.find("div", class_="view-content"))
+                text = content
+                # for img in soup.find("div", class_="region region-content") \
+                #         .find("div", id="block-views-modern-gallery-block").findAll("img"):
+                #     result["news_imgs"].append(
+                #         {
+                #             "img": img['src'] if "https" in img['src'] else self.config.MEPHI_URL + img['src'],
+                #             "text": ""
+                #         }
+                #     )
 
-            return result
+            result = {
+                "id": url.split("news/")[1],
+                "news_text": text.prettify() if text is not None else "",
+                "news_imgs": []
+            }
+
+            return [result, preview_url]
         except Exception as err:
             print(err, url)
 
@@ -188,13 +204,7 @@ class NewsParser:
                 news = await asyncio.gather(*tasks)
                 print("Parsing completed")
 
-                self.toFile(obj=news, filename=f'{os.getcwd()}/parsing/news/new_news.json', mode='w', encoding='utf-8',
-                            indent=3, ensure_ascii=False)
-
-                old_news = self.fromFile(filename=f'{os.getcwd()}/parsing/news/news.json', mode="r", encoding='utf-8')
-                news += old_news
-                self.toFile(obj=news, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8',
-                            indent=3, ensure_ascii=False)
+                self.smartAddData(news, filename=f'{os.getcwd()}/parsing/news/news.json', encoding='utf-8')
 
         except Exception as err:
             print(err)
@@ -208,7 +218,7 @@ class NewsParser:
         return news_url.split("news/")[1]
 
     @staticmethod
-    def toFile(obj: object, filename: str, mode: str, encoding: str, indent: int, ensure_ascii: bool):
+    def toFile(obj: object, filename: str, encoding: str, indent: int, ensure_ascii: bool, mode: str = "w"):
         try:
             with open(filename, mode=mode, encoding=encoding) as fp:
                 json.dump(obj, fp, ensure_ascii=ensure_ascii, indent=indent, default=str)
@@ -217,10 +227,64 @@ class NewsParser:
             print(e)
 
     @staticmethod
-    def fromFile(filename: str, mode: str, encoding: str):
+    def fromFile(filename: str, encoding: str, mode: str = "r"):
         try:
             with open(filename, mode=mode, encoding=encoding) as fp:
                 res = json.load(fp)
-                return res
+            print("Data get from file")
+            return res
         except Exception as e:
             print(e)
+
+    @staticmethod
+    def smartAddData(new_data, filename: str, encoding: str, indent: int = 3):
+        tmp_filename = filename + '.tmp'
+
+        with open(tmp_filename, 'w', encoding=encoding) as tmp_file:
+            json.dump(new_data, tmp_file, ensure_ascii=False)
+
+        with open(tmp_filename, 'r+', encoding=encoding) as tmp_file:
+            tmp_file.seek(0, os.SEEK_END)
+            tmp_file.seek(tmp_file.tell() - 1, os.SEEK_SET)
+            tmp_file.truncate()
+            tmp_file.write(',')
+
+        with open(filename, 'r+', encoding=encoding) as original_file, \
+                open(tmp_filename, 'r', encoding=encoding) as tmp_file:
+
+            with open(filename + '.new', 'w', encoding=encoding) as new_file:
+                for line in tmp_file:
+                    new_file.write(line)
+
+                next(original_file)
+                for line in original_file:
+                    new_file.write(line)
+
+        os.rename(filename + '.new', filename)
+
+    # @staticmethod
+    # def smartAddData(new_data, filename: str, encoding: str, indent: int = 3):
+    #     tmp_filename = filename + '.tmp'
+    #
+    #     with open(filename, 'r', encoding=encoding) as f:
+    #         with open(tmp_filename, 'w', encoding=encoding) as tmp_file:
+    #             line = f.readline()
+    #             if line.strip() == '[':
+    #                 tmp_file.write(line)
+    #                 tmp_file.write('\n')
+    #                 json.dump(new_data, tmp_file, ensure_ascii=False, indent=indent)
+    #                 tmp_file.write('\n')
+    #             else:
+    #                 raise ValueError("File doesn't contain a JSON array")
+    #
+    #             line = f.readline()
+    #             while line.strip() != ']':
+    #                 tmp_file.write(line)
+    #                 line = f.readline()
+    #
+    #             tmp_file.write(',\n')
+    #             json.dump(new_data, tmp_file, ensure_ascii=False, indent=indent)
+    #             tmp_file.write('\n')
+    #             tmp_file.write(line)
+    #
+    #     os.rename(tmp_filename, filename)
