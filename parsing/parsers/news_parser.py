@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import itertools
 import json
 import os
 import time
@@ -32,6 +33,29 @@ class NewsParser:
         loop.run_until_complete(self.parse_all_news())
         print(f"Total time: {time.time() - _}")
 
+    # async def parse_all_news(self):
+    #     async with ClientSession(trust_env=True) as session:
+    #         tags = await self.parse_tags(session, self.config.MEPHI_NEWS_PAGE_URL)
+    #         tasks = []
+    #         for tag in tags:
+    #             page_count = await self.parse_count_pages(session,
+    #                                                       f'{self.config.MEPHI_NEWS_PAGE_URL}?category={tag["value"]}')
+    #             print(f"Tag '{tag['name']}' contains {page_count} pages")
+    #             for i in range(page_count):
+    #                 tasks.append(self.parse_news_page(session,
+    #                                                   url=f'{self.config.MEPHI_NEWS_PAGE_URL}'
+    #                                                       f'?category={tag["value"]}&page={i}',
+    #                                                   tag=tag['name']))
+    #         print(f"Total pages {len(tasks)}")
+    #         news = await asyncio.gather(*tasks)
+    #         print("Parsing completed")
+    #
+    #         res = []
+    #         for n in news:
+    #             res += n
+    #         self.toFile(obj=res, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8',
+    #                     indent=3, ensure_ascii=False)
+
     async def parse_all_news(self):
         async with ClientSession(trust_env=True) as session:
             tags = await self.parse_tags(session, self.config.MEPHI_NEWS_PAGE_URL)
@@ -45,15 +69,21 @@ class NewsParser:
                                                       url=f'{self.config.MEPHI_NEWS_PAGE_URL}'
                                                           f'?category={tag["value"]}&page={i}',
                                                       tag=tag['name']))
-            print(f"Total pages {len(tasks)}")
-            news = await asyncio.gather(*tasks)
-            print("Parsing completed")
 
+            len_chunk = 100
+            chunks = [tasks[i:i + len_chunk] for i in range(0, len(tasks), len_chunk)]  # разбиваем на чанки по 1000 задач
+
+            print(f"Total pages {len(tasks)}")
             res = []
-            for n in news:
-                res += n
-            self.toFile(obj=res, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8',
+            for i, chunk in enumerate(chunks):
+                print(f"Parsing chunk {i + 1} out of {len(chunks)}")
+                news = await asyncio.gather(*chunk)
+                for n in news:
+                    res += n
+            self.toFile(obj=res, filename=f'{os.getcwd()}/parsing/news/news_{i + 1}.json', mode='w',
+                        encoding='utf-8',
                         indent=3, ensure_ascii=False)
+            print("Parsing completed")
 
     async def parse_tags(self, session: ClientSession, url: str):
         html = await self.get_html(session, url)
