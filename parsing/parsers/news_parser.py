@@ -71,7 +71,7 @@ class NewsParser:
                                                       tag=tag['name']))
 
             len_chunk = 100
-            chunks = [tasks[i:i + len_chunk] for i in range(0, len(tasks), len_chunk)]  # разбиваем на чанки по 1000 задач
+            chunks = [tasks[i:i + len_chunk] for i in range(0, len(tasks), len_chunk)]
 
             print(f"Total pages {len(tasks)}")
             res = []
@@ -172,11 +172,24 @@ class NewsParser:
                             text.findAll("p", class_="rtecenter")[i+1].extract()
                     field.extract()
 
-            imgs = soup.find("div", class_="region region-content").find("div", id="block-views-modern-gallery-block")
-            if imgs is not None:
+            result = {
+                "id": url.split("news/")[1],
+                "news_imgs": []
+            }
+
+            for img in soup.find("div", class_='field-item even').findAll("img"):
+                result["news_imgs"].append(
+                    {
+                        "img": img['src'] if "https" in img['src'] else self.config.MEPHI_URL + img['src'],
+                        "text": ""
+                    }
+                )
+
+            imgs_block = soup.find("div", class_="region region-content").find("div", id="block-views-modern-gallery-block")
+            if imgs_block is not None:
                 content = soup.new_tag("div", class_="content")
                 content.append(text)
-                content.append(imgs.find("div", class_="view-content"))
+                content.append(imgs_block.find("div", class_="view-content"))
                 text = content
                 # for img in soup.find("div", class_="region region-content") \
                 #         .find("div", id="block-views-modern-gallery-block").findAll("img"):
@@ -186,12 +199,7 @@ class NewsParser:
                 #             "text": ""
                 #         }
                 #     )
-
-            result = {
-                "id": url.split("news/")[1],
-                "news_text": text.prettify() if text is not None else "",
-                "news_imgs": []
-            }
+            result["news_text"] = text.prettify() if text is not None else ""
 
             return [result, preview_url]
         except Exception as err:
