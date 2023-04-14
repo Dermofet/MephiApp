@@ -33,29 +33,6 @@ class NewsParser:
         loop.run_until_complete(self.parse_all_news())
         print(f"Total time: {time.time() - _}")
 
-    # async def parse_all_news(self):
-    #     async with ClientSession(trust_env=True) as session:
-    #         tags = await self.parse_tags(session, self.config.MEPHI_NEWS_PAGE_URL)
-    #         tasks = []
-    #         for tag in tags:
-    #             page_count = await self.parse_count_pages(session,
-    #                                                       f'{self.config.MEPHI_NEWS_PAGE_URL}?category={tag["value"]}')
-    #             print(f"Tag '{tag['name']}' contains {page_count} pages")
-    #             for i in range(page_count):
-    #                 tasks.append(self.parse_news_page(session,
-    #                                                   url=f'{self.config.MEPHI_NEWS_PAGE_URL}'
-    #                                                       f'?category={tag["value"]}&page={i}',
-    #                                                   tag=tag['name']))
-    #         print(f"Total pages {len(tasks)}")
-    #         news = await asyncio.gather(*tasks)
-    #         print("Parsing completed")
-    #
-    #         res = []
-    #         for n in news:
-    #             res += n
-    #         self.toFile(obj=res, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w', encoding='utf-8',
-    #                     indent=3, ensure_ascii=False)
-
     async def parse_all_news(self):
         async with ClientSession(trust_env=True) as session:
             tags = await self.parse_tags(session, self.config.MEPHI_NEWS_PAGE_URL)
@@ -80,7 +57,7 @@ class NewsParser:
                 news = await asyncio.gather(*chunk)
                 for n in news:
                     res += n
-            self.toFile(obj=res, filename=f'{os.getcwd()}/parsing/news/news_{i + 1}.json', mode='w',
+            self.toFile(obj=res, filename=f'{os.getcwd()}/parsing/news/news.json', mode='w',
                         encoding='utf-8',
                         indent=3, ensure_ascii=False)
             print("Parsing completed")
@@ -127,6 +104,8 @@ class NewsParser:
     async def parse_full_news(self, session, preview, tag: str):
         news_data, news_url = await self.parse_preview(preview, tag)
         news = await self.parse_news(session, news_url)
+        if news is None:
+            raise TypeError("News is None")
         news_data["preview_img"] = news[1] if news[1] != "" else None
         news_data.update(news[0])
         return news_data
@@ -163,27 +142,49 @@ class NewsParser:
 
             text = soup.find("div", class_="field-item even")
             preview_url = ""
-            for i, field in enumerate(text.findAll("p", class_="rtecenter")):
-                if field.find("img") is not None:
-                    preview_url = field.find("img")['src'] if "https" in field.find("img")['src'] \
-                        else self.config.MEPHI_URL + field.find("img")['src']
-                    if len(text.findAll("p", class_="rtecenter")) > i + 1:
-                        if text.findAll("p", class_="rtecenter")[i+1].find("img") is None:
-                            text.findAll("p", class_="rtecenter")[i+1].extract()
-                    field.extract()
 
             result = {
                 "id": url.split("news/")[1],
                 "news_imgs": []
             }
 
-            for img in soup.find("div", class_='field-item even').findAll("img"):
-                result["news_imgs"].append(
-                    {
-                        "img": img['src'] if "https" in img['src'] else self.config.MEPHI_URL + img['src'],
-                        "text": ""
-                    }
-                )
+            if text is not None:
+                if text.find("p", class_="rtecenter") is not None:
+                    for i, field in enumerate(text.findAll("p", class_="rtecenter")):
+                        if field.find("img") is not None:
+                            if preview_url == "":
+                                preview_url = field.find("img")['src'] if "https" in field.find("img")['src'] \
+                                    else self.config.MEPHI_URL + field.find("img")['src']
+                                if len(text.findAll("p", class_="rtecenter")) > i + 1:
+                                    if text.findAll("p", class_="rtecenter")[i + 1].find("img") is None:
+                                        text.findAll("p", class_="rtecenter")[i + 1].extract()
+                                field.extract()
+                            else:
+                                result["news_imgs"].append(
+                                    {
+                                        "img": field.find("img")['src'] if "https" in field.find("img")['src']
+                                        else self.config.MEPHI_URL + field.find("img")['src'],
+                                        "text": ""
+                                    }
+                                )
+                else:
+                    for field in text.findAll("img"):
+                        try:
+                            if preview_url == "":
+                                preview_url = field['src'] if "https" in field['src'] \
+                                    else self.config.MEPHI_URL + field['src']
+                                field.parent.extract()
+                            else:
+                                result["news_imgs"].append(
+                                    {
+                                        "img": field['src'] if "https" in field['src']
+                                        else self.config.MEPHI_URL + field['src'],
+                                        "text": ""
+                                    }
+                                )
+                        except Exception as e:
+                            print(e, url)
+                            print(field)
 
             imgs_block = soup.find("div", class_="region region-content").find("div", id="block-views-modern-gallery-block")
             if imgs_block is not None:
@@ -191,16 +192,11 @@ class NewsParser:
                 content.append(text)
                 content.append(imgs_block.find("div", class_="view-content"))
                 text = content
-                # for img in soup.find("div", class_="region region-content") \
-                #         .find("div", id="block-views-modern-gallery-block").findAll("img"):
-                #     result["news_imgs"].append(
-                #         {
-                #             "img": img['src'] if "https" in img['src'] else self.config.MEPHI_URL + img['src'],
-                #             "text": ""
-                #         }
-                #     )
+
             result["news_text"] = text.prettify() if text is not None else ""
 
+            if preview_url is None:
+                preview_url = ""
             return [result, preview_url]
         except Exception as err:
             print(err, url)

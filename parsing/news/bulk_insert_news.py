@@ -74,7 +74,6 @@ async def bulk_insert_news(db):
         news_image_buffer = []
         with open(f'{os.getcwd()}/parsing/news/news.json', 'rb') as fp:
             parser = stream.iterate(json.load(fp)).stream()
-
             async with parser.stream() as streamer:
                 async for news_record in streamer:
                     news_image_models = []
