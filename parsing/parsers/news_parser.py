@@ -188,6 +188,14 @@ class NewsParser:
 
             imgs_block = soup.find("div", class_="region region-content").find("div", id="block-views-modern-gallery-block")
             if imgs_block is not None:
+                for img in imgs_block.findAll("img"):
+                    result["news_imgs"].append(
+                        {
+                            "img": img['src'] if "https" in img['src']
+                            else self.config.MEPHI_URL + img['src'],
+                            "text": ""
+                        }
+                    )
                 content = soup.new_tag("div", class_="content")
                 content.append(text)
                 content.append(imgs_block.find("div", class_="view-content"))
@@ -197,6 +205,7 @@ class NewsParser:
 
             if preview_url is None:
                 preview_url = ""
+
             return [result, preview_url]
         except Exception as err:
             print(err, url)
