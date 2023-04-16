@@ -149,7 +149,8 @@ class NewsParser:
             }
 
             if text is not None:
-                if text.find("p", class_="rtecenter") is not None:
+                content = text.find("div", class_="field-item even")
+                if content.find("p", class_="rtecenter") is not None:
                     for i, field in enumerate(text.findAll("p", class_="rtecenter")):
                         if field.find("img") is not None:
                             if preview_url == "":
@@ -167,8 +168,10 @@ class NewsParser:
                                         "text": ""
                                     }
                                 )
+                        else:
+                            field
                 else:
-                    for field in text.findAll("img"):
+                    for field in content.findAll("img"):
                         try:
                             if preview_url == "":
                                 preview_url = field['src'] if "https" in field['src'] \
@@ -188,7 +191,9 @@ class NewsParser:
 
             imgs_block = soup.find("div", class_="region region-content").find("div", id="block-views-modern-gallery-block")
             if imgs_block is not None:
-                for img in imgs_block.findAll("img"):
+                for tag_a in imgs_block.findAll("a"):
+                    img = tag_a.find("img")
+                    img['src'] = tag_a['href']
                     result["news_imgs"].append(
                         {
                             "img": img['src'] if "https" in img['src']
@@ -198,6 +203,15 @@ class NewsParser:
                     )
                 content = soup.new_tag("div", class_="content")
                 content.append(text)
+
+                for tag_a in imgs_block.findAll("a"):
+                    img = tag_a.find("img")
+                    img['src'] = tag_a['href']
+                    del img['height']
+                    del img['width']
+                    tag_a.insert_before(img)
+                    tag_a.extract()
+
                 content.append(imgs_block.find("div", class_="view-content"))
                 text = content
 
