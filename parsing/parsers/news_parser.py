@@ -135,6 +135,14 @@ class NewsParser:
         except Exception as e:
             print(e)
 
+    @staticmethod
+    async def isValid(http: str) -> bool:
+        if len(http) > 2083:
+            return False
+        if "http" not in http or "https" not in http:
+            return False
+        return True
+
     async def parse_news(self, session: ClientSession, url: str):
         try:
             html = await self.get_html(session, url)
@@ -149,58 +157,75 @@ class NewsParser:
             }
 
             if text is not None:
-                content = text.find("div", class_="field-item even")
-                if content.find("p", class_="rtecenter") is not None:
+                if text.find("p", class_="rtecenter") is not None:
                     for i, field in enumerate(text.findAll("p", class_="rtecenter")):
                         if field.find("img") is not None:
                             if preview_url == "":
                                 preview_url = field.find("img")['src'] if "https" in field.find("img")['src'] \
                                     else self.config.MEPHI_URL + field.find("img")['src']
+                                if not await self.isValid(preview_url):
+                                    preview_url = ""
                                 if len(text.findAll("p", class_="rtecenter")) > i + 1:
                                     if text.findAll("p", class_="rtecenter")[i + 1].find("img") is None:
                                         text.findAll("p", class_="rtecenter")[i + 1].extract()
                                 field.extract()
                             else:
-                                result["news_imgs"].append(
-                                    {
-                                        "img": field.find("img")['src'] if "https" in field.find("img")['src']
-                                        else self.config.MEPHI_URL + field.find("img")['src'],
-                                        "text": ""
-                                    }
-                                )
-                        else:
-                            field
+                                img = field.find("img")['src'] if "https" in field.find("img")['src'] \
+                                    else self.config.MEPHI_URL + field.find("img")['src'],
+                                if await self.isValid(img):
+                                    result["news_imgs"].append(
+                                        {
+                                            "img": img,
+                                            "text": ""
+                                        }
+                                    )
+                                else:
+                                    field.extract()
+                    if preview_url == "" and text.find("img") is not None:
+                        field = text.find("img")
+                        preview_url = field['src'] if "https" in field['src'] \
+                            else self.config.MEPHI_URL + field['src']
+                        if not await self.isValid(preview_url):
+                            preview_url = ""
+                        field.parent.extract()
                 else:
-                    for field in content.findAll("img"):
+                    for field in text.findAll("img"):
                         try:
                             if preview_url == "":
                                 preview_url = field['src'] if "https" in field['src'] \
                                     else self.config.MEPHI_URL + field['src']
+                                if not await self.isValid(preview_url):
+                                    preview_url = ""
                                 field.parent.extract()
                             else:
-                                result["news_imgs"].append(
-                                    {
-                                        "img": field['src'] if "https" in field['src']
-                                        else self.config.MEPHI_URL + field['src'],
-                                        "text": ""
-                                    }
-                                )
+                                img = field['src'] if "https" in field['src'] \
+                                    else self.config.MEPHI_URL + field['src']
+                                if await self.isValid(img):
+                                    result["news_imgs"].append(
+                                        {
+                                            "img": img,
+                                            "text": ""
+                                        }
+                                    )
                         except Exception as e:
                             print(e, url)
                             print(field)
 
-            imgs_block = soup.find("div", class_="region region-content").find("div", id="block-views-modern-gallery-block")
+            imgs_block = soup.find("div", class_="region region-content")\
+                .find("div", id="block-views-modern-gallery-block")
             if imgs_block is not None:
                 for tag_a in imgs_block.findAll("a"):
                     img = tag_a.find("img")
                     img['src'] = tag_a['href']
-                    result["news_imgs"].append(
-                        {
-                            "img": img['src'] if "https" in img['src']
-                            else self.config.MEPHI_URL + img['src'],
-                            "text": ""
-                        }
-                    )
+                    img = img['src'] if "https" in img['src'] \
+                        else self.config.MEPHI_URL + img['src']
+                    if await self.isValid(img):
+                        result["news_imgs"].append(
+                            {
+                                "img": img,
+                                "text": ""
+                            }
+                        )
                 content = soup.new_tag("div", class_="content")
                 content.append(text)
 
