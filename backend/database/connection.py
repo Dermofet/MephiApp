@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import QueuePool
 from sqlalchemy.schema import DropTable
 
 from backend.config import config
@@ -14,8 +15,7 @@ engine = create_async_engine(
     max_overflow=30,
     pool_timeout=60,
     pool_recycle=900,
-    pool_pre_ping=True,
-    max_inactive_connection_lifetime=3
+    pool_pre_ping=True
 )
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 Base = declarative_base()
