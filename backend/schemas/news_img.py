@@ -1,10 +1,10 @@
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, Field, HttpUrl
+from pydantic import UUID4, BaseModel, Field
 
 
 class NewsImageBaseSchema(BaseModel):
-    url: Optional[HttpUrl] = Field(description="Ссылка на картинку")
+    url: Optional[str] = Field(description="Ссылка на картинку")
     text: Optional[str] = Field(description="Текст картинки")
 
 

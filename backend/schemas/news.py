@@ -1,14 +1,14 @@
 import datetime
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, Field, HttpUrl, validator
+from pydantic import UUID4, BaseModel, Field, validator
 
 from backend.schemas.news_img import NewsImageOutputSchema, NewsImageSchema
 
 
 class NewsBaseSchema(BaseModel):
     title: str = Field(description="Текст превью")
-    preview_url: Optional[HttpUrl] = Field(description="Ссылка на картинку")
+    preview_url: Optional[str] = Field(description="Ссылка на картинку")
     date: datetime.date = Field(description="Дата публикации новости")
     text: str = Field(description="Текст новости")
 
