@@ -60,7 +60,7 @@ class LessonRepository:
         if room is not None:
             lesson.rooms.append(room)
 
-        teacher = await TeacherRepository.get_by_name(db, teacher_name, lang)
+        teacher = await TeacherRepository.get_by_name(db, teacher_name)
         if teacher is not None:
             lesson.teachers.append(teacher)
 

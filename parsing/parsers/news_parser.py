@@ -136,10 +136,12 @@ class NewsParser:
             print(e)
 
     @staticmethod
-    async def isValid(http: str) -> bool:
+    async def isValid(http) -> bool:
         if len(http) > 2083:
+            print("Http too long")
             return False
         if "http" not in http or "https" not in http:
+            print("Don't contain http or https")
             return False
         return True
 
@@ -161,17 +163,23 @@ class NewsParser:
                     for i, field in enumerate(text.findAll("p", class_="rtecenter")):
                         if field.find("img") is not None:
                             if preview_url == "":
-                                preview_url = field.find("img")['src'] if "https" in field.find("img")['src'] \
-                                    else self.config.MEPHI_URL + field.find("img")['src']
+                                preview_url = field.find("img")['src']
+                                if "https" not in preview_url:
+                                    preview_url = self.config.MEPHI_URL + preview_url
+
                                 if not await self.isValid(preview_url):
                                     preview_url = ""
+
                                 if len(text.findAll("p", class_="rtecenter")) > i + 1:
                                     if text.findAll("p", class_="rtecenter")[i + 1].find("img") is None:
                                         text.findAll("p", class_="rtecenter")[i + 1].extract()
+
                                 field.extract()
                             else:
-                                img = field.find("img")['src'] if "https" in field.find("img")['src'] \
-                                    else self.config.MEPHI_URL + field.find("img")['src'],
+                                img = field.find("img")['src']
+                                if "https" not in img:
+                                    img = self.config.MEPHI_URL + img
+
                                 if await self.isValid(img):
                                     result["news_imgs"].append(
                                         {
@@ -183,23 +191,31 @@ class NewsParser:
                                     field.extract()
                     if preview_url == "" and text.find("img") is not None:
                         field = text.find("img")
-                        preview_url = field['src'] if "https" in field['src'] \
-                            else self.config.MEPHI_URL + field['src']
+                        preview_url = field['src']
+                        if "https" not in preview_url:
+                            preview_url = self.config.MEPHI_URL + preview_url
+
                         if not await self.isValid(preview_url):
                             preview_url = ""
+
                         field.parent.extract()
                 else:
                     for field in text.findAll("img"):
                         try:
                             if preview_url == "":
-                                preview_url = field['src'] if "https" in field['src'] \
-                                    else self.config.MEPHI_URL + field['src']
+                                preview_url = field['src']
+                                if "https" not in preview_url:
+                                    preview_url = self.config.MEPHI_URL + preview_url
+
                                 if not await self.isValid(preview_url):
                                     preview_url = ""
+
                                 field.parent.extract()
                             else:
-                                img = field['src'] if "https" in field['src'] \
-                                    else self.config.MEPHI_URL + field['src']
+                                img = field['src']
+                                if "https" not in img:
+                                    img = self.config.MEPHI_URL + img
+
                                 if await self.isValid(img):
                                     result["news_imgs"].append(
                                         {
@@ -217,8 +233,11 @@ class NewsParser:
                 for tag_a in imgs_block.findAll("a"):
                     img = tag_a.find("img")
                     img['src'] = tag_a['href']
-                    img = img['src'] if "https" in img['src'] \
-                        else self.config.MEPHI_URL + img['src']
+
+                    img = img['src']
+                    if "https" not in img:
+                        img = self.config.MEPHI_URL + img
+
                     if await self.isValid(img):
                         result["news_imgs"].append(
                             {
@@ -323,18 +342,20 @@ class NewsParser:
         tmp_filename = filename + '.tmp'
 
         with open(tmp_filename, 'w', encoding=encoding) as tmp_file:
-            json.dump(new_data, tmp_file, ensure_ascii=False)
+            json.dump(new_data, tmp_file, ensure_ascii=False, indent=indent)
 
+    @staticmethod
+    def combineFiles(tmp_filename: str, origin_filename: str, encoding: str):
         with open(tmp_filename, 'r+', encoding=encoding) as tmp_file:
             tmp_file.seek(0, os.SEEK_END)
             tmp_file.seek(tmp_file.tell() - 1, os.SEEK_SET)
             tmp_file.truncate()
             tmp_file.write(',')
 
-        with open(filename, 'r+', encoding=encoding) as original_file, \
+        with open(origin_filename, 'r+', encoding=encoding) as original_file, \
                 open(tmp_filename, 'r', encoding=encoding) as tmp_file:
 
-            with open(filename + '.new', 'w', encoding=encoding) as new_file:
+            with open(origin_filename + '.new', 'w', encoding=encoding) as new_file:
                 for line in tmp_file:
                     new_file.write(line)
 
@@ -344,29 +365,8 @@ class NewsParser:
 
         os.rename(filename + '.new', filename)
 
-    # @staticmethod
-    # def smartAddData(new_data, filename: str, encoding: str, indent: int = 3):
-    #     tmp_filename = filename + '.tmp'
-    #
-    #     with open(filename, 'r', encoding=encoding) as f:
-    #         with open(tmp_filename, 'w', encoding=encoding) as tmp_file:
-    #             line = f.readline()
-    #             if line.strip() == '[':
-    #                 tmp_file.write(line)
-    #                 tmp_file.write('\n')
-    #                 json.dump(new_data, tmp_file, ensure_ascii=False, indent=indent)
-    #                 tmp_file.write('\n')
-    #             else:
-    #                 raise ValueError("File doesn't contain a JSON array")
-    #
-    #             line = f.readline()
-    #             while line.strip() != ']':
-    #                 tmp_file.write(line)
-    #                 line = f.readline()
-    #
-    #             tmp_file.write(',\n')
-    #             json.dump(new_data, tmp_file, ensure_ascii=False, indent=indent)
-    #             tmp_file.write('\n')
-    #             tmp_file.write(line)
-    #
-    #     os.rename(tmp_filename, filename)
+        with open(tmp_filename, 'r+', encoding=encoding) as tmp_file:
+            tmp_file.seek(0, os.SEEK_END)
+            tmp_file.seek(tmp_file.tell() - 1, os.SEEK_SET)
+            tmp_file.truncate()
+            tmp_file.write(']')

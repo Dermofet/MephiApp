@@ -26,9 +26,9 @@ if __name__ == '__main__':
         loop.run_until_complete(set_news())
         print("Completed: News")
         print()
-    except Exception as err:
-        print(f"Error: {err}")
-        loop.stop()
+    # except Exception as err:
+    #     print(f"Error: {err}")
+    #     loop.stop()
     finally:
         loop.close()
         
