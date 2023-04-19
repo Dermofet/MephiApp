@@ -47,9 +47,9 @@ async def bulk_insert_new_news(db: AsyncSession) -> None:
 
     except FileNotFoundError:
         print(f'File {os.getcwd()}/parsing/news/news.json.tmp was not found.')
-    # except sqlalchemy.exc.IntegrityError as e:
-    #     print(f'Error: {str(e)}')
-    #     await db.rollback()
-    # except Exception as e:
-    #     print(f'Error: {str(e)}')
-    #     await db.rollback()
+    except sqlalchemy.exc.IntegrityError as e:
+        print(f'Error: {str(e)}')
+        await db.rollback()
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        await db.rollback()
