@@ -50,7 +50,9 @@ class RoomService:
         rooms = await RoomRepository.get_empty(db, room_filter)
         if rooms is None:
             raise HTTPException(404, "Аудитории не найдены")
-        return {"rooms": [{"name": room,
+        return {"rooms": [{"name": room[0],
+                           "time_start": room[1],
+                           "time_end": room[2],
                            "floor": None} for room in rooms]}
 
     @staticmethod

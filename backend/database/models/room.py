@@ -13,7 +13,7 @@ class RoomModel(Base):
     __table_args__ = {'extend_existing': True}
 
     guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
-    number = Column(String(150), nullable=False)
+    number = Column(String(150), nullable=False, unique=True)
     corps_guid = Column(UUID(as_uuid=True), ForeignKey("corps.guid"))
 
     corps = relationship("CorpsModel", back_populates="rooms", lazy="joined", uselist=False)
