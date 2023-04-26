@@ -48,11 +48,10 @@ def parse_date(path: str):
 
 async def insert_date(date: datetime.date):
     db = await get_session_return()
-    db_date = await StartSemesterService.get(db)
-    if db_date is None:
-        await StartSemesterService.create(db, StartSemesterCreateSchema(date=date))
-    else:
+    try:
         await StartSemesterService.update(db, StartSemesterCreateSchema(date=date))
+    except Exception:
+        await StartSemesterService.create(db, StartSemesterCreateSchema(date=date))
     await db.close()
 
 
