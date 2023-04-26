@@ -1,15 +1,17 @@
 from datetime import date, time
-from typing import Optional
+from typing import List, Optional
 
+from fastapi import Query
 from fastapi_filter.contrib.sqlalchemy import Filter
-from pydantic import Field
+
+# from pydantic import Field
 
 
 class RoomFilter(Filter):
-    time_start: time = Field(description="Начало отрезка времени, в котором аудитория свободна")
-    time_end: time = Field(description="Конец отрезка времени, в котором аудитория свободна")
-    corps: str = Field(description="Корпус, в которой находится аудитория")
-    date_: date = Field(description="Дата, когда аудитория свободна")
+    time_start: time = Query(..., description="Начало отрезка времени, в котором аудитория свободна")
+    time_end: time = Query(..., description="Конец отрезка времени, в котором аудитория свободна")
+    corps: List[str] = Query([], description="Корпусы, в которых находятся аудитории")
+    date_: date = Query(..., description="Дата, когда аудитория свободна")
 
     def __repr__(self):
         return f'RoomFilter:\n' \

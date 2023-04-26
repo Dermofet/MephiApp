@@ -52,7 +52,8 @@ class RoomRepository:
         return room.scalar()
 
     @staticmethod
-    async def get_empty(db: AsyncSession, room_filter: RoomFilter) -> List[tuple[str, datetime.time, datetime.time]]:
+    async def get_empty(db: AsyncSession, room_filter: RoomFilter) \
+            -> List[tuple[str, datetime.time, datetime.time]]:
         date = await StartSemesterRepository.get(db)
         week = (room_filter.date_ - date.date).days // 7 + 1
         if week == 2:
@@ -67,11 +68,13 @@ class RoomRepository:
                 RoomModel.number.label("room_number"),
                 LessonModel.time_start.label("lesson_time_start"),
                 LessonModel.time_end.label("lesson_time_end"),
+                CorpsModel.name.label("corps_name")
             )
             .join(RoomModel.lessons)
+            .join(RoomModel.corps)
             .where(
                 and_(
-                    RoomModel.corps.has(name=room_filter.corps),
+                    CorpsModel.name.in_(room_filter.corps),
                     LessonModel.day == weekdays[room_filter.date_.weekday()],
                     LessonModel.weeks.in_(week),
                     or_(
@@ -111,9 +114,10 @@ class RoomRepository:
             select(
                 RoomModel.number.label("room_number")
             )
+            .join(RoomModel.corps)
             .where(
                 and_(
-                    RoomModel.corps.has(name=room_filter.corps),
+                    CorpsModel.name.in_(room_filter.corps),
                     RoomModel.number.notin_(occupied_rooms_numbers)
                 )
             )
@@ -128,23 +132,23 @@ class RoomRepository:
             if last_room is None:
                 if room[1] > room_filter.time_start and \
                         RoomRepository.sub_time(room[1], room_filter.time_start) > deltatime:
-                    free_rooms.append((room[0], room_filter.time_start, room[1]))
+                    free_rooms.append((room[0], room_filter.time_start, room[1], room[3]))
                 last_room = room
                 continue
 
             if last_room[0] == room[0]:
                 if RoomRepository.sub_time(room[1], last_room[2]) > deltatime:
-                    free_rooms.append((last_room[0], last_room[2], room[1]))
+                    free_rooms.append((last_room[0], last_room[2], room[1], last_room[3]))
                 last_room = room
                 continue
 
             if last_room[2] < room_filter.time_end and \
                     RoomRepository.sub_time(room_filter.time_end, last_room[2]) > deltatime:
-                free_rooms.append((last_room[0], last_room[2], room_filter.time_end))
+                free_rooms.append((last_room[0], last_room[2], room_filter.time_end, last_room[3]))
 
             if room[1] > room_filter.time_start and \
                     RoomRepository.sub_time(room[1], room_filter.time_start) > deltatime:
-                free_rooms.append((room[0], room_filter.time_start, room[1]))
+                free_rooms.append((room[0], room_filter.time_start, room[1], room[3]))
             last_room = room
 
         for room in full_time_free_rooms:
