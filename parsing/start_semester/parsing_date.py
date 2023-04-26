@@ -14,9 +14,9 @@ if __name__ == '__main__':
         print("--Parse date--")
         loop.run_until_complete(start_parse())
         print("--Parsing completed--")
-    # except Exception as err:
-    #     print(f"Error: {err}")
-    #     loop.stop()
+    except Exception as err:
+        print(f"Error: {err}")
+        loop.stop()
     finally:
         loop.close()
 
