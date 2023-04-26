@@ -22,6 +22,7 @@ fastapi_filter = { version = "^0.5.1", python = "^3.9.16"}
 aiohttp = "^3.8.4"
 ijson = "^3.2.0.post0"
 aiostream = "^0.4.5"
+icalendar = "^5.0.5"
 
 
 [tool.poetry.dev-dependencies]

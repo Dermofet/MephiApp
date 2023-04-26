@@ -106,9 +106,9 @@ if __name__ == '__main__':
         loop.run_until_complete(set_translated_schedule(config.FOREIGN_LANGS))
         print("Completed: Translated schedule")
         print()
-    # except Exception as err:
-    #     print(f"Error: {err}")
-    #     loop.stop()
+    except Exception as err:
+        print(f"Error: {err}")
+        loop.stop()
     finally:
         loop.close()
 

@@ -10,7 +10,6 @@ class RoomFilter(Filter):
     time_end: time = Field(description="Конец отрезка времени, в котором аудитория свободна")
     corps: str = Field(description="Корпус, в которой находится аудитория")
     date_: date = Field(description="Дата, когда аудитория свободна")
-    week: int = Field(description="Четность недели")
 
     def __repr__(self):
         return f'RoomFilter:\n' \
