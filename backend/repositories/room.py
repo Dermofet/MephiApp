@@ -52,8 +52,8 @@ class RoomRepository:
         return room.scalar()
 
     @staticmethod
-    async def get_empty(db: AsyncSession, room_filter: RoomFilter) \
-            -> List[tuple[str, datetime.time, datetime.time]]:
+    async def get_empty(db: AsyncSession, room_filter: RoomFilter, corps: list[str]) \
+            -> List[tuple[str, datetime.time, datetime.time, str]]:
         date = await StartSemesterRepository.get(db)
         week = (room_filter.date_ - date.date).days // 7 + 1
         if week == 2:
@@ -74,7 +74,7 @@ class RoomRepository:
             .join(RoomModel.corps)
             .where(
                 and_(
-                    CorpsModel.name.in_(room_filter.corps),
+                    CorpsModel.name.in_(corps),
                     LessonModel.day == weekdays[room_filter.date_.weekday()],
                     LessonModel.weeks.in_(week),
                     or_(
@@ -109,21 +109,22 @@ class RoomRepository:
 
         occupied_rooms = occupied_rooms.all()
 
-        occupied_rooms_numbers = [room[0] for room in occupied_rooms]
+        occupied_rooms_numbers = (room[0] for room in occupied_rooms)
         full_time_free_rooms = await db.execute(
             select(
-                RoomModel.number.label("room_number")
+                RoomModel.number.label("room_number"),
+                CorpsModel.name.label("corps_name")
             )
             .join(RoomModel.corps)
             .where(
                 and_(
-                    CorpsModel.name.in_(room_filter.corps),
+                    CorpsModel.name.in_(corps),
                     RoomModel.number.notin_(occupied_rooms_numbers)
                 )
             )
         )
 
-        full_time_free_rooms = full_time_free_rooms.scalars().unique().all()
+        full_time_free_rooms = full_time_free_rooms.all()
 
         last_room = None
         free_rooms = []
@@ -152,7 +153,8 @@ class RoomRepository:
             last_room = room
 
         for room in full_time_free_rooms:
-            free_rooms.append((room, room_filter.time_start, room_filter.time_end))
+            print(room)
+            free_rooms.append((room[0], room_filter.time_start, room_filter.time_end, room[1]))
 
         return free_rooms
 

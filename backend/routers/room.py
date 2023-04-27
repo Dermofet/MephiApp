@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, Path
+from typing import Annotated, Union
+
+from fastapi import APIRouter, Depends, Path, Query
 from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
@@ -36,8 +38,9 @@ async def create(
     summary="Получить пустые аудитории",
 )
 async def get_empty(
+        corps: Annotated[Union[list[str], None], Query(description="Корпусы, в которых находятся аудитории")] = None,
         room_filter: RoomFilter = FilterDepends(RoomFilter),
         db: AsyncSession = Depends(get_session_yield),
         room_service: RoomService = Depends()
 ):
-    return await room_service.get_empty(db, room_filter)
+    return await room_service.get_empty(db, room_filter, corps)
