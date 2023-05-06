@@ -55,6 +55,10 @@ class RoomRepository:
     async def get_empty(db: AsyncSession, room_filter: RoomFilter, corps: list[str]) \
             -> List[tuple[str, datetime.time, datetime.time, str]]:
         date = await StartSemesterRepository.get(db)
+
+        if date is None:
+            raise HTTPException(409, "Даты начала семестра нет")
+
         week = (room_filter.date_ - date.date).days // 7 + 1
         if week == 2:
             week = [0, 1, 2]
@@ -138,13 +142,13 @@ class RoomRepository:
                 continue
 
             if last_room[0] == room[0]:
-                if RoomRepository.sub_time(room[1], last_room[2]) > deltatime:
+                if RoomRepository.sub_time(last_room[2], room[1]) > deltatime:
                     free_rooms.append((last_room[0], last_room[2], room[1], last_room[3]))
                 last_room = room
                 continue
 
             if last_room[2] < room_filter.time_end and \
-                    RoomRepository.sub_time(room_filter.time_end, last_room[2]) > deltatime:
+                    RoomRepository.sub_time(last_room[2], room_filter.time_end) > deltatime:
                 free_rooms.append((last_room[0], last_room[2], room_filter.time_end, last_room[3]))
 
             if room[1] > room_filter.time_start and \
@@ -153,10 +157,130 @@ class RoomRepository:
             last_room = room
 
         for room in full_time_free_rooms:
-            print(room)
             free_rooms.append((room[0], room_filter.time_start, room_filter.time_end, room[1]))
 
         return free_rooms
+
+    # [('Б-100', datetime.time(8, 30), datetime.time(10, 5), 'Корпус Б'),
+    #  ('Б-100', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-106А', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-106А', datetime.time(13, 35), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-108', datetime.time(12, 45), datetime.time(14, 20), 'Корпус Б'),
+    #  ('Б-108', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-109', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-118', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-118', datetime.time(17, 55), datetime.time(19, 30), 'Корпус Б'),
+    #  ('Б-124/126', datetime.time(9, 20), datetime.time(10, 5), 'Корпус Б'),
+    #  ('Б-124/126', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-124/126', datetime.time(12, 45), datetime.time(14, 20), 'Корпус Б'),
+    #  ('Б-124/126', datetime.time(14, 30), datetime.time(15, 15), 'Корпус Б'),
+    #  ('Б-124/126', datetime.time(15, 20), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-201', datetime.time(8, 30), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-201', datetime.time(12, 45), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-202', datetime.time(8, 30), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-202', datetime.time(12, 45), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-204', datetime.time(12, 45), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-205', datetime.time(8, 30), datetime.time(10, 5), 'Корпус Б'),
+    #  ('Б-205', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-205', datetime.time(12, 45), datetime.time(14, 20), 'Корпус Б'),
+    #  ('Б-205', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-205', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-207', datetime.time(8, 30), datetime.time(10, 5), 'Корпус Б'),
+    #  ('Б-207', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-207', datetime.time(12, 45), datetime.time(14, 20), 'Корпус Б'),
+    #  ('Б-207', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-207', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-208', datetime.time(8, 30), datetime.time(10, 5), 'Корпус Б'),
+    #  ('Б-208', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-208', datetime.time(12, 45), datetime.time(14, 20), 'Корпус Б'),
+    #  ('Б-208', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-208', datetime.time(16, 15), datetime.time(18, 40), 'Корпус Б'),
+    #  ('Б-208', datetime.time(18, 45), datetime.time(20, 20), 'Корпус Б'),
+    #  ('Б-210', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-210', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-210', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-210', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-210', datetime.time(20, 25), datetime.time(22, 0), 'Корпус Б'),
+    #  ('Б-211', datetime.time(8, 30), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-211', datetime.time(13, 35), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-212', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-212', datetime.time(12, 45), datetime.time(14, 20), 'Корпус Б'),
+    #  ('Б-212', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-212', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-212ст', datetime.time(8, 30), datetime.time(10, 5), 'Корпус Б'),
+    #  ('Б-212ст', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-212ст', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-212ст', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-213', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-213', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-213', datetime.time(13, 35), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-213', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-213', datetime.time(18, 45), datetime.time(20, 20), 'Корпус Б'),
+    #  ('Б-213', datetime.time(20, 25), datetime.time(22, 0), 'Корпус Б'),
+    #  ('Б-214', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-214', datetime.time(12, 45), datetime.time(14, 20), 'Корпус Б'),
+    #  ('Б-214', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-214', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-214', datetime.time(19, 35), datetime.time(20, 20), 'Корпус Б'),
+    #  ('Б-214', datetime.time(20, 25), datetime.time(22, 0), 'Корпус Б'),
+    #  ('Б-215', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-215', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-215', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-215', datetime.time(16, 15), datetime.time(18, 40), 'Корпус Б'),
+    #  ('Б-215', datetime.time(20, 25), datetime.time(22, 0), 'Корпус Б'),
+    #  ('Б-216', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-216', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-216', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-216', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-217', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-217', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-217', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-217', datetime.time(20, 25), datetime.time(22, 0), 'Корпус Б'),
+    #  ('Б-218', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-218', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-218', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-218', datetime.time(17, 5), datetime.time(18, 40), 'Корпус Б'),
+    #  ('Б-218', datetime.time(18, 45), datetime.time(20, 20), 'Корпус Б'),
+    #  ('Б-218', datetime.time(20, 25), datetime.time(22, 0), 'Корпус Б'),
+    #  ('Б-219', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-219', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-219', datetime.time(16, 15), datetime.time(22, 0), 'Корпус Б'),
+    #  ('Б-221', datetime.time(11, 5), datetime.time(12, 40), 'Корпус Б'),
+    #  ('Б-221', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-221', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-301', datetime.time(8, 30), datetime.time(10, 5), 'Корпус Б'),
+    #  ('Б-301', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-301', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-301', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-301', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-303', datetime.time(8, 30), datetime.time(10, 5), 'Корпус Б'),
+    #  ('Б-303', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-303', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-303', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-303', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-304', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-304', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-308', datetime.time(12, 45), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-314а', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-314а', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-314б', datetime.time(12, 45), datetime.time(14, 20), 'Корпус Б'),
+    #  ('Б-315', datetime.time(12, 45), datetime.time(14, 20), 'Корпус Б'),
+    #  ('Б-315', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-316', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-401', datetime.time(8, 30), datetime.time(10, 5), 'Корпус Б'),
+    #  ('Б-401', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-401', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-401', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-401', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('Б-403', datetime.time(8, 30), datetime.time(10, 5), 'Корпус Б'),
+    #  ('Б-403', datetime.time(10, 15), datetime.time(11, 50), 'Корпус Б'),
+    #  ('Б-403', datetime.time(11, 55), datetime.time(13, 30), 'Корпус Б'),
+    #  ('Б-403', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('Б-403', datetime.time(16, 15), datetime.time(17, 50), 'Корпус Б'),
+    #  ('каф.69', datetime.time(9, 20), datetime.time(11, 0), 'Корпус Б'),
+    #  ('каф.69', datetime.time(11, 5), datetime.time(11, 50), 'Корпус Б'),
+    #  ('каф.69', datetime.time(14, 30), datetime.time(16, 5), 'Корпус Б'),
+    #  ('каф.69', datetime.time(16, 15), datetime.time(18, 40), 'Корпус Б')]
 
     @staticmethod
     def sub_time(time1: datetime.time, time2: datetime.time) -> datetime.timedelta:
