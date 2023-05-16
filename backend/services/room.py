@@ -47,6 +47,8 @@ class RoomService:
 
     @staticmethod
     async def get_empty(db: AsyncSession, room_filter: RoomFilter, corps: list[str]) -> dict[str, list[dict]]:
+        if not corps:
+            raise HTTPException(422, "Не было выбрано ни одного корпуса")
         rooms = await RoomRepository.get_empty(db, room_filter, corps)
         if rooms is None:
             raise HTTPException(404, "Аудитории не найдены")
