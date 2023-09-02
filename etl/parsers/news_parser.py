@@ -112,7 +112,7 @@ class NewsParser(BaseParser):
 
     async def __parse_preview(self, preview, tag: str):
         try:
-            preview_fields = preview.select(".field-content")
+            preview_fields = preview.findAll("div", class_="field-content")
 
             if len(preview_fields) == 4:
                 news_data = {
@@ -156,8 +156,6 @@ class NewsParser(BaseParser):
 
             if text:
                 self.__process_text(result, text, preview_url)
-            # else:
-            #     self.__process_text_without_paragraphs(result, text, preview_url)
 
                 if imgs_block := soup.find("div", class_="region region-content").find(
                     "div", id="block-views-modern-gallery-block"
@@ -200,17 +198,6 @@ class NewsParser(BaseParser):
             preview_url = self.__get_image_source(img)
             if preview_url and self.__is_valid(preview_url):
                 img.parent.extract()
-
-    # def __process_text_without_paragraphs(self, result, text, preview_url):
-    #     if text.find("img") is None:
-    #         return
-        
-    #     for img in text.findAll("img"):
-    #         img_src = self.__get_image_source(img)
-    #         if img_src and self.__is_valid(img_src):
-    #             if not preview_url:
-    #                 preview_url = img_src
-    #             result["news_imgs"].append({"img": img_src, "text": ""})
 
     def __process_image_block(self, result, imgs_block, text):
         for tag_a in imgs_block.findAll("a"):

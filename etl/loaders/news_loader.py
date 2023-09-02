@@ -32,8 +32,8 @@ class NewsLoader(BaseLoader):
         for i, key in enumerate(self.redis_db.keys("news:*")):
             news.append(NewsLoading.model_validate_redis(self.redis_db.hget(name=key, key="news")))
             if i % 100 == 0:
+                self.logger.debug(f"Loaded {i} news")
                 await self.facade_db.bulk_insert_news(news)
                 news = []
-            i += 1
 
         self.logger.debug("News are loaded")

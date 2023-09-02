@@ -60,14 +60,14 @@ async def etl_schedule():
 
 @celery.task
 async def etl_all_news():
-    # e = NewsParser(
-    #     url=config.MEPHI_NEWS_PAGE_URL.unicode_string(),
-    #     redis_host=config.REDIS_HOST,
-    #     redis_port=config.REDIS_PORT,
-    #     db=config.REDIS_DB,
-    #     chunks=100
-    # )
-    # await e.parse_all_news()
+    e = NewsParser(
+        url=config.MEPHI_NEWS_PAGE_URL.unicode_string(),
+        redis_host=config.REDIS_HOST,
+        redis_port=config.REDIS_PORT,
+        db=config.REDIS_DB,
+        chunks=100
+    )
+    await e.parse_all_news()
 
     l = NewsLoader(
         redis_host=config.REDIS_HOST,
