@@ -19,26 +19,8 @@ parse_schedule() {
 }
 
 parse() {
-  venv/Scripts/python.exe ./etl/etl_.py "$2"
-
-  # if [ -z "$2" ]; then
-  #   echo "Unexpected parameter"
-  #   menu
-  #   exit
-  # fi
-
-  # if [ "$2" = "start_semester" ]; then
-  #   python /etl/etl_.py start_semester
-  # elif [ "$2" = "all_news" ]; then
-  #   python /etl/etl_.py all_news
-  # elif [ "$2" = "new_news" ]; then
-  #   python /etl/etl_.py new_news
-  # elif [ "$2" = "schedule" ]; then
-  #   python /etl/etl_.py schedule
-  # else
-  #   echo "Unexpected parameter"
-  #   menu
-  # fi
+  script_dir="$(dirname "$0")"
+  python "$script_dir/etl/etl_.py" "$2"
 }
 
 build() {
