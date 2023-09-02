@@ -21,15 +21,15 @@ class ScheduleLoader(BaseLoader):
     async def load(self):
         self.logger.info("Loading schedule...")
 
-        # try:
-        await self.__load_academics()
-        await self.__load_corps()
-        await self.__load_rooms()
-        await self.__load_teachers()
-        await self.__load_lessons()
-        # except Exception as e:
-        #     self.logger.error(f"Can't loading data: {e}")
-        #     await self.facade_db.rollback()
+        try:
+            await self.__load_academics()
+            await self.__load_corps()
+            await self.__load_rooms()
+            await self.__load_teachers()
+            await self.__load_lessons()
+        except Exception as e:
+            self.logger.error(f"Can't loading data: {e}")
+            await self.facade_db.rollback()
 
         self.logger.info("Schedule loaded successfully")
 

@@ -5,7 +5,7 @@ import traceback
 from etl.parsers.base_parser import BaseParser
 from etl.schemas.news import NewsLoading
 from etl.schemas.news_img import NewsImageLoading
-
+# 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
 
 class NewsParser(BaseParser):
     url: str
@@ -112,7 +112,7 @@ class NewsParser(BaseParser):
 
     async def __parse_preview(self, preview, tag: str):
         try:
-            preview_fields = preview.findAll("div", class_="field-content")
+            preview_fields = preview.findAll("div", class_="views-field")
 
             if len(preview_fields) == 4:
                 news_data = {
@@ -132,7 +132,7 @@ class NewsParser(BaseParser):
                 news_url = f"{self.base_url(self.url)}{preview_fields[2].find('a')['href']}"
             return news_data, news_url
         except Exception as e:
-            self.logger.error(f"Error[parse_preview]: {e}")
+            self.logger.error(f"Error[parse_preview]: {traceback.format_exc()}")
 
     def __is_valid(self, http: str) -> bool:
         if len(http) > 2083:
@@ -155,7 +155,7 @@ class NewsParser(BaseParser):
             text = soup.find("div", class_="field-item even")
 
             if text:
-                self.__process_text(result, text, preview_url)
+                preview_url = self.__process_text(result, text, preview_url)
 
                 if imgs_block := soup.find("div", class_="region region-content").find(
                     "div", id="block-views-modern-gallery-block"
@@ -198,6 +198,8 @@ class NewsParser(BaseParser):
             preview_url = self.__get_image_source(img)
             if preview_url and self.__is_valid(preview_url):
                 img.parent.extract()
+
+        return preview_url
 
     def __process_image_block(self, result, imgs_block, text):
         for tag_a in imgs_block.findAll("a"):

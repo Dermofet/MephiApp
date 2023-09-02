@@ -36,4 +36,6 @@ class NewsLoader(BaseLoader):
                 await self.facade_db.bulk_insert_news(news)
                 news = []
 
+        self.redis_db.delete("news:*")
+
         self.logger.debug("News are loaded")
