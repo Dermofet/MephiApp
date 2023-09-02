@@ -1,23 +1,5 @@
 #!/bin/bash
 
-parse_date() {
-  docker compose exec backend python /api/parsing/start_semester/parsing_date.py
-}
-
-parse_new_news() {
-  docker compose exec backend python /api/parsing/news/run_parsing_new_news.py
-}
-
-parse_news() {
-  docker compose exec backend python /api/parsing/news/run_parsing_news.py
-  docker compose exec backend python /api/parsing/news/run_bulk_insert_news.py
-}
-
-parse_schedule() {
-  docker compose exec backend python /api/parsing/schedule/run_parsing_schedule.py
-  docker compose exec backend python /api/parsing/schedule/run_bulk_insert_schedule.py
-}
-
 parse() {
   script_dir="$(dirname "$0")"
   python "$script_dir/etl/etl_.py" "$2"

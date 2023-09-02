@@ -18,21 +18,22 @@ class NewsLoader(BaseLoader):
     async def load(self):
         self.logger.info("Loading news...")
 
-        # try:
-        await self.__load_news()
-        await self.facade_db.commit()
-        # except Exception as e:
-        #     self.logger.error(f"Can't loading data: {e}")
-        #     await self.facade_db.rollback()
+        try:
+            await self.__load_news()
+            await self.facade_db.commit()
+        except Exception as e:
+            self.logger.error(f"Can't loading data: {e}")
+            await self.facade_db.rollback()
 
         self.logger.info("News loaded successfully")
 
     async def __load_news(self):
-        news = [
-            NewsLoading.model_validate_redis(self.redis_db.hget(name=key, key="news"))
-            for key in self.redis_db.keys("news:*")
-        ]
-
-        await self.facade_db.bulk_insert_news(news)
+        news = []
+        for i, key in enumerate(self.redis_db.keys("news:*")):
+            news.append(NewsLoading.model_validate_redis(self.redis_db.hget(name=key, key="news")))
+            if i % 100 == 0:
+                await self.facade_db.bulk_insert_news(news)
+                news = []
+            i += 1
 
         self.logger.debug("News are loaded")
