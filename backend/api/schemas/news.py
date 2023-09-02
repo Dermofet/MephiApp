@@ -1,9 +1,9 @@
 import datetime
-from typing import Optional
+from typing import List, Optional
 
-from pydantic import UUID4, BaseModel, Field, validator
+from pydantic import ConfigDict, BaseModel, Field, field_validator
 
-from backend.schemas.news_img import NewsImageOutputSchema, NewsImageSchema
+from backend.api.schemas.news_img import NewsImageCreateSchema, NewsImageOutputSchema, NewsImageSchema
 
 
 class NewsBaseSchema(BaseModel):
@@ -12,7 +12,7 @@ class NewsBaseSchema(BaseModel):
     date: datetime.date = Field(description="Дата публикации новости")
     text: str = Field(description="Текст новости")
 
-    @validator("date", pre=True)
+    @field_validator("date", mode="before")
     def change_date_start(cls, value):
         if isinstance(value, str):
             date_ = value.split('.')
@@ -21,16 +21,21 @@ class NewsBaseSchema(BaseModel):
         return None
 
 
+class NewsCreateSchema(NewsBaseSchema):
+    news_id: str = Field(description="ID новости")
+    imgs: List[NewsImageCreateSchema] = Field(description="Список картинок новости")
+
+
 class NewsOutputSchema(NewsBaseSchema):
     date: str = Field(description="Дата публикации новости")
-    imgs: list[NewsImageOutputSchema] = Field(description="Список картинок новости")
+    imgs: List[NewsImageOutputSchema] = Field(description="Список картинок новости")
 
 
 class NewsSchema(NewsBaseSchema):
     date: str = Field(description="Дата публикации новости")
-    imgs: list[NewsImageSchema] = Field(description="Список картинок новости")
+    imgs: List[NewsImageSchema] = Field(description="Список картинок новости")
 
-    @validator("date", pre=True)
+    @field_validator("date", mode="before")
     def change_date_start(cls, value):
         if isinstance(value, datetime.date):
             return value.strftime('%m.%d.%Y')
@@ -40,6 +45,4 @@ class NewsSchema(NewsBaseSchema):
             return None
         else:
             ValueError(f"date_start - неверный тип данных. Ожидалось date, было получено {type(value)}")
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

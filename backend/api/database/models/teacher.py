@@ -1,34 +1,25 @@
 import uuid
+from typing import List, Optional
+from sqlalchemy import String
 
-from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.database.connection import Base
-from backend.database.models.association_tables import AT_lesson_teacher
+from backend.api.database.connection import Base
+from backend.api.database.models.association_tables import AT_lesson_teacher
 
 
 class TeacherModel(Base):
     __tablename__ = "teachers"
-    __table_args__ = {'extend_existing': True}
 
-    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
-    online_url = Column(String, nullable=True, unique=True)
-    alt_online_url = Column(String, nullable=True, unique=True)
+    guid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
+    name: Mapped[str]
+    fullname: Mapped[Optional[str]]
+    lang: Mapped[str] = mapped_column(String(2))
 
-    trans = relationship("TeacherTranslateModel", back_populates="teacher", lazy="joined", uselist=True,
-                         primaryjoin="TeacherModel.guid == TeacherTranslateModel.teacher_guid")
-    lessons = relationship("LessonModel", back_populates="teachers", lazy="joined", uselist=True,
-                           secondary=AT_lesson_teacher)
-
-    def __repr__(self):
-        return f'<TeacherModel: {None if not self.trans else self.trans[0]}>'
-
-    def __eq__(self, other):
-        if isinstance(other, TeacherModel):
-            return self.trans[0].name == other.trans[0].name and self.trans[0].fullname == other.trans[0].fullname and \
-                   self.trans[0].lang == self.trans[0].lang
-        return False
-
-    def __hash__(self):
-        return hash(str(self.trans[0].name) + str(self.trans[0].fullname) + str(self.trans[0].lang))
+    lessons: Mapped[List["LessonModel"]] = relationship(
+        "LessonModel",
+        back_populates="teachers",
+        lazy="joined",
+        secondary=AT_lesson_teacher
+    )

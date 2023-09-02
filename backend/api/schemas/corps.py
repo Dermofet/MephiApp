@@ -1,8 +1,8 @@
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, Field
+from pydantic import ConfigDict, UUID4, BaseModel, Field
 
-from backend.database.models.corps import CorpsModel
+from backend.api.database.models.corps import CorpsModel
 
 
 class CorpsBaseSchema(BaseModel):
@@ -19,9 +19,7 @@ class CorpsOutputSchema(CorpsBaseSchema):
 
 class CorpsSchema(CorpsBaseSchema):
     guid: Optional[UUID4] = Field(description="ID")
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
     def clone(self):
         return CorpsSchema(

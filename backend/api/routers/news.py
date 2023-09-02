@@ -1,12 +1,10 @@
 from fastapi import APIRouter, Depends
 from pydantic import UUID4
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from backend.config import config
-from backend.database.connection import get_session_yield
-from backend.schemas.news import NewsOutputSchema, NewsSchema
-from backend.services.news import NewsService
+from backend.api.schemas.news import NewsOutputSchema
+from backend.api.services.news import NewsService
+from config import config
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 
@@ -22,10 +20,9 @@ async def get_all(
         tag: str = "Главные новости",
         offset: int = 0,
         limit: int = 100,
-        db: AsyncSession = Depends(get_session_yield),
-        news_service: NewsService = Depends()
+        news_service: NewsService = Depends(NewsService.get_service),
 ):
-    return await news_service.get_all(db, tag, offset, limit)
+    return await news_service.get_all(tag, offset, limit)
 
 
 @router.get(
@@ -37,7 +34,6 @@ async def get_all(
 )
 async def get(
         guid: UUID4,
-        db: AsyncSession = Depends(get_session_yield),
-        news_service: NewsService = Depends()
+        news_service: NewsService = Depends(NewsService.get_service),
 ):
-    return await news_service.get(db, guid)
+    return await news_service.get(guid)

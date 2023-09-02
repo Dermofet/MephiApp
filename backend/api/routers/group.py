@@ -1,12 +1,9 @@
 from fastapi import APIRouter, Depends
-from pydantic import UUID4
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from backend.config import config
-from backend.database.connection import get_session_yield
-from backend.schemas.group import GroupCreateSchema, GroupOutputSchema
-from backend.services.group import GroupService
+from backend.api.schemas.group import GroupCreateSchema, GroupOutputSchema
+from backend.api.services.group import GroupService
+from config import config
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 
@@ -21,10 +18,9 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 )
 async def create(
         schemas: GroupCreateSchema,
-        db: AsyncSession = Depends(get_session_yield),
-        group_service: GroupService = Depends(),
+        group_service: GroupService = Depends(GroupService.get_service),
 ):
-    return await group_service.create(db=db, schemas=schemas)
+    return await group_service.create(schemas=schemas)
 
 
 @router.get(
@@ -35,10 +31,9 @@ async def create(
     summary="Получить все группы",
 )
 async def get_all(
-        db: AsyncSession = Depends(get_session_yield),
-        group_service: GroupService = Depends()
+        group_service: GroupService = Depends(GroupService.get_service),
 ):
-    return await group_service.get_all(db)
+    return await group_service.get_all()
 
 
 @router.get(
@@ -50,7 +45,6 @@ async def get_all(
 )
 async def get(
         name: str,
-        db: AsyncSession = Depends(get_session_yield),
-        group_service: GroupService = Depends(),
+        group_service: GroupService = Depends(GroupService.get_service),
 ):
-    return await group_service.get_by_name(db, name=name)
+    return await group_service.get_by_name(name=name)

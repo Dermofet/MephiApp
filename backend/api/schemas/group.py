@@ -1,9 +1,9 @@
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, Field
+from pydantic import ConfigDict, UUID4, BaseModel, Field
 
-from backend.database.models.group import GroupModel
-from backend.schemas.academic import AcademicOutputSchema, AcademicSchema
+from backend.api.database.models.group import GroupModel
+from backend.api.schemas.academic import AcademicOutputSchema, AcademicSchema
 
 
 class GroupBaseSchema(BaseModel):
@@ -22,9 +22,7 @@ class GroupOutputSchema(GroupBaseSchema):
 class GroupSchema(GroupBaseSchema):
     guid: Optional[UUID4] = Field(description="ID")
     academic: AcademicSchema = Field(description="Ученое звание")
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
     def clone(self):
         return GroupSchema(
@@ -42,9 +40,7 @@ class GroupSchema(GroupBaseSchema):
         )
 
     def __eq__(self, other):
-        if isinstance(other, GroupSchema):
-            return self.name == other.name
-        return False
+        return self.name == other.name if isinstance(other, GroupSchema) else False
 
     def __hash__(self):
         return hash(self.name)

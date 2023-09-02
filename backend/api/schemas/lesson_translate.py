@@ -1,8 +1,8 @@
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, Field
+from pydantic import ConfigDict, UUID4, BaseModel, Field
 
-from backend.database.models.lesson_translate import LessonTranslateModel
+from backend.api.database.models.lesson_translate import LessonTranslateModel
 
 
 class LessonTranslateBaseSchema(BaseModel):
@@ -49,6 +49,4 @@ class LessonTranslateSchema(LessonTranslateBaseSchema):
 
     def __hash__(self):
         return hash(str(self.name) + str(self.subgroup) + str(self.lang) + str(self.type))
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

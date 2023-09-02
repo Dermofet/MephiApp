@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from backend.config import config
-from backend.database.connection import get_session_yield
-from backend.schemas.academic import AcademicCreateSchema, AcademicOutputSchema
-from backend.services.academic import AcademicService
+from backend.api.schemas.academic import AcademicCreateSchema, AcademicOutputSchema
+from backend.api.services.academic import AcademicService
+from config import config
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 
@@ -20,7 +18,6 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 )
 async def create(
         schemas: AcademicCreateSchema,
-        db: AsyncSession = Depends(get_session_yield),
-        academic_service: AcademicService = Depends(),
+        academic_service: AcademicService = Depends(AcademicService.get_service),
 ):
-    return await academic_service.create(db=db, schemas=schemas)
+    return await academic_service.create(schemas=schemas)

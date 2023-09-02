@@ -1,9 +1,9 @@
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, Field
+from pydantic import ConfigDict, UUID4, BaseModel, Field
 
-from backend.database.models.room import RoomModel
-from backend.schemas.corps import CorpsOutputSchema, CorpsSchema
+from backend.api.database.models.room import RoomModel
+from backend.api.schemas.corps import CorpsOutputSchema, CorpsSchema
 
 
 class RoomBaseSchema(BaseModel):
@@ -44,6 +44,4 @@ class RoomSchema(RoomBaseSchema):
 
     def __hash__(self):
         return hash(self.number)
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

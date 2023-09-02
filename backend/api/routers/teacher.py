@@ -1,12 +1,10 @@
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Depends
 from pydantic import UUID4
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from backend.config import config
-from backend.database.connection import get_session_yield
-from backend.schemas.teacher import TeacherCreateSchema, TeacherOutputSchema
-from backend.services.teacher import TeacherService
+from backend.api.schemas.teacher import TeacherCreateSchema, TeacherOutputSchema
+from backend.api.services.teacher import TeacherService
+from config import config
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 
@@ -21,10 +19,9 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 )
 async def create(
         schemas: TeacherCreateSchema,
-        db: AsyncSession = Depends(get_session_yield),
-        teacher_service: TeacherService = Depends(),
+        teacher_service: TeacherService = Depends(TeacherService.get_service),
 ):
-    return await teacher_service.create(db=db, schemas=schemas)
+    return await teacher_service.create(schemas=schemas)
 
 
 @router.get(
@@ -36,10 +33,9 @@ async def create(
 )
 async def get_all(
         lang: str = "ru",
-        db: AsyncSession = Depends(get_session_yield),
-        teacher_service: TeacherService = Depends(),
+        teacher_service: TeacherService = Depends(TeacherService.get_service),
 ):
-    return await teacher_service.get_all(db, lang)
+    return await teacher_service.get_all(lang)
 
 
 @router.get(
@@ -52,10 +48,9 @@ async def get_all(
 async def get_by_name(
         name: str,
         lang: str = "ru",
-        db: AsyncSession = Depends(get_session_yield),
-        teacher_service: TeacherService = Depends(),
+        teacher_service: TeacherService = Depends(TeacherService.get_service),
 ):
-    return await teacher_service.get_by_name(db, name=name, lang=lang)
+    return await teacher_service.get_by_name(name=name, lang=lang)
 
 
 @router.put(
@@ -68,10 +63,9 @@ async def get_by_name(
 async def update(
         schemas: TeacherCreateSchema,
         guid: UUID4,
-        db: AsyncSession = Depends(get_session_yield),
-        teacher_service: TeacherService = Depends(),
+        teacher_service: TeacherService = Depends(TeacherService.get_service),
 ):
-    return await teacher_service.update_by_id(db, guid, schemas)
+    return await teacher_service.update(guid, schemas)
 
 
 @router.put(
@@ -83,7 +77,6 @@ async def update(
 )
 async def update(
         schemas: TeacherCreateSchema,
-        db: AsyncSession = Depends(get_session_yield),
-        teacher_service: TeacherService = Depends(),
+        teacher_service: TeacherService = Depends(TeacherService.get_service),
 ):
     return await teacher_service.update(db, schemas)

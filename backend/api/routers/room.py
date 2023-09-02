@@ -1,15 +1,13 @@
+import datetime
 from typing import Annotated, Union
 
-from fastapi import APIRouter, Depends, Path, Query
-from fastapi_filter import FilterDepends
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, Query
 from starlette import status
 
-from backend.config import config
-from backend.database.connection import get_session_yield
-from backend.filters.room import RoomFilter
-from backend.schemas.room import RoomCreateSchema, RoomOutputSchema
-from backend.services.room import RoomService
+from backend.api.filters.room import RoomFilter
+from backend.api.schemas.room import RoomCreateSchema, RoomOutputSchema
+from backend.api.services.room import RoomService
+from config import config
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 
@@ -24,10 +22,9 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 )
 async def create(
         schemas: RoomCreateSchema,
-        db: AsyncSession = Depends(get_session_yield),
-        room_service: RoomService = Depends()
+        room_service: RoomService = Depends(RoomService.get_service)
 ):
-    return await room_service.create(db=db, schemas=schemas)
+    return await room_service.create(schemas=schemas)
 
 
 @router.get(
@@ -39,8 +36,10 @@ async def create(
 )
 async def get_empty(
         corps: Annotated[Union[list[str], None], Query(description="Корпусы, в которых находятся аудитории")] = None,
-        room_filter: RoomFilter = FilterDepends(RoomFilter),
-        db: AsyncSession = Depends(get_session_yield),
-        room_service: RoomService = Depends()
+        time_start: datetime.time = Query(..., description="Начало отрезка времени, в котором аудитория свободна"),
+        time_end: datetime.time = Query(..., description="Конец отрезка времени, в котором аудитория свободна"),
+        date_: datetime.date = Query(..., description="Дата, когда аудитория свободна"),
+        room_service: RoomService = Depends(RoomService.get_service)
 ):
-    return await room_service.get_empty(db, room_filter, corps)
+    room_filter = RoomFilter(time_start=time_start, time_end=time_end, date_=date_)
+    return await room_service.get_empty(room_filter, corps)

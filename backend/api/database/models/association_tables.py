@@ -1,9 +1,7 @@
-from sqlalchemy import Column, ForeignKey, String, insert
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy.schema import Table
 
-from backend.database.connection import Base
+from backend.api.database.connection import Base
 
 AT_lesson_group = Table(
     "AT_lesson_group",

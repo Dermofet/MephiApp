@@ -1,13 +1,9 @@
-import datetime
-
-from fastapi import APIRouter, Depends, Path
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends
 from starlette import status
 
-from backend.config import config
-from backend.database.connection import get_session_yield
-from backend.schemas.start_semester import StartSemesterCreateSchema, StartSemesterOutputSchema
-from backend.services.start_semester import StartSemesterService
+from backend.api.schemas.start_semester import StartSemesterCreateSchema, StartSemesterOutputSchema
+from backend.api.services.start_semester import StartSemesterService
+from config import config
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 
@@ -22,10 +18,9 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 )
 async def create(
         schemas: StartSemesterCreateSchema,
-        db: AsyncSession = Depends(get_session_yield),
-        start_semester_service: StartSemesterService = Depends()
+        start_semester_service: StartSemesterService = Depends(StartSemesterService.get_service)
 ):
-    return await start_semester_service.create(db=db, schemas=schemas)
+    return await start_semester_service.create(schemas=schemas)
 
 
 @router.get(
@@ -36,10 +31,9 @@ async def create(
     summary="Получить дату",
 )
 async def get(
-        db: AsyncSession = Depends(get_session_yield),
-        start_semester_service: StartSemesterService = Depends()
+        start_semester_service: StartSemesterService = Depends(StartSemesterService.get_service)
 ):
-    return await start_semester_service.get(db)
+    return await start_semester_service.get()
 
 
 @router.put(
@@ -51,7 +45,6 @@ async def get(
 )
 async def update(
         schema: StartSemesterCreateSchema,
-        db: AsyncSession = Depends(get_session_yield),
-        start_semester_service: StartSemesterService = Depends()
+        start_semester_service: StartSemesterService = Depends(StartSemesterService.get_service)
 ):
-    return await start_semester_service.update(db, schema)
+    return await start_semester_service.update(schema)

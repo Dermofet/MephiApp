@@ -1,51 +1,49 @@
-import time
+from typing import Dict, List
 
 from fastapi import HTTPException, Response
 from pydantic import UUID4
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.repositories.corps import CorpsRepository
-from backend.schemas.corps import CorpsCreateSchema, CorpsOutputSchema, CorpsSchema
+from backend.api.schemas.corps import CorpsCreateSchema, CorpsOutputSchema, CorpsSchema
+from backend.api.services.base_servise import BaseService
 
 
-class CorpsService:
-    @staticmethod
-    async def create(db: AsyncSession, schemas: CorpsCreateSchema) -> CorpsOutputSchema:
-        corps = await CorpsRepository.get_by_name(db, schemas.name)
+class CorpsService(BaseService):
+    async def create(self, schemas: CorpsCreateSchema) -> CorpsOutputSchema:
+        corps = await self.facade.get_by_name_corps(schemas.name)
         if corps is not None:
             raise HTTPException(409, "Корпус уже существует")
-        else:
-            corps = await CorpsRepository.create(db, schemas)
-        return CorpsOutputSchema(**CorpsSchema.from_orm(corps).dict())
 
-    @staticmethod
-    async def get(db: AsyncSession, guid: UUID4) -> CorpsOutputSchema:
-        corps = await CorpsRepository.get_by_id(db, guid)
+        corps = await self.facade.create_corps(schemas)
+        await self.facade.commit()
+
+        return CorpsOutputSchema(**CorpsSchema.model_validate(corps).model_dump())
+    
+    async def get(self, guid: UUID4) -> CorpsOutputSchema:
+        corps = await self.facade.get_by_id_corps(guid)
         if corps is None:
             raise HTTPException(404, "Корпус не найден")
-        return CorpsOutputSchema(**CorpsSchema.from_orm(corps).dict())
-
-    @staticmethod
-    async def get_by_name(db: AsyncSession, name: str) -> CorpsOutputSchema:
-        corps = await CorpsRepository.get_by_name(db, name)
+        return CorpsOutputSchema(**CorpsSchema.model_validate(corps).model_dump())
+    
+    async def get_by_name(self, name: str) -> CorpsOutputSchema:
+        corps = await self.facade.get_by_name_corps(name)
         if corps is None:
             raise HTTPException(404, "Корпус не найден")
-        return CorpsOutputSchema(**CorpsSchema.from_orm(corps).dict())
-
-    @staticmethod
-    async def get_all(db: AsyncSession) -> dict[str, list[str]]:
-        corps = await CorpsRepository.get_all(db)
+        return CorpsOutputSchema(**CorpsSchema.model_validate(corps).model_dump())
+    
+    async def get_all(self) -> Dict[str, List[str]]:
+        corps = await self.facade.get_all_corps()
         corps.sort()
         return {"corps": corps}
-
-    @staticmethod
-    async def update(db: AsyncSession, guid: UUID4, schemas: CorpsCreateSchema) -> CorpsOutputSchema:
-        corps = await CorpsRepository.update(db, guid, schemas)
+    
+    async def update(self, guid: UUID4, schemas: CorpsCreateSchema) -> CorpsOutputSchema:
+        corps = await self.facade.update_corps(guid, schemas)
         if corps is None:
             raise HTTPException(404, "Корпус не найден")
-        return CorpsOutputSchema(**CorpsSchema.from_orm(corps).dict())
+        await self.facade.commit()
+        return CorpsOutputSchema(**CorpsSchema.model_validate(corps).model_dump())
 
-    @staticmethod
-    async def delete(db: AsyncSession, guid: UUID4) -> Response(status_code=204):
-        await CorpsRepository.delete(db, guid)
+    async def delete(self, guid: UUID4) -> Response:
+        await self.facade.delete_corps(guid)
+        await self.facade.commit()
+
         return Response(status_code=204)

@@ -1,55 +1,50 @@
-from datetime import date
+from typing import Dict, List
 
 from fastapi import HTTPException, Response
 from pydantic import UUID4
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.filters.room import RoomFilter
-from backend.repositories.corps import CorpsRepository
-from backend.repositories.room import RoomRepository
-from backend.schemas.corps import CorpsCreateSchema
-from backend.schemas.room import RoomCreateSchema, RoomOutputSchema, RoomSchema
+from backend.api.filters.room import RoomFilter
+from backend.api.schemas.room import RoomCreateSchema, RoomOutputSchema, RoomSchema
+from backend.api.services.base_servise import BaseService
 
 
-class RoomService:
-    @staticmethod
-    async def create(db: AsyncSession, schemas: RoomCreateSchema) -> RoomOutputSchema:
-        room = await RoomRepository.get_by_number(db, schemas.number)
+class RoomService(BaseService):
+    async def create(self, schemas: RoomCreateSchema) -> RoomOutputSchema:
+        room = await self.facade.get_by_number_room(schemas.number)
         if room is not None:
             raise HTTPException(409, "Аудитория уже существует")
-        else:
-            corps = await CorpsRepository.get_by_name(db, name=schemas.corps)
-            if corps is None:
-                raise HTTPException(404, "Корпус, в котором находится аудитория, не найден")
-            room = await RoomRepository.create(db, schemas, corps_guid=corps.guid)
-        return RoomOutputSchema(**RoomSchema.from_orm(room).dict())
 
-    @staticmethod
-    async def get(db: AsyncSession, guid: UUID4) -> RoomOutputSchema:
-        room = await RoomRepository.get_by_id(db, guid)
+        corps = await self.facade.get_by_name_corps(name=schemas.corps)
+        if corps is None:
+            raise HTTPException(404, "Корпус, в котором находится аудитория, не найден")
+
+        room = await self.facade.create_room(schemas, corps_guid=corps.guid)
+        await self.facade.commit()
+
+        return RoomOutputSchema(**RoomSchema.model_validate(room).model_dump())
+    
+    async def get_by_id(self, guid: UUID4) -> RoomOutputSchema:
+        room = await self.facade.get_by_id_room(guid)
         if room is None:
             raise HTTPException(404, "Аудитория не найдена")
-        return RoomOutputSchema(**RoomSchema.from_orm(room).dict())
+        return RoomOutputSchema(**RoomSchema.model_validate(room).model_dump())
 
-    @staticmethod
-    async def get_by_name(db: AsyncSession, name: str) -> RoomOutputSchema:
-        room = await RoomRepository.get_by_name(db, name)
+    async def get_by_name(self, name: str) -> RoomOutputSchema:
+        room = await self.facade.get_by_number_room(name)
         if room is None:
             raise HTTPException(404, "Аудитория не найдена")
-        return RoomOutputSchema(**RoomSchema.from_orm(room).dict())
-
-    @staticmethod
-    async def get_all(db: AsyncSession) -> list[str]:
-        rooms = await RoomRepository.get_all(db)
+        return RoomOutputSchema(**RoomSchema.model_validate(room).model_dump())
+    
+    async def get_all(self) -> list[str]:
+        rooms = await self.facade.get_all_room()
         if not rooms:
             raise HTTPException(404, "Аудитории не найдены")
-        return [RoomOutputSchema(**RoomSchema.from_orm(room).dict()) for room in rooms]
-
-    @staticmethod
-    async def get_empty(db: AsyncSession, room_filter: RoomFilter, corps: list[str]) -> dict[str, list[dict]]:
+        return [RoomOutputSchema(**RoomSchema.model_validate(room).model_dump()) for room in rooms]
+    
+    async def get_empty(self, room_filter: RoomFilter, corps: list[str]) -> Dict[str, List[Dict]]:
         if not corps:
             raise HTTPException(422, "Не было выбрано ни одного корпуса")
-        rooms = await RoomRepository.get_empty(db, room_filter, corps)
+        rooms = await self.facade.get_empty_room(room_filter, corps)
         if rooms is None:
             raise HTTPException(404, "Аудитории не найдены")
         return {"rooms": [{"name": room[0],
@@ -58,14 +53,17 @@ class RoomService:
                            "corps": room[3],
                            "floor": None} for room in rooms]}
 
-    @staticmethod
-    async def update(db: AsyncSession, guid: UUID4, schemas: RoomCreateSchema) -> RoomOutputSchema:
-        room = await RoomRepository.update(db, guid, schemas)
+    async def update(self, guid: UUID4, schemas: RoomCreateSchema) -> RoomOutputSchema:
+        room = await self.facade.update_room(guid, schemas)
         if room is None:
             raise HTTPException(404, "Аудитория не найдена")
-        return RoomOutputSchema(**RoomSchema.from_orm(room).dict())
 
-    @staticmethod
-    async def delete(db: AsyncSession, guid: UUID4) -> Response(status_code=204):
-        await RoomRepository.delete(db, guid)
+        await self.facade.commit()
+
+        return RoomOutputSchema(**RoomSchema.model_validate(room).model_dump())
+
+    async def delete(self, guid: UUID4) -> Response(status_code=204):
+        await self.facade.delete_room(guid)
+        await self.facade.commit()
+
         return Response(status_code=204)

@@ -1,8 +1,8 @@
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, Field
+from pydantic import ConfigDict, UUID4, BaseModel, Field
 
-from backend.database.models.academic import AcademicModel
+from backend.api.database.models.academic import AcademicModel
 
 
 class AcademicBaseSchema(BaseModel):
@@ -19,9 +19,7 @@ class AcademicOutputSchema(AcademicBaseSchema):
 
 class AcademicSchema(AcademicBaseSchema):
     guid: Optional[UUID4] = Field(description="ID")
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
     def clone(self):
         return AcademicSchema(

@@ -1,54 +1,57 @@
+from typing import Dict, List
+
 from fastapi import HTTPException, Response
 from pydantic import UUID4
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.repositories.academic import AcademicRepository
-from backend.repositories.group import GroupRepository
-from backend.schemas.academic import AcademicCreateSchema
-from backend.schemas.group import GroupCreateSchema, GroupOutputSchema, GroupSchema
+from backend.api.schemas.group import GroupCreateSchema, GroupOutputSchema, GroupSchema
+from backend.api.services.base_servise import BaseService
 
 
-class GroupService:
-    @staticmethod
-    async def create(db: AsyncSession, schemas: GroupCreateSchema) -> GroupOutputSchema:
-        group = await GroupRepository.get_by_name(db, schemas.name)
+class GroupService(BaseService):
+    async def create(self, schemas: GroupCreateSchema) -> GroupOutputSchema:
+        group = await self.facade.get_by_name_group(schemas.name)
         if group is not None:
             raise HTTPException(409, "Группа уже существует")
-        else:
-            academic = await AcademicRepository.get_by_name(db, name=schemas.academic)
-            if academic is None:
-                raise HTTPException(408, "Ученого звание не существует")
-            group = await GroupRepository.create(db, schemas, academic_guid=academic.guid)
-        return GroupOutputSchema(**GroupSchema.from_orm(group).dict())
 
-    @staticmethod
-    async def get(db: AsyncSession, guid: UUID4) -> GroupOutputSchema:
-        group = await GroupRepository.get_by_id(db, guid)
+        academic = await self.facade.get_by_name_academic(name=schemas.academic)
+        if academic is None:
+            raise HTTPException(408, "Ученого звание не существует")
+
+        group = await self.facade.create_group(schemas, academic_guid=academic.guid)
+        await self.facade.commit()
+
+        return GroupOutputSchema(**GroupSchema.model_validate(group).model_dump())
+
+    async def get(self, guid: UUID4) -> GroupOutputSchema:
+        group = await self.facade.get_by_id_group(guid)
         if group is None:
             raise HTTPException(404, "Группа не найдена")
-        return GroupOutputSchema(**GroupSchema.from_orm(group).dict())
+        return GroupOutputSchema(**GroupSchema.model_validate(group).model_dump())
 
-    @staticmethod
-    async def get_all(db: AsyncSession) -> dict[str, list[str]]:
-        groups = await GroupRepository.get_all(db)
+    
+    async def get_all(self) -> Dict[str, List[str]]:
+        groups = await self.facade.get_all_group()
         groups.sort()
         return {"groups": groups}
 
-    @staticmethod
-    async def get_by_name(db: AsyncSession, name: str) -> GroupOutputSchema:
-        group = await GroupRepository.get_by_name(db, name)
+    
+    async def get_by_name(self, name: str) -> GroupOutputSchema:
+        group = await self.facade.get_by_name_group(name)
         if group is None:
             raise HTTPException(404, "Группа не найдена")
-        return GroupOutputSchema(**GroupSchema.from_orm(group).dict())
+        return GroupOutputSchema(**GroupSchema.model_validate(group).model_dump())
 
-    @staticmethod
-    async def update(db: AsyncSession, guid: UUID4, schemas: GroupCreateSchema) -> GroupOutputSchema:
-        group = await GroupRepository.update(db, guid, schemas)
+    
+    async def update(self, guid: UUID4, schemas: GroupCreateSchema) -> GroupOutputSchema:
+        group = await self.facade.update_group(guid, schemas)
         if group is None:
             raise HTTPException(404, "Группа не найдена")
-        return GroupOutputSchema(**GroupSchema.from_orm(group).dict())
+        await self.facade.commit()
+        return GroupOutputSchema(**GroupSchema.model_validate(group).model_dump())
 
-    @staticmethod
-    async def delete(db: AsyncSession, guid: UUID4) -> Response(status_code=204):
-        await GroupRepository.delete(db, guid)
+    
+    async def delete(self, guid: UUID4) -> Response:
+        await self.facade.delete_group(guid)
+        await self.facade.commit()
+
         return Response(status_code=204)

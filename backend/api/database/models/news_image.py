@@ -1,26 +1,19 @@
 import uuid
+from typing import Optional
 
-from sqlalchemy import UUID, Column, ForeignKey, String, Text
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey, Text
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.database.connection import Base
+from backend.api.database.connection import Base
 
 
 class NewsImageModel(Base):
     __tablename__ = "news_image"
-    __table_args__ = {'extend_existing': True}
 
-    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
-    url = Column(String, nullable=True)
-    text = Column(Text, nullable=True)
-    news_guid = Column(UUID(as_uuid=True), ForeignKey("news.guid"))
+    guid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
+    url: Mapped[Optional[str]]
+    text: Mapped[Optional[str]] = mapped_column(Text)
+    news_guid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("news.guid"))
 
-    news = relationship("NewsModel", back_populates="imgs", lazy="joined")
-
-    def __hash__(self):
-        return hash(str(self.url) + str(self.text))
-
-    def eq(self, other):
-        if isinstance(other, NewsImageModel):
-            return self.url == other.url and self.text == other.text
-        return False
+    news: Mapped["NewsModel"] = relationship("NewsModel", back_populates="imgs", lazy="joined")

@@ -1,17 +1,15 @@
 import uuid
 
-from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.database.connection import Base
+from backend.api.database.connection import Base
 
 
 class AcademicModel(Base):
     __tablename__ = "academics"
-    __table_args__ = {'extend_existing': True}
 
-    guid = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
-    name = Column(String(100), unique=True)
+    guid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
+    name: Mapped[str] = mapped_column(unique=True)
 
-    groups = relationship("GroupModel", back_populates="academic", lazy='joined')
+    groups: Mapped["GroupModel"] = relationship("GroupModel", back_populates="academic", lazy='joined')

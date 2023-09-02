@@ -3,17 +3,14 @@ from copy import deepcopy
 from datetime import date, time
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, Field, ValidationError, validator
+from pydantic import field_validator, ConfigDict, UUID4, BaseModel, Field, ValidationError
 
-from backend.database.models.lesson import LessonModel
-from backend.database.models.lesson_translate import LessonTranslateModel
-from backend.schemas.group import GroupOutputSchema, GroupSchema
-from backend.schemas.lesson_translate import (
-    LessonTranslateOutputSchema,
-    LessonTranslateSchema,
-)
-from backend.schemas.room import RoomOutputSchema, RoomSchema
-from backend.schemas.teacher import TeacherOutputSchema, TeacherSchema
+from backend.api.database.models.lesson import LessonModel
+from backend.api.database.models.lesson_translate import LessonTranslateModel
+from backend.api.schemas.group import GroupOutputSchema, GroupSchema
+from backend.api.schemas.lesson_translate import LessonTranslateOutputSchema, LessonTranslateSchema
+from backend.api.schemas.room import RoomOutputSchema, RoomSchema
+from backend.api.schemas.teacher import TeacherOutputSchema, TeacherSchema
 
 
 class LessonBaseSchema(BaseModel):
@@ -25,7 +22,8 @@ class LessonBaseSchema(BaseModel):
     date_start: Optional[date] = Field(description="Дата начала занятия")
     date_end: Optional[date] = Field(description="Дата конца занятия")
 
-    @validator("date_start", pre=True)
+    @field_validator("date_start", mode="before")
+    @classmethod
     def change_date_start(cls, value):
         if isinstance(value, str):
             date_ = value.split('.')
@@ -33,7 +31,8 @@ class LessonBaseSchema(BaseModel):
             return "-".join(date_)
         return None
 
-    @validator("date_end", pre=True)
+    @field_validator("date_end", mode="before")
+    @classmethod
     def change_date_end(cls, value):
         if isinstance(value, str):
             date_ = value.split('.')
@@ -53,7 +52,8 @@ class LessonCreateSchema(LessonBaseSchema):
     teacher_name: str = Field(description="Имя преподавателя")
     lang: str = Field(description="Язык (для перевода)")
 
-    @validator("teacher_name", pre=True)
+    @field_validator("teacher_name", mode="before")
+    @classmethod
     def none_teacher(cls, value):
         if isinstance(value, type(None)):
             return "None"
@@ -75,7 +75,8 @@ class LessonOutputSchema(LessonBaseSchema):
     teachers: list[TeacherOutputSchema] = Field(description="Список преподавателей, которые находятся на занятии")
     rooms: list[RoomOutputSchema] = Field(description="Список аудиторий, в которой проводится занятие")
 
-    @validator("weeks", pre=True)
+    @field_validator("weeks", mode="before")
+    @classmethod
     def change_weeks(cls, value):
         if isinstance(value, int):
             if value == 0:
@@ -172,7 +173,8 @@ class LessonSchema(LessonBaseSchema):
         return hash(str(self.time_start) + str(self.time_end) + str(self.dot) + str(self.weeks) + str(self.date_start)
                     + str(self.date_end) + str(self.day) + "".join(self_rooms) + self_trans)
 
-    @validator("trans", pre=True)
+    @field_validator("trans", mode="before")
+    @classmethod
     def check_trans(cls, trans):
         if not isinstance(trans, list):
             raise ValueError(f"trans - {type(trans)}, должен быть list")
@@ -183,7 +185,8 @@ class LessonSchema(LessonBaseSchema):
                 raise ValueError(f"trans содержит {type(tr)}, "
                                  f"должен быть LessonTranslateModel или LessonTranslateSchema.")
 
-    @validator("time_start", pre=True)
+    @field_validator("time_start", mode="before")
+    @classmethod
     def change_time_start(cls, value):
         if isinstance(value, time):
             return value.strftime('%H:%M')
@@ -194,7 +197,8 @@ class LessonSchema(LessonBaseSchema):
         else:
             ValueError(f"time_start - неверный тип данных. Ожидалось time, было получено {type(value)}")
 
-    @validator("time_end", pre=True)
+    @field_validator("time_end", mode="before")
+    @classmethod
     def change_time_end(cls, value):
         if isinstance(value, time):
             return value.strftime('%H:%M')
@@ -205,7 +209,8 @@ class LessonSchema(LessonBaseSchema):
         else:
             ValueError(f"time_end - неверный тип данных. Ожидалось time, было получено {type(value)}")
 
-    @validator("date_start", pre=True)
+    @field_validator("date_start", mode="before")
+    @classmethod
     def change_date_start(cls, value):
         if isinstance(value, date):
             return value.strftime('%m.%d.%Y')
@@ -216,7 +221,8 @@ class LessonSchema(LessonBaseSchema):
         else:
             ValueError(f"date_start - неверный тип данных. Ожидалось date, было получено {type(value)}")
 
-    @validator("date_end", pre=True)
+    @field_validator("date_end", mode="before")
+    @classmethod
     def change_date_end(cls, value):
         if isinstance(value, date):
             return value.strftime('%m.%d.%Y')
@@ -226,9 +232,7 @@ class LessonSchema(LessonBaseSchema):
             return None
         else:
             ValueError(f"date_end - неверный тип данных. Ожидалось date, было получено {type(value)}")
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class LessonsByBaseSchema(BaseModel):

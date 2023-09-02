@@ -1,5 +1,6 @@
 import asyncio
 import json
+from os import name
 from typing import List
 
 import bs4
@@ -25,7 +26,11 @@ class TeachersParser(BaseParser):
         self.url = url
 
     async def parse(self):
+        self.logger.info("Start parsing teachers")
+
         await self.parse_teachers_fullname()
+
+        self.logger.info("Teachers were parsed successfully")
 
     async def parse_teachers_fullname(self):
         categories = await self.get_categories()
@@ -34,23 +39,39 @@ class TeachersParser(BaseParser):
 
     async def get_categories(self):
         soup = await self.soup(self.url)
+        
+        if soup.find("ul", class_="pagination") is None:
+            return []
+        
         return [
             self.base_url(self.url) + item.find("a")['href']
             for item in soup.find("ul", class_="pagination").findAll("li")
         ]
 
-    async def get_teachers(self, categories_urls: HttpUrl):
-        tasks = [
+    async def get_teachers(self, categories_urls: List[HttpUrl]):
+        tasks = []
+        tasks.extend(
             self.get_teachers_fullname_from_category(category_url)
             for category_url in categories_urls
-        ]
+        )
+        
+        self.logger.debug(f"Total teachers: {len(tasks)}")
         results = await asyncio.gather(*tasks)
-        return [TeacherFullnameLoading(**item) for item in results]
+
+        res = []
+        for item in results:
+            res.extend(item)
+        return res
 
     async def get_teachers_fullname_from_category(self, category_url: HttpUrl):
         soup = await self.soup(category_url)
-        return [TeacherFullnameLoading(fullname=item.text, lang="ru") for item in soup.findAll("a", class_="list-group-item")]
+        res = []
+        for item in soup.findAll("a", class_="list-group-item"):
+            name_parts = item.text.split()
+            name = f"{name_parts[0]} {'.'.join([i[0] for i in name_parts[1:]])}."
+            res.append(TeacherFullnameLoading(fullname=item.text, name=name, lang="ru"))
+        return res
 
     def set_info_to_db(self, teachers: List[TeacherFullnameLoading]):
         for teacher in teachers:
-            self.db.hset("teachers", hash(teacher), teacher.model_dump())
+            self.db.hset(f"teachers:{hash(teacher)}", key="teacher", value=teacher.model_dump_redis())
