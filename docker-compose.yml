@@ -90,9 +90,9 @@ services:
 
   redis:
     container_name: redis
-    image: redis:7.2-rc3
+    image: redis:7.2
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:6379"
     environment:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}

@@ -22,12 +22,12 @@ stop() {
 delete() {
   if [ -z "$2" ]; then
     docker compose down
-    exit
+    return
   fi
 
   if [ "$2" = "all" ]; then
     docker compose down -v
-    exit
+    return
   fi
 
   echo "Unexpected parameter"
@@ -37,7 +37,7 @@ create_migration() {
   if [ -z "$3" ]; then
     echo "Unexpected parameter"
     menu
-    exit
+    return
   fi
 
   docker compose exec backend alembic -c backend/alembic.ini revision --autogenerate -m "$3"
@@ -55,7 +55,7 @@ alembic() {
   if [ -z "$2" ]; then
     echo "Unexpected parameter"
     menu
-    exit
+    return
   fi
 
   if [ "$2" = "create_migration" ]; then
@@ -88,7 +88,7 @@ menu() {
 command="$1"
 if [ -z "$command" ]; then
   menu
-  exit 0
+  return 0
 else
   $command "$@"
 fi

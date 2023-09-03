@@ -33,9 +33,8 @@ class NewsParser(BaseParser):
     async def parse_all_news(self):
         self.logger.info("Start parsing news")
 
-        tags = await self.__parse_tags()
         tasks = []
-        for tag in tags:
+        for tag in await self.__parse_tags():
             page_count = await self.__parse_count_pages(f'{self.url}?category={tag[1]}')
 
             self.logger.info(f"Tag '{tag[0]}' contains {page_count} pages")
@@ -48,7 +47,6 @@ class NewsParser(BaseParser):
                 for i in range(page_count)
             )
         news = await self.__execute_tasks(tasks)
-        self.__set_info_to_db(news)
 
         self.logger.info("All news parsed and set in the db")
 
@@ -60,6 +58,7 @@ class NewsParser(BaseParser):
             self.logger.debug(f"Parsing chunk {i + 1} out of {len(chunks)}")
             news = await asyncio.gather(*chunk)
             res.extend(news)
+            self.__set_info_to_db(news)
 
         return res
 

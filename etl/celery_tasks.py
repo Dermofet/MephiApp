@@ -65,7 +65,7 @@ async def etl_all_news():
         redis_host=config.REDIS_HOST,
         redis_port=config.REDIS_PORT,
         db=config.REDIS_DB,
-        chunks=100
+        chunks=50   
     )
     await e.parse_all_news()
 
