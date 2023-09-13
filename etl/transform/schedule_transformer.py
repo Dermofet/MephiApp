@@ -1,6 +1,7 @@
 from re import S
 from etl.schemas.academic import AcademicLoading
 from etl.schemas.corps import CorpsLoading
+from etl.schemas.group import GroupLoading
 from etl.schemas.lesson import LessonExtracting, LessonLoading
 from etl.schemas.room import RoomLoading
 from etl.schemas.teacher import TeacherLoading
@@ -85,14 +86,21 @@ class ScheduleTransformer(BaseTransformer):
         self.logger.debug("Transform lessons")
 
         academics = Set()
+        groups = Set()
         lessons_loading = {}
         lessons_extracting = Set()
 
         for key in self.db.scan_iter("lessons:*"):
             lesson: LessonExtracting = LessonExtracting.model_validate_redis(model=self.db.hget(name=key.decode("utf-8"), key="lesson"))
             await academics.add(AcademicLoading(name=lesson.academic))
+            await groups.add(GroupLoading(
+                    name=lesson.group,
+                    course=int(lesson.course),
+                    academic=lesson.academic,
+                )
+            )
 
-            if lesson not in lessons_extracting:
+            if hash(lesson) not in lessons_extracting:
                 await lessons_extracting.add(hash(lesson))
                 lessons_loading[hash(lesson)] = LessonLoading(
                     time_start=lesson.time_start,
@@ -124,6 +132,9 @@ class ScheduleTransformer(BaseTransformer):
 
         async for academic in academics:
             self.db.hset(name=f"academics:{hash(academic)}", key="academic", value=academic.model_dump_redis())
+
+        async for group in groups:
+            self.db.hset(name=f"groups:{hash(group)}", key="group", value=group.model_dump_redis())
 
         for lesson in lessons_loading.values():
             self.db.hset(name=f"lessons:{hash(lesson)}", key="lesson", value=lesson.model_dump_redis())

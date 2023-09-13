@@ -1,3 +1,4 @@
+import asyncio
 from dataclasses import dataclass
 from typing import Dict
 from urllib.parse import urlparse, quote, urlencode
@@ -72,6 +73,7 @@ class BaseParser:
 
             async with session.get(url, cookies={'_session_id': self.auth_data.session_id}) as response:
                 if response.status != 200:
+                    await asyncio.sleep(5)
                     await self.__auth(session)
 
                 html = await response.text()
@@ -85,6 +87,7 @@ class BaseParser:
             
             async with session.get(url, cookies={'_session_id': self.auth_data.session_id}) as response:
                 if response.status != 200:
+                    await asyncio.sleep(5)
                     await self.__auth(session)
                 
                 with open(filepath, 'wb') as file:
@@ -141,19 +144,25 @@ class BaseParser:
                 return form_data, cookies
 
     async def __get_tgt(self, session: aiohttp.ClientSession):
-        body, cookies = await self.__get_login_data(self.auth_data.login, self.auth_data.password)
-        async with session.post(
-                self.auth_url, 
-                data=body,
-                cookies=cookies,
-                allow_redirects=False,
-        ) as response:
+        while True:
+            body, cookies = await self.__get_login_data(self.auth_data.login, self.auth_data.password)
+            async with session.post(
+                    self.auth_url, 
+                    data=body,
+                    cookies=cookies,
+                    allow_redirects=False,
+            ) as response:
 
-            if response.status != 303:
-                raise Exception(f'Response status code is {response.status}')
+                if response.status == 503:
+                    await asyncio.sleep(5)
+                    continue
 
-            self.auth_data.tgt = response.headers.getall('set-cookie')[1].split('=')[1].split(';')[0]
-            print(f'tgt: {self.auth_data.tgt}')
+                if response.status != 303:
+                    raise Exception(f'Response status code is {response.status}')
+
+                self.auth_data.tgt = response.headers.getall('set-cookie')[1].split('=')[1].split(';')[0]
+                print(f'tgt: {self.auth_data.tgt}')
+                break
 
     async def __get_session_id(self, session: aiohttp.ClientSession):
         async with session.get(

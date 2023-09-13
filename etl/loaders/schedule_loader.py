@@ -2,6 +2,7 @@ import sqlalchemy
 from etl.loaders.base_loader import BaseLoader
 from etl.schemas.academic import AcademicLoading
 from etl.schemas.corps import CorpsLoading
+from etl.schemas.group import GroupLoading
 from etl.schemas.lesson import LessonLoading
 from etl.schemas.room import RoomLoading
 from etl.schemas.teacher import TeacherLoading
@@ -24,6 +25,7 @@ class ScheduleLoader(BaseLoader):
 
         try:
             await self.__load_academics()
+            await self.__load_groups()
             await self.__load_corps()
             await self.__load_rooms()
             await self.__load_teachers()
@@ -99,3 +101,16 @@ class ScheduleLoader(BaseLoader):
             self.redis_db.delete(key)
 
         self.logger.debug("Lessons are loaded")
+
+    async def __load_groups(self):
+        groups = [
+            GroupLoading.model_validate_redis(self.redis_db.hget(name=key.decode("utf-8"), key="group"))
+            for key in self.redis_db.scan_iter("groups:*")
+        ]
+
+        await self.facade_db.bulk_insert_group(groups)
+
+        for key in self.redis_db.scan_iter("groups:*"):
+            self.redis_db.delete(key)
+
+        self.logger.debug("Groups are loaded")

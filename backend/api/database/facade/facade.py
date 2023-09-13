@@ -76,6 +76,10 @@ class FacadeDB(IFacadeDB, ABC):
     async def get_by_name_academic(self, name: str) -> AcademicModel:
         academic = await self.session.execute(select(AcademicModel).where(AcademicModel.name == name).limit(1))
         return academic.scalar()
+    
+    async def get_all_academics(self) -> List[AcademicModel]:
+        academic = await self.session.execute(select(AcademicModel))
+        return academic.scalars().all()
 
     async def update_academic(self, guid: UUID4, data: AcademicCreateSchema) -> AcademicModel:
         academic = await self.get_by_id_academic(guid)
@@ -141,7 +145,16 @@ class FacadeDB(IFacadeDB, ABC):
         return group
 
     async def bulk_insert_group(self, data: List[GroupCreateSchema]) -> None:
-        insert_data = [GroupModel(**group.model_dump()) for group in data]
+        academics = {academic.name: academic.guid for academic in await self.get_all_academics()}
+
+        insert_data = [
+            GroupModel(
+                name=group.name,
+                course=group.course,
+                academic_guid=academics[group.academic]
+            ) 
+            for group in data
+        ]
         self.session.add_all(insert_data)
         await self.session.flush()
 
@@ -232,10 +245,16 @@ class FacadeDB(IFacadeDB, ABC):
                 weeks=lesson.weeks,
                 day=lesson.day,
                 date_start=lesson.date_start,
-                date_end=lesson.date_end
+                date_end=lesson.date_end,
             )
-
-            # insert(LessonModel).values(**db_lesson.model_dump())
+            db_lesson.trans.add(
+                LessonTranslateModel(
+                    name=lesson.name, 
+                    subgroup=lesson.subgroup, 
+                    type=lesson.type, 
+                    lang=lesson.lang,
+                )
+            )
 
             self.session.add(db_lesson)
 
@@ -248,7 +267,6 @@ class FacadeDB(IFacadeDB, ABC):
 
             db_lessons.append(db_lesson)
 
-        # self.session.add_all(db_lessons)
         await self.session.flush()
 
     async def get_by_id_lesson(self, guid: UUID4) -> LessonModel:

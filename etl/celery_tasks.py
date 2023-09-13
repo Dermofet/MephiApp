@@ -56,8 +56,6 @@ async def etl_schedule():
     )
     await t.transform()
 
-    print(config.LOCAL_DB_URI.unicode_string())
-
     l = ScheduleLoader(
         redis_host=config.REDIS_HOST,
         redis_port=config.REDIS_PORT,

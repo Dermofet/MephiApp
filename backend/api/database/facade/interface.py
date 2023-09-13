@@ -59,6 +59,10 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
+    async def get_all_academics(self) -> List[AcademicModel]:
+        ...
+
+    @abstractmethod
     async def get_by_id_academic(self, guid: UUID4) -> AcademicModel:
         ...
 
