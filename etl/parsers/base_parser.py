@@ -13,9 +13,8 @@ from logging_ import Logger
 class AuthData:
     login: str
     password: str
-    headers: Dict[str, str]
-    cookies: Dict[str, str]
-    body: str
+    tgt: str
+    session_id: str
 
 
 class BaseParser:
@@ -28,6 +27,7 @@ class BaseParser:
     db: Redis
 
     auth_url: str
+    auth_service_url: str
 
     def __init__(
         self,
@@ -35,6 +35,7 @@ class BaseParser:
         redis_port: int,
         db: int,
         auth_url: str = None,
+        auth_service_url: str = None,
         login: str = None,
         password: str = None,
         single_connection_client: bool = True,
@@ -45,18 +46,12 @@ class BaseParser:
         self.logger = Logger(is_logged)
 
         self.auth_url = auth_url
-        if self.auth_url is None:
-            self.auth_data = None
-        else:
-            self.auth_data = AuthData(login, password, {}, {}, "")
+        self.auth_service_url = auth_service_url
+        self.auth_data = AuthData(login, password, '', '')
 
     @staticmethod
     async def session(headers: Dict[str, str] = None, cookies: Dict[str, str] = None) -> aiohttp.ClientSession:
-        # filtered_cookies = None
-        # if cookies is not None:
-        #     filtered_cookies = {k: v for k, v in cookies.items() if k.lower() != 'path'}
-        # async with aiohttp.ClientSession(headers=headers, cookies=filtered_cookies) as session:
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(headers=headers, cookies=cookies) as session:
             yield session
 
     async def soup(self, url: str) -> bs4.BeautifulSoup:
@@ -69,43 +64,56 @@ class BaseParser:
     def base_url(url):
         parsed = urlparse(url)
         return f'{parsed.scheme}://{parsed.netloc}'
-    
-    async def login(self):
-        self.auth_data = await self.__get_login_data(self.auth_data.login, self.auth_data.password)
 
     async def soup_with_auth(self, url: str) -> bs4.BeautifulSoup:
-        async for session in self.session(self.auth_data.headers, self.auth_data.cookies):
-            tgt = await self.__auth(session)
-            print(tgt)
-            self.auth_data.cookies['tgt'] = tgt
-            print(self.auth_data.cookies)
+        async for session in self.session():
+            if self.auth_data.session_id == '':
+                await self.__auth(session)
 
-        async for session in self.session(headers=self.auth_data.headers, cookies=self.auth_data.cookies):
-            async with session.get(url) as response:
+            async with session.get(url, cookies={'_session_id': self.auth_data.session_id}) as response:
+                if response.status != 200:
+                    await self.__auth(session)
+
                 html = await response.text()
                 
         return bs4.BeautifulSoup(html, "lxml")
+    
+    async def download_file_with_auth(self, url: str, filepath: str):
+        async for session in self.session():
+            if self.auth_data.session_id == '':
+                await self.__auth(session)
+            
+            async with session.get(url, cookies={'_session_id': self.auth_data.session_id}) as response:
+                if response.status != 200:
+                    await self.__auth(session)
+                
+                with open(filepath, 'wb') as file:
+                    file.write(await response.read())
+    
+    async def __auth(self, session: aiohttp.ClientSession):
+        try:
+            await self.__get_session_id(session)
+        except Exception:
+            await self.__get_tgt(session)
+            await self.__get_session_id(session)
 
     @staticmethod
     def __get_cookies_from_response(response):
         cookies = {}
-        cookie_header = response.headers.get('set-cookie')
-        if cookie_header:
+        if cookie_header := response.headers.get('set-cookie'):
             cookie_values = cookie_header.split(';')
             for cookie_value in cookie_values:
                 key_value = cookie_value.split('=')
                 if len(key_value) == 2:
+                    if key_value[0] == ' path':
+                        continue
+
                     key = key_value[0].strip()
                     value = key_value[1].strip()
                     cookies[key] = value
         return cookies
 
-    @staticmethod
-    def __get_cookie_header(cookies):
-        cookie_list = [f'{key}={value}' for key, value in cookies.items()]
-        return '; '.join(cookie_list)
-
-    async def __get_login_data(self, login, password):
+    async def __get_login_data(self, login: str, password: str):
         async for session in self.session():
 
             # Получение страницы с формой авторизации
@@ -117,6 +125,7 @@ class BaseParser:
                 authenticity_token = document.select_one('input[name="authenticity_token"]')['value']
                 lt = document.select_one('input[name="lt"]')['value']
 
+                form_data = aiohttp.FormData()
                 body_fields = {
                     'utf8': '✓',
                     'authenticity_token': authenticity_token,
@@ -125,40 +134,42 @@ class BaseParser:
                     'password': password,
                     'button': '',
                 }
+                for key, value in body_fields.items():
+                    form_data.add_field(key, value)
 
-                # Вычисление длины тела запроса
-                body = '&'.join([f'{key}={value}' for key, value in body_fields.items()])
-                headers = {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Content-Length': str(len(body)),
-                }
 
-                return AuthData(login, password, headers, cookies, body)
+                return form_data, cookies
 
-    async def __auth(self, session: aiohttp.ClientSession):
-        cookies = self.auth_data.cookies
-        # cookies.pop('path')
-        self.auth_data.headers["Cookie"] = self.__get_cookie_header(cookies)
-        body = urlencode(self.auth_data.body)
-        # print(f'Cookies: {cookies}')
-        print(f'Header: {self.auth_data.headers}')
-        print(f'Body: {body}')
+    async def __get_tgt(self, session: aiohttp.ClientSession):
+        body, cookies = await self.__get_login_data(self.auth_data.login, self.auth_data.password)
         async with session.post(
-            self.auth_url, 
-            data=body, 
-            headers=self.auth_data.headers
+                self.auth_url, 
+                data=body,
+                cookies=cookies,
+                allow_redirects=False,
         ) as response:
-            print(await response.text())
 
-            # Проверка на успешную авторизацию
-            if response.status == 303:
-                set_cookie_header = response.headers.get('set-cookie')
-                tgt_index = set_cookie_header.index('tgt=')
-                session_id_index = set_cookie_header.index(',_mephi_casino_session=')
-                return set_cookie_header[tgt_index:session_id_index]
-
-            if response.status == 200:
-                raise Exception('Your session is expired. Authorize again')
-            else:
+            if response.status != 303:
                 raise Exception(f'Response status code is {response.status}')
+
+            self.auth_data.tgt = response.headers.getall('set-cookie')[1].split('=')[1].split(';')[0]
+            print(f'tgt: {self.auth_data.tgt}')
+
+    async def __get_session_id(self, session: aiohttp.ClientSession):
+        async with session.get(
+                self.auth_service_url,
+                cookies={'tgt': self.auth_data.tgt},
+                allow_redirects=False,
+        ) as response:
+             
+            if response.status != 303:
+                raise Exception(f'Cannot get tgt. Response status code is {response.status}')
+
+            redirect_url = bs4.BeautifulSoup(await response.text(), 'lxml').find('a')['href']
+        
+        async with session.get(redirect_url, allow_redirects=False) as response:
+            if response.status != 302:
+                raise Exception(f'Cannot get session_id. Response status code is {response.status}')
+            self.auth_data.session_id = response.headers.get('set-cookie').split('=')[1].split(';')[0]
+            print(f'session_id: {self.auth_data.session_id}')
 

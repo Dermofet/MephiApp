@@ -1,10 +1,10 @@
 import datetime
 import uuid
-from typing import List, Optional
+from typing import Optional
 
-from sqlalchemy import Boolean, Date, Integer, String, Time
+from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, WriteOnlyMapped
 
 from backend.api.database.connection import Base
 from backend.api.database.models.association_tables import AT_lesson_group, AT_lesson_room, AT_lesson_teacher
@@ -22,27 +22,23 @@ class LessonModel(Base):
     date_end: Mapped[Optional[datetime.date]]
     day: Mapped[str] = mapped_column(String(50))
 
-    trans: Mapped[List["LessonTranslateModel"]] = relationship(
-        "LessonTranslateModel",
+    trans: WriteOnlyMapped["LessonTranslateModel"] = relationship(
         back_populates="lesson",
-        lazy="joined",
+        uselist=True,
     )
-    groups: Mapped[List["GroupModel"]] = relationship(
-        "GroupModel",
+    groups: WriteOnlyMapped["GroupModel"] = relationship(
         back_populates="lessons",
-        lazy="joined",
         secondary=AT_lesson_group,
+        uselist=True,
     )
-    teachers: Mapped[List["TeacherModel"]] = relationship(
-        "TeacherModel",
+    teachers: WriteOnlyMapped["TeacherModel"] = relationship(
         back_populates="lessons",
-        lazy="joined",
         secondary=AT_lesson_teacher,
+        uselist=True,
     )
-    rooms: Mapped[List["RoomModel"]] = relationship(
-        "RoomModel",
+    rooms: WriteOnlyMapped["RoomModel"] = relationship(
         back_populates="lessons",
-        lazy="joined",
         secondary=AT_lesson_room,
+        uselist=True,
     )
 

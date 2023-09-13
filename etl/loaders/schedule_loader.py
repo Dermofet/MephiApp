@@ -1,3 +1,4 @@
+import sqlalchemy
 from etl.loaders.base_loader import BaseLoader
 from etl.schemas.academic import AcademicLoading
 from etl.schemas.corps import CorpsLoading
@@ -27,6 +28,7 @@ class ScheduleLoader(BaseLoader):
             await self.__load_rooms()
             await self.__load_teachers()
             await self.__load_lessons()
+            await self.facade_db.commit()
         except Exception as e:
             self.logger.error(f"Can't loading data: {e}")
             await self.facade_db.rollback()
@@ -36,26 +38,26 @@ class ScheduleLoader(BaseLoader):
     async def __load_academics(self):
         academics = [
             AcademicLoading.model_validate_redis(self.redis_db.hget(name=key.decode("utf-8"), key="academic"))
-            for key in self.redis_db.keys("academics:*")
+            for key in self.redis_db.scan_iter("academics:*")
         ]
 
         await self.facade_db.bulk_insert_academic(academics)
-        await self.facade_db.commit()
 
-        self.redis_db.delete("academics:*")
+        for key in self.redis_db.scan_iter("academics:*"):
+            self.redis_db.delete(key)
 
         self.logger.debug("Academics are loaded")
 
     async def __load_corps(self):
         corps = [
             CorpsLoading.model_validate_redis(self.redis_db.hget(name=key.decode("utf-8"), key="corp"))
-            for key in self.redis_db.keys("corps:*")
+            for key in self.redis_db.scan_iter("corps:*")
         ]
 
         await self.facade_db.bulk_insert_corps(corps)
-        await self.facade_db.commit()
 
-        self.redis_db.delete("corps:*")
+        for key in self.redis_db.scan_iter("corps:*"):
+            self.redis_db.delete(key)
 
         self.logger.debug("Corps are loaded")
 
@@ -66,34 +68,34 @@ class ScheduleLoader(BaseLoader):
         ]
 
         await self.facade_db.bulk_insert_room(rooms)
-        await self.facade_db.commit()
 
-        self.redis_db.delete("rooms:*")
+        for key in self.redis_db.scan_iter("rooms:*"):
+            self.redis_db.delete(key)
 
         self.logger.debug("Rooms are loaded")
 
     async def __load_teachers(self):
         teachers = [
             TeacherLoading.model_validate_redis(self.redis_db.hget(name=key.decode("utf-8"), key="teacher"))
-            for key in self.redis_db.keys("teachers:*")
+            for key in self.redis_db.scan_iter("teachers:*")
         ]
 
         await self.facade_db.bulk_insert_teacher(teachers)
-        await self.facade_db.commit()
 
-        self.redis_db.delete("teachers:*")
+        for key in self.redis_db.scan_iter("teachers:*"):
+            self.redis_db.delete(key)
 
         self.logger.debug("Teachers are loaded")
 
     async def __load_lessons(self):
         lessons = [
             LessonLoading.model_validate_redis(self.redis_db.hget(name=key.decode("utf-8"), key="lesson"))
-            for key in self.redis_db.keys("lessons:*")
+            for key in self.redis_db.scan_iter("lessons:*")
         ]
 
         await self.facade_db.bulk_insert_lesson(lessons)
-        await self.facade_db.commit()
 
-        self.redis_db.delete("lessons:*")
+        for key in self.redis_db.scan_iter("lessons:*"):
+            self.redis_db.delete(key)
 
         self.logger.debug("Lessons are loaded")

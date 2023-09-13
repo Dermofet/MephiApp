@@ -36,6 +36,7 @@ class NewsLoader(BaseLoader):
                 await self.facade_db.bulk_insert_news(news)
                 news = []
 
-        self.redis_db.delete("news:*")
+        for key in self.redis_db.scan_iter("news:*"):
+            self.redis_db.delete(key)
 
         self.logger.debug("News are loaded")

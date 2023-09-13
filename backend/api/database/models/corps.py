@@ -3,7 +3,7 @@ from typing import List
 
 from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, WriteOnlyMapped
 
 from backend.api.database.connection import Base
 
@@ -13,4 +13,4 @@ class CorpsModel(Base):
 
     guid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
     name: Mapped[str] = mapped_column(String(300), unique=True)
-    rooms: Mapped[List["RoomModel"]] = relationship("RoomModel", back_populates="corps", lazy="joined")
+    rooms: WriteOnlyMapped["RoomModel"] = relationship(back_populates="corps", uselist=True)

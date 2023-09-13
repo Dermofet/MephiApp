@@ -16,14 +16,13 @@ async def etl_schedule():
     es = ScheduleParser(
         url=config.MEPHI_SCHEDULE_URL.unicode_string(),
         auth_url=config.MEPHI_AUTH_URL.unicode_string(),
+        auth_service_url=config.MEPHI_AUTH_SERVICE_URL.unicode_string(),
         redis_host=config.REDIS_HOST,
         redis_port=config.REDIS_PORT,
         db=config.REDIS_DB,
         login=config.MEPHI_LOGIN,
         password=config.MEPHI_PASSWORD,
     )
-    es.db.flushdb()
-    await es.login()
     await es.parse()
     
     er = RoomParser(
@@ -31,6 +30,10 @@ async def etl_schedule():
         redis_host=config.REDIS_HOST,
         redis_port=config.REDIS_PORT,
         db=config.REDIS_DB,
+        login=config.MEPHI_LOGIN,
+        password=config.MEPHI_PASSWORD,
+        auth_url=config.MEPHI_AUTH_URL.unicode_string(),
+        auth_service_url=config.MEPHI_AUTH_SERVICE_URL.unicode_string(),
     )
     await er.parse()
     
@@ -39,6 +42,10 @@ async def etl_schedule():
         redis_host=config.REDIS_HOST,
         redis_port=config.REDIS_PORT,
         db=config.REDIS_DB,
+        login=config.MEPHI_LOGIN,
+        password=config.MEPHI_PASSWORD,
+        auth_url=config.MEPHI_AUTH_URL.unicode_string(),
+        auth_service_url=config.MEPHI_AUTH_SERVICE_URL.unicode_string(),
     )
     await et.parse()
 
@@ -48,6 +55,8 @@ async def etl_schedule():
         db=config.REDIS_DB,
     )
     await t.transform()
+
+    print(config.LOCAL_DB_URI.unicode_string())
 
     l = ScheduleLoader(
         redis_host=config.REDIS_HOST,
@@ -85,7 +94,7 @@ async def etl_new_news():
         redis_host=config.REDIS_HOST,
         redis_port=config.REDIS_PORT,
         db=config.REDIS_DB,
-        chunks=1000
+        chunks=50
     )
     await e.parse_new_news()
 
@@ -101,10 +110,14 @@ async def etl_new_news():
 @celery.task
 async def etl_start_semester():
     e = StartSemesterParser(
-        url=config.MEPHI_NEWS_PAGE_URL.unicode_string(),
+        url=config.MEPHI_SCHEDULE_URL.unicode_string(),
         redis_host=config.REDIS_HOST,
         redis_port=config.REDIS_PORT,
         db=config.REDIS_DB,
+        login=config.MEPHI_LOGIN,
+        password=config.MEPHI_PASSWORD,
+        auth_url=config.MEPHI_AUTH_URL.unicode_string(),
+        auth_service_url=config.MEPHI_AUTH_SERVICE_URL.unicode_string(),
     )
     await e.parse()
 

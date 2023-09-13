@@ -5,7 +5,6 @@ import traceback
 from etl.parsers.base_parser import BaseParser
 from etl.schemas.news import NewsLoading
 from etl.schemas.news_img import NewsImageLoading
-# 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
 
 class NewsParser(BaseParser):
     url: str
@@ -98,16 +97,18 @@ class NewsParser(BaseParser):
         if news is None:
             raise TypeError("News is None")
 
-        news_model = NewsLoading(
+        return NewsLoading(
             news_id=news["id"],
             title=news_data["title"],
             preview_url=preview_url if preview_url != "" else None,
             date=news_data["date"],
             text=news["news_text"],
             tag=tag,
-            imgs=[NewsImageLoading(url=img["img"], text=img["text"]) for img in news["news_imgs"]],
+            imgs=[
+                NewsImageLoading(url=img["img"], text=img["text"])
+                for img in news["news_imgs"]
+            ],
         )
-        return news_model
 
     async def __parse_preview(self, preview, tag: str):
         try:

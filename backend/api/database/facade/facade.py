@@ -31,6 +31,7 @@ from backend.api.schemas.news import NewsCreateSchema
 from backend.api.schemas.room import RoomCreateSchema
 from backend.api.schemas.start_semester import StartSemesterCreateSchema
 from backend.api.schemas.teacher import TeacherCreateSchema
+from etl.schemas.lesson import LessonLoading
 
 
 class FacadeDB(IFacadeDB, ABC):
@@ -184,9 +185,9 @@ class FacadeDB(IFacadeDB, ABC):
 
         lesson = await self.set_dependencies(
             lesson=lesson,
-            group=data.group,
-            room=data.room,
-            teacher_name=data.teacher_name
+            groups=[data.group],
+            rooms=[data.room],
+            teachers=[data.teacher_name]
         )
 
         self.session.add(lesson)
@@ -198,25 +199,29 @@ class FacadeDB(IFacadeDB, ABC):
     async def set_dependencies(
             self,
             lesson: LessonModel,
-            group: str,
-            room: str,
-            teacher_name: str
+            groups: List[str],
+            rooms: List[str],
+            teachers: List[str],
     ) -> LessonModel:
-        group = await self.get_by_name_group(group)
-        if group is not None:
-            lesson.groups.append(group)
+        
+        for group in groups:
+            g = await self.get_by_name_group(group)
+            if g is not None:
+                lesson.groups.add(g)
 
-        room = await self.get_by_number_room(room)
-        if room is not None:
-            lesson.rooms.append(room)
+        for room in rooms:
+            r = await self.get_by_number_room(room)
+            if r is not None:
+                lesson.rooms.add(r)
 
-        teacher = await self.get_by_name_teacher(teacher_name)
-        if teacher is not None:
-            lesson.teachers.append(teacher)
+        for teacher in teachers:
+            t = await self.get_by_name_teacher(teacher)
+            if t is not None:
+                lesson.teachers.add(t)
 
         return lesson
 
-    async def bulk_insert_lesson(self, data: List[LessonCreateSchema]) -> None:
+    async def bulk_insert_lesson(self, data: List[LessonLoading]) -> None:
         db_lessons = []
 
         for lesson in data:
@@ -230,16 +235,20 @@ class FacadeDB(IFacadeDB, ABC):
                 date_end=lesson.date_end
             )
 
+            # insert(LessonModel).values(**db_lesson.model_dump())
+
+            self.session.add(db_lesson)
+
             db_lesson = await self.set_dependencies(
                 lesson=db_lesson,
-                group=lesson.group,
-                room=lesson.room,
-                teacher_name=lesson.teacher_name
+                groups=lesson.groups,
+                rooms=lesson.rooms,
+                teachers=lesson.teachers
             )
 
             db_lessons.append(db_lesson)
 
-        self.session.add_all(db_lessons)
+        # self.session.add_all(db_lessons)
         await self.session.flush()
 
     async def get_by_id_lesson(self, guid: UUID4) -> LessonModel:

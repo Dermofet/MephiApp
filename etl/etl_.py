@@ -3,45 +3,37 @@ import sys
 
 from etl import celery_tasks
 
+def event_loop():
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+    yield loop
+
+    if not loop.is_closed:
+        loop.close()
 
 def schedule():
-    loop = asyncio.get_event_loop()
-    try:
+    for loop in event_loop():
         loop.run_until_complete(celery_tasks.etl_schedule())
-    finally:
-        pass
-    loop.close()
 
 
 def start_semester():
-    loop = asyncio.get_event_loop()
-    try:
+    for loop in event_loop():
         loop.run_until_complete(celery_tasks.etl_start_semester())
-    finally:
-        loop.close()
 
 
 def all_news():
-    loop = asyncio.get_event_loop()
-    try:
+    for loop in event_loop():
         loop.run_until_complete(celery_tasks.etl_all_news())
-    finally:
-        loop.close()
 
 
 def new_news():
-    loop = asyncio.get_event_loop()
-    try:
+    for loop in event_loop():
         loop.run_until_complete(celery_tasks.etl_new_news())
-    finally:
-        loop.close()
 
 
-args = []
-for arg in sys.argv:
-    if arg != "":
-        args.append(arg)
-
+args = [arg for arg in sys.argv if arg != ""]
 
 # Проверить, что был передан хотя бы один аргумент
 if len(args) < 2:
@@ -55,13 +47,13 @@ if len(args) < 2:
 else:
     # Получить значение параметра
     parameter = args[1]
-    if parameter == "schedule":
-        schedule()
-    elif parameter == "start_semester":
-        start_semester()
-    elif parameter == "all_news":
+    if parameter == "all_news":
         all_news()
     elif parameter == "new_news":
         new_news()
+    elif parameter == "schedule":
+        schedule()
+    elif parameter == "start_semester":
+        start_semester()
     else:
         print(f"Unknown parameter: {parameter}")

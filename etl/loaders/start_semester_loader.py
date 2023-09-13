@@ -20,6 +20,7 @@ class StartSemesterLoader(BaseLoader):
 
         try:
             await self.__load_start_semester()
+            await self.facade_db.commit()
         except Exception as e:
             self.logger.error(f"Can't loading data: {e}")
             await self.facade_db.rollback()
@@ -27,11 +28,13 @@ class StartSemesterLoader(BaseLoader):
         self.logger.info("Start semester date loaded successfully")
 
     async def __load_start_semester(self):
-        date_ = [
-            StartSemesterLoading.model_validate(self.redis_db.hgetall(key))
-            for key in self.redis_db.keys("start_semester:*")
-        ]
+        date_ = StartSemesterLoading.model_validate_redis(self.redis_db.get("start_semester"))
 
-        await self.facade_db.create_start_semester(date_)
+        if await self.facade_db.get_start_semester() is None:
+            await self.facade_db.create_start_semester(date_)
+        else:
+            await self.facade_db.update_start_semester(date_)
+
+        self.redis_db.delete("start_semester")
 
         self.logger.debug("Start semester date are loaded")

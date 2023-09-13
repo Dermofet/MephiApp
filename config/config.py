@@ -15,7 +15,6 @@ class AsyncPostgresDns(PostgresDsn):
 class _Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file_encoding="utf-8")
 
-
 class Config(_Settings):
     # Debug
     DEBUG: bool = Field(..., description="Debug mode")
@@ -47,6 +46,7 @@ class Config(_Settings):
     MEPHI_ROOM_URL: HttpUrl = Field(..., description="Mephi room url")
     MEPHI_TEACHERS_URL: HttpUrl = Field(..., description="Mephi teachers url")
     MEPHI_AUTH_URL: HttpUrl = Field(..., description="Mephi auth url")
+    MEPHI_AUTH_SERVICE_URL: HttpUrl = Field(..., description="Mephi auth service url")
     MEPHI_LOGIN: str = Field(..., description="Mephi login")
     MEPHI_PASSWORD: str = Field(..., description="Mephi password")
 

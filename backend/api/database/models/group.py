@@ -3,7 +3,7 @@ from typing import List
 
 from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, WriteOnlyMapped
 
 from backend.api.database.connection import Base
 from backend.api.database.models.association_tables import AT_lesson_group
@@ -17,6 +17,5 @@ class GroupModel(Base):
     course: Mapped[int]
     academic_guid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("academics.guid"))
 
-    academic: Mapped["AcademicModel"] = relationship("AcademicModel", back_populates="groups", lazy="joined")
-    lessons: Mapped[List["LessonModel"]] = relationship("LessonModel", back_populates="groups", lazy="joined",
-                                                        secondary=AT_lesson_group)
+    academic: Mapped["AcademicModel"] = relationship(back_populates="groups")
+    lessons: WriteOnlyMapped["LessonModel"] = relationship(back_populates="groups", secondary=AT_lesson_group, uselist=True)

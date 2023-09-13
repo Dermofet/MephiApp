@@ -16,4 +16,4 @@ class NewsImageModel(Base):
     text: Mapped[Optional[str]] = mapped_column(Text)
     news_guid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("news.guid"))
 
-    news: Mapped["NewsModel"] = relationship("NewsModel", back_populates="imgs", lazy="joined")
+    news: Mapped["NewsModel"] = relationship(back_populates="imgs")

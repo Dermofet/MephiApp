@@ -12,6 +12,7 @@ class ScheduleParser(BaseParser):
             self,
             url: str,
             auth_url: str,
+            auth_service_url: str,
             redis_host: str,
             redis_port: int,
             db: int,
@@ -20,7 +21,17 @@ class ScheduleParser(BaseParser):
             single_connection_client: bool = True,
             is_logged: bool = True,
     ):
-        super().__init__(auth_url, redis_host, redis_port, db, login, password, single_connection_client, is_logged)
+        super().__init__(
+            auth_url=auth_url,
+            auth_service_url=auth_service_url,
+            redis_host=redis_host, 
+            redis_port=redis_port, 
+            db=db,
+            login=login,
+            password=password,
+            single_connection_client=single_connection_client, 
+            is_logged=is_logged
+        )
         self.url = url
         
 
@@ -140,7 +151,7 @@ class ScheduleParser(BaseParser):
     @staticmethod
     def __extract_room(lesson):
         room_div = lesson.find("div", class_="pull-right")
-        if len(room_div.contents) != 3:
+        if room_div.find("a", class_="text-nowrap") is not None:
             return False, room_div.find("a", class_="text-nowrap").text
         return True, None
 

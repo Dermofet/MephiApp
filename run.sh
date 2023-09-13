@@ -2,7 +2,7 @@
 
 parse() {
   script_dir="$(dirname "$0")"
-  python "$script_dir/etl/etl_.py" "$2"
+  venv/Scripts/python.exe "$script_dir/etl/etl_.py" "$2"
 }
 
 build() {

@@ -18,4 +18,4 @@ class LessonTranslateModel(Base):
     lang: Mapped[str] = mapped_column(String(2))
     lesson_guid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("lessons.guid"))
 
-    lesson: Mapped["LessonModel"] = relationship("LessonModel", back_populates="trans", lazy="joined")
+    lesson: Mapped["LessonModel"] = relationship(back_populates="trans")

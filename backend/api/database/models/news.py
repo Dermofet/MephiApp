@@ -1,10 +1,10 @@
 import datetime
 import uuid
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy import String, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, WriteOnlyMapped
 
 from backend.api.database.connection import Base
 
@@ -21,4 +21,4 @@ class NewsModel(Base):
     text: Mapped[str] = mapped_column(Text)
     tag: Mapped[str] = mapped_column(String(100))
 
-    imgs: Mapped[List["NewsImageModel"]] = relationship("NewsImageModel", back_populates="news", lazy="joined")
+    imgs: WriteOnlyMapped["NewsImageModel"] = relationship("NewsImageModel", back_populates="news", uselist=True)

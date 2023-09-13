@@ -14,10 +14,24 @@ class RoomParser(BaseParser):
             redis_host: str,
             redis_port: int,
             db: int,
+            auth_url: str,
+            auth_service_url: str,
+            login: str,
+            password: str,
             single_connection_client: bool = True,
             is_logged: bool = True,
     ):
-        super().__init__(redis_host, redis_port, db, single_connection_client, is_logged)
+        super().__init__(
+            redis_host=redis_host, 
+            redis_port=redis_port, 
+            db=db,
+            auth_url=auth_url,
+            auth_service_url=auth_service_url,
+            login=login,
+            password=password, 
+            single_connection_client=single_connection_client, 
+            is_logged=is_logged,
+        )
         self.url = url
 
         self.logger.info('RoomParser initialized')
@@ -27,14 +41,14 @@ class RoomParser(BaseParser):
         self.set_info_to_db(res_rooms, res_corps)
 
     async def parse_rooms(self):
-        soup = await self.soup(self.url)
+        soup = await self.soup_with_auth(self.url)
 
         res_rooms = []
         res_corps = []
 
         box = soup.find("div", class_="box")
         if box is None:
-            self.logger.info(f'Rooms found: 0, Corps found: 0')
+            self.logger.info('Rooms found: 0, Corps found: 0')
             return res_rooms, res_corps
 
         for name, rooms in zip(box.findAll("h3", class_="light"), box.findAll("ul", class_="list-inline")):

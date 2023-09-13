@@ -31,6 +31,11 @@ class IFacadeDB(ABC):
     
     @abstractmethod
     async def is_alive(self) -> bool:
+        """
+        Check if the object is alive.
+
+        :return: A boolean indicating whether the object is alive.
+        """
         ...
 
     @abstractmethod
