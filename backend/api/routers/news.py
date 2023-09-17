@@ -10,7 +10,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 
 
 @router.get(
-    "/news",
+    "/news/all",
     response_model=dict[str, list[NewsOutputSchema]],
     status_code=status.HTTP_200_OK,
     description="Получить новости",
@@ -24,16 +24,17 @@ async def get_all(
 ):
     return await news_service.get_all(tag, offset, limit)
 
+# TODO Удалить
 
-@router.get(
-    "/news/{guid}",
-    response_model=NewsOutputSchema,
-    status_code=status.HTTP_200_OK,
-    description="Получить группу по названию",
-    summary="Получить группу по названию",
-)
-async def get(
-        guid: UUID4,
-        news_service: NewsService = Depends(NewsService.get_service),
-):
-    return await news_service.get(guid)
+# @router.get(
+#     "/news/{guid}",
+#     response_model=NewsOutputSchema,
+#     status_code=status.HTTP_200_OK,
+#     description="Получить группу по названию",
+#     summary="Получить группу по названию",
+# )
+# async def get(
+#         guid: UUID4,
+#         news_service: NewsService = Depends(NewsService.get_service),
+# ):
+#     return await news_service.get(guid)

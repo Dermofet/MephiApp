@@ -41,4 +41,3 @@ class LessonModel(Base):
         secondary=AT_lesson_room,
         uselist=True,
     )
-

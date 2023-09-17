@@ -5,6 +5,9 @@ from etl.schemas.base import Base
 
 
 class TeacherLoading(Base):
+    url: Optional[str] = Field(description="Ссылка на дискорд")
+    alt_url: Optional[str] = Field(description="Ссылка на дискорд")
+
     lang: str = Field(description="Код страны (для перевода)")
     name: str = Field(description="ФИО приподавателя")
     fullname: Optional[str] = Field(description="Полное ФИО преподавателя")
@@ -16,6 +19,9 @@ class TeacherLoading(Base):
         return self.name == other.name
 
 class TeacherFullnameLoading(Base):
+    url: Optional[str] = Field(description="Ссылка на дискорд")
+    alt_url: Optional[str] = Field(description="Ссылка на дискорд")
+
     lang: str = Field(description="Код страны (для перевода)")
     name: Optional[str] = Field(description="ФИО приподавателя")
     fullname: str = Field(description="Полное ФИО преподавателя")

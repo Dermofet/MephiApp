@@ -39,19 +39,33 @@ class RoomService(BaseService):
         rooms = await self.facade.get_all_room()
         if not rooms:
             raise HTTPException(404, "Аудитории не найдены")
-        return [RoomOutputSchema(**RoomSchema.model_validate(room).model_dump()) for room in rooms]
+        rooms = [room.number for room in rooms]
+        rooms.sort()
+        return rooms
     
     async def get_empty(self, room_filter: RoomFilter, corps: list[str]) -> Dict[str, List[Dict]]:
         if not corps:
             raise HTTPException(422, "Не было выбрано ни одного корпуса")
+        
         rooms = await self.facade.get_empty_room(room_filter, corps)
         if rooms is None:
             raise HTTPException(404, "Аудитории не найдены")
-        return {"rooms": [{"name": room[0],
-                           "time_start": room[1].strftime("%H:%M"),
-                           "time_end": room[2].strftime("%H:%M"),
-                           "corps": room[3],
-                           "floor": None} for room in rooms]}
+        
+        res = [
+            {
+                "name": room[0],
+                "time_start": room[1].strftime("%H:%M"),
+                "time_end": room[2].strftime("%H:%M"),
+                "corps": room[3],
+                "floor": None
+            } 
+            for room in rooms
+        ]
+        res.sort(key=lambda x: x["name"])
+
+        return {
+            "rooms": res
+        }
 
     async def update(self, guid: UUID4, schemas: RoomCreateSchema) -> RoomOutputSchema:
         room = await self.facade.update_room(guid, schemas)

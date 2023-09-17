@@ -23,7 +23,6 @@ class LessonBaseSchema(BaseModel):
     date_end: Optional[date] = Field(description="Дата конца занятия")
 
     @field_validator("date_start", mode="before")
-    @classmethod
     def change_date_start(cls, value):
         if isinstance(value, str):
             date_ = value.split('.')
@@ -32,7 +31,6 @@ class LessonBaseSchema(BaseModel):
         return None
 
     @field_validator("date_end", mode="before")
-    @classmethod
     def change_date_end(cls, value):
         if isinstance(value, str):
             date_ = value.split('.')
@@ -53,7 +51,6 @@ class LessonCreateSchema(LessonBaseSchema):
     lang: str = Field(description="Язык (для перевода)")
 
     @field_validator("teacher_name", mode="before")
-    @classmethod
     def none_teacher(cls, value):
         if isinstance(value, type(None)):
             return "None"
@@ -76,7 +73,6 @@ class LessonOutputSchema(LessonBaseSchema):
     rooms: list[RoomOutputSchema] = Field(description="Список аудиторий, в которой проводится занятие")
 
     @field_validator("weeks", mode="before")
-    @classmethod
     def change_weeks(cls, value):
         if isinstance(value, int):
             if value == 0:
@@ -174,7 +170,6 @@ class LessonSchema(LessonBaseSchema):
                     + str(self.date_end) + str(self.day) + "".join(self_rooms) + self_trans)
 
     @field_validator("trans", mode="before")
-    @classmethod
     def check_trans(cls, trans):
         if not isinstance(trans, list):
             raise ValueError(f"trans - {type(trans)}, должен быть list")
@@ -186,7 +181,6 @@ class LessonSchema(LessonBaseSchema):
                                  f"должен быть LessonTranslateModel или LessonTranslateSchema.")
 
     @field_validator("time_start", mode="before")
-    @classmethod
     def change_time_start(cls, value):
         if isinstance(value, time):
             return value.strftime('%H:%M')
@@ -198,7 +192,6 @@ class LessonSchema(LessonBaseSchema):
             ValueError(f"time_start - неверный тип данных. Ожидалось time, было получено {type(value)}")
 
     @field_validator("time_end", mode="before")
-    @classmethod
     def change_time_end(cls, value):
         if isinstance(value, time):
             return value.strftime('%H:%M')
@@ -210,7 +203,6 @@ class LessonSchema(LessonBaseSchema):
             ValueError(f"time_end - неверный тип данных. Ожидалось time, было получено {type(value)}")
 
     @field_validator("date_start", mode="before")
-    @classmethod
     def change_date_start(cls, value):
         if isinstance(value, date):
             return value.strftime('%m.%d.%Y')
@@ -221,8 +213,7 @@ class LessonSchema(LessonBaseSchema):
         else:
             ValueError(f"date_start - неверный тип данных. Ожидалось date, было получено {type(value)}")
 
-    @field_validator("date_end", mode="before")
-    @classmethod
+    @field_validator("date_end", mode="before")    
     def change_date_end(cls, value):
         if isinstance(value, date):
             return value.strftime('%m.%d.%Y')
@@ -277,8 +268,8 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
                 "lesson_group": []
             }
             _teachers_ = [{
-                "teacher_name": teacher.trans.name,
-                "teacher_fullname": teacher.trans.fullname
+                "teacher_name": teacher.name,
+                "teacher_fullname": teacher.fullname
             } for teacher in lesson.teachers]
             _rooms_ = {room.number for room in lesson.rooms}
             _groups_ = {group.name for group in lesson.groups}
@@ -310,12 +301,17 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
 
 
 class LessonsByTeacherSchema(LessonsByBaseSchema):
-    teacher: TeacherSchema = Field(description="Поля преподавателя")
-
+    name: str = Field(description="Имя")
+    fullname: Optional[str] = Field(description="Фамилия")
+    url: Optional[str] = Field(description="Ссылка на дискорд")
+    alt_url: Optional[str] = Field(description="Ссылка на дискорд")
+    
     def dict(self, *args, **kwargs):
         res = {
-            "name": self.teacher.trans.name,
-            "fullname": self.teacher.trans.fullname,
+            "name": self.name,
+            "fullname": self.fullname,
+            "url": self.url,
+            "alt_url": self.alt_url,
             "schedule": {
                 "1": [],
                 "2": [],
@@ -336,8 +332,10 @@ class LessonsByTeacherSchema(LessonsByBaseSchema):
                 "lesson_group": []
             }
             _teachers_ = [{
-                "teacher_name": teacher.trans.name,
-                "teacher_fullname": teacher.trans.fullname
+                "teacher_name": teacher.name,
+                "teacher_fullname": teacher.fullname,
+                "url": teacher.url,
+                "alt_url": teacher.alt_url
             } for teacher in lesson.teachers]
             _rooms_ = {room.number for room in lesson.rooms}
             _groups_ = {group.name for group in lesson.groups}

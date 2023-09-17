@@ -23,6 +23,7 @@ async def etl_schedule():
         login=config.MEPHI_LOGIN,
         password=config.MEPHI_PASSWORD,
     )
+    es.db.flushdb()
     await es.parse()
     
     er = RoomParser(

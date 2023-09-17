@@ -86,7 +86,8 @@ class Config(_Settings):
             username=info.data['POSTGRES_USER'],
             password=info.data['POSTGRES_PASSWORD'],
             host=info.data['POSTGRES_SERVER'],
-            port=info.data['POSTGRES_PORT'],
+            port=5432,
+            # port=info.data['POSTGRES_PORT'],
             path=info.data['POSTGRES_DB']
         )
 

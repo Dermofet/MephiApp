@@ -7,24 +7,25 @@ from config import config
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 
+# TODO Удалить
 
-@router.post(
-    "/groups",
-    response_model=GroupOutputSchema,
-    response_description="Группа успешно создано",
-    status_code=status.HTTP_201_CREATED,
-    description="Создать группу и вернуть его",
-    summary="Создание группы",
-)
-async def create(
-        schemas: GroupCreateSchema,
-        group_service: GroupService = Depends(GroupService.get_service),
-):
-    return await group_service.create(schemas=schemas)
+# @router.post(
+#     "/groups",
+#     response_model=GroupOutputSchema,
+#     response_description="Группа успешно создано",
+#     status_code=status.HTTP_201_CREATED,
+#     description="Создать группу и вернуть его",
+#     summary="Создание группы",
+# )
+# async def create(
+#         schemas: GroupCreateSchema,
+#         group_service: GroupService = Depends(GroupService.get_service),
+# ):
+#     return await group_service.create(schemas=schemas)
 
 
 @router.get(
-    "/groups",
+    "/groups/all",
     response_model=dict[str, list[str]],
     status_code=status.HTTP_200_OK,
     description="Получить все группы",

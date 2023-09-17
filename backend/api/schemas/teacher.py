@@ -4,6 +4,8 @@ from pydantic import ConfigDict, UUID4, BaseModel, Field
 
 
 class TeacherBaseSchema(BaseModel):
+    url: Optional[str] = Field(description="Ссылка на дискорд")
+    alt_url: Optional[str] = Field(description="Ссылка на дискорд") 
     lang: str = Field(description="Код страны (для перевода)")
     name: str = Field(description="ФИО приподавателя")
     fullname: Optional[str] = Field(description="Полное ФИО преподавателя")

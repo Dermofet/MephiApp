@@ -11,10 +11,12 @@ from backend.api.schemas.lesson import (
     LessonSchema,
 )
 from backend.api.schemas.lesson_translate import LessonTranslateCreateSchema
+from backend.api.schemas.teacher import TeacherSchema
 from backend.api.services.base_servise import BaseService
 
 
 class LessonService(BaseService):
+    # TODO fix set_dependencies
     async def create(self, schemas: LessonCreateSchema) -> LessonOutputSchema:
         lesson = await self.facade.get_unique_lesson(schemas)
         if lesson is not None:
@@ -50,7 +52,6 @@ class LessonService(BaseService):
         await self.facade.commit()
 
         return LessonOutputSchema(**LessonSchema.model_validate(lesson).model_dump())
-
     
     async def get(self, guid: UUID4, lang: str) -> LessonOutputSchema:
         lesson = await self.facade.get_by_id_lesson(guid)
@@ -61,50 +62,94 @@ class LessonService(BaseService):
             if tr.lang != lang:
                 lesson.trans.remove(tr)
         return LessonOutputSchema(**LessonSchema.model_validate(lesson).model_dump())
-
     
     async def get_guid(self, schemas: LessonCreateSchema) -> UUID4:
         lesson = await self.facade.get_id_lesson(schemas)
         if lesson is None:
             raise HTTPException(404, "Занятие не найдено")
         return lesson
-
     
     async def get_by_group(self, group: str, lang: str) -> Dict:
         lessons = await self.facade.get_by_group_lesson(group, lang)
+
         if not lessons:
             raise HTTPException(404, "Занятий не найдено")
 
-        teacher_lang = "ru" if lang == "ru" else "en"
-        for lesson in lessons:
-            lesson.trans = [tr for tr in lesson.trans if tr.lang == lang]
-            for teacher in lesson.teachers:
-                teacher.trans = [tr for tr in teacher.trans if tr.lang == teacher_lang]
+        lessons = [
+            LessonOutputSchema(
+                **LessonSchema(
+                    guid=lesson.guid,
+                    time_start=lesson.time_start,
+                    time_end=lesson.time_end,
+                    date_start=lesson.date_start,
+                    date_end=lesson.date_end,
+                    dot=lesson.dot,
+                    weeks=lesson.weeks,
+                    day=lesson.day,
+                    trans=[await self.facade.get_trans_lesson(lesson, lang)],
+                    rooms=await self.facade.get_rooms_lesson(lesson),
+                    groups=await self.facade.get_groups_lesson(lesson),
+                    teachers=[
+                        TeacherSchema(
+                            guid=t[0].guid,
+                            url=t[0].url,
+                            alt_url=t[0].alt_url,
+                            name=t[1].name,
+                            fullname=t[1].fullname,
+                            lang=t[1].lang
+                        ) for t in await self.facade.get_teachers_lesson(lesson, lang)
+                    ],
+                ).model_dump()
+            ) for lesson in lessons
+        ]
 
-        lessons = [LessonOutputSchema(**LessonSchema.model_validate(lesson).model_dump()) for lesson in lessons]
-        res = LessonsByGroupSchema(lessons=lessons, group=group, lang=lang)
-        return res.model_dump()
+        return LessonsByGroupSchema(lessons=lessons, group=group, lang=lang).dict()
 
-    
     async def get_by_teacher(self, teacher: str, lang: str) -> Dict:
         lessons = await self.facade.get_by_teacher_lesson(teacher, lang)
+
         if not lessons:
             raise HTTPException(404, "Занятий не найдено")
 
-        teacher_lang = "ru" if lang == "ru" else "en"
-        teacher_model = await self.facade.get_by_name_teacher(teacher)
-        teacher_model.trans = [tr for tr in teacher_model.trans if tr.lang == teacher_lang]
+        lessons = [
+            LessonOutputSchema(
+                **LessonSchema(
+                    guid=lesson.guid,
+                    time_start=lesson.time_start,
+                    time_end=lesson.time_end,
+                    date_start=lesson.date_start,
+                    date_end=lesson.date_end,
+                    dot=lesson.dot,
+                    weeks=lesson.weeks,
+                    day=lesson.day,
+                    trans=[await self.facade.get_trans_lesson(lesson, lang)],
+                    rooms=await self.facade.get_rooms_lesson(lesson),
+                    groups=await self.facade.get_groups_lesson(lesson),
+                    teachers=[
+                        TeacherSchema(
+                            guid=t[0].guid,
+                            url=t[0].url,
+                            alt_url=t[0].alt_url,
+                            name=t[1].name,
+                            fullname=t[1].fullname,
+                            lang=t[1].lang
+                        ) for t in await self.facade.get_teachers_lesson(lesson, lang)
+                    ],
+                ).model_dump()
+            ) for lesson in lessons
+        ]
 
-        for lesson in lessons:
-            lesson.trans = [tr for tr in lesson.trans if tr.lang == lang]
-            for teacher_ in lesson.teachers:
-                teacher_.trans = [tr for tr in teacher_.trans if tr.lang == teacher_lang]
+        t = await self.facade.get_by_name_teacher(teacher)
+        t_trans = await self.facade.get_trans_teacher(t, lang=lang)
+        return LessonsByTeacherSchema(
+            lessons=lessons,
+            name=t_trans.name,
+            fullname=t_trans.fullname,
+            url=t.url,
+            alt_url=t.alt_url,
+            lang=lang
+        ).dict()
 
-        lessons = [LessonOutputSchema(**LessonSchema.model_validate(lesson).model_dump()) for lesson in lessons]
-        res = LessonsByTeacherSchema(lessons=lessons, teacher=teacher_model, lang=lang)
-        return res.model_dump()
-
-    
     async def update(self, guid: UUID4, schemas: LessonCreateSchema) -> LessonOutputSchema:
         lesson = await self.facade.update_lesson(guid, schemas)
         if lesson is None:
@@ -118,7 +163,6 @@ class LessonService(BaseService):
         await self.facade.commit()
         return LessonOutputSchema(**LessonSchema.model_validate(lesson).model_dump())
 
-    
     async def update_translate(self, schemas: LessonCreateSchema, guid: UUID4) -> LessonOutputSchema:
         lesson = await self.facade.update_translate_lesson(schemas, guid)
         if lesson is None:
@@ -131,7 +175,6 @@ class LessonService(BaseService):
 
         await self.facade.commit()
         return LessonOutputSchema(**LessonSchema.model_validate(lesson).model_dump())
-
     
     async def delete(self, guid: UUID4) -> Response:
         await self.facade.delete_lesson(guid)

@@ -83,7 +83,7 @@ class TeachersParser(BaseParser):
         for item in soup.findAll("a", class_="list-group-item"):
             name_parts = item.text.split()
             name = f"{name_parts[0]} {'.'.join([i[0] for i in name_parts[1:]])}."
-            res.append(TeacherFullnameLoading(fullname=item.text, name=name, lang="ru"))
+            res.append(TeacherFullnameLoading(url=None, alt_url=None, fullname=item.text, name=name, lang="ru"))
         return res
 
     def set_info_to_db(self, teachers: List[TeacherFullnameLoading]):

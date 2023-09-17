@@ -39,7 +39,15 @@ class GroupService(BaseService):
         group = await self.facade.get_by_name_group(name)
         if group is None:
             raise HTTPException(404, "Группа не найдена")
-        return GroupOutputSchema(**GroupSchema.model_validate(group).model_dump())
+        
+        return GroupOutputSchema(
+            **GroupSchema(
+                guid=group.guid,
+                name=group.name,
+                course=group.course,
+                academic=await self.facade.get_academic_group(group)
+            ).model_dump()
+        )
 
     
     async def update(self, guid: UUID4, schemas: GroupCreateSchema) -> GroupOutputSchema:

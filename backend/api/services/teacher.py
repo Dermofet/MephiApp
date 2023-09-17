@@ -29,10 +29,18 @@ class TeacherService(BaseService):
     async def get_by_name(self, name: str, lang: str) -> TeacherOutputSchema:
         lang = "ru" if lang == "ru" else "en"
         teacher = await self.facade.get_by_name_teacher(name)
-        teacher.trans = [tr for tr in teacher.trans if tr.lang == lang]
+
         if teacher is None:
             raise HTTPException(404, "Преподаватель не найден")
-        return TeacherOutputSchema(**TeacherSchema.model_validate(teacher).model_dump())
+        
+        trans = await self.facade.get_trans_teacher(teacher, lang)
+        return TeacherOutputSchema(
+            url=teacher.url,
+            alt_url=teacher.alt_url,
+            lang=trans.lang,
+            name=trans.name,
+            fullname=trans.fullname
+        )
 
 
     async def get_all(self, lang: str) -> Dict[str, List[str]]:

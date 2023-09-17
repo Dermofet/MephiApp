@@ -1,5 +1,6 @@
 import asyncio
 from logging.config import fileConfig
+import time
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
@@ -18,6 +19,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+print(backend_config.DB_URI.unicode_string())
 config.set_main_option('sqlalchemy.url', backend_config.DB_URI.unicode_string())
 
 # add your model's MetaData object here
@@ -81,7 +83,7 @@ async def run_migrations_online() -> None:
     )
 
     async with connectable.connect() as connection:
-        await connection.run_sync(do_run_migrations)
+        await connection.run_sync(do_run_migrations)    
 
     await connectable.dispose()
 

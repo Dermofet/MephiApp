@@ -1,6 +1,6 @@
 import datetime
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Tuple
 
 from pydantic import UUID4, BaseModel
 
@@ -9,18 +9,19 @@ from backend.api.database.models import (
     CorpsModel,
     GroupModel,
     LessonModel,
-    LessonTranslateModel,
     NewsModel,
     RoomModel,
     StartSemesterModel,
 )
+from backend.api.database.models.lesson_translate import LessonTranslateModel
+from backend.api.database.models.news_image import NewsImageModel
 from backend.api.database.models.teacher import TeacherModel
+from backend.api.database.models.teacher_translate import TeacherTranslateModel
 from backend.api.filters.room import RoomFilter
 from backend.api.schemas.academic import AcademicCreateSchema
 from backend.api.schemas.corps import CorpsCreateSchema
 from backend.api.schemas.group import GroupCreateSchema
 from backend.api.schemas.lesson import LessonCreateSchema
-from backend.api.schemas.lesson_translate import LessonTranslateCreateSchema
 from backend.api.schemas.news import NewsCreateSchema
 from backend.api.schemas.room import RoomCreateSchema
 from backend.api.schemas.start_semester import StartSemesterCreateSchema
@@ -31,11 +32,6 @@ class IFacadeDB(ABC):
     
     @abstractmethod
     async def is_alive(self) -> bool:
-        """
-        Check if the object is alive.
-
-        :return: A boolean indicating whether the object is alive.
-        """
         ...
 
     @abstractmethod
@@ -119,11 +115,15 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
-    async def get_all_group(self, ) -> List[str]:
+    async def get_all_group(self) -> List[str]:
         ...
 
     @abstractmethod
     async def get_by_name_group(self, name: str) -> GroupModel:
+        ...
+
+    @abstractmethod
+    async def get_academic_group(self, group: GroupModel) -> AcademicModel:
         ...
 
     @abstractmethod
@@ -136,16 +136,6 @@ class IFacadeDB(ABC):
 
     @abstractmethod
     async def create_lesson(self, data: LessonCreateSchema) -> LessonModel:
-        ...
-
-    @abstractmethod
-    async def set_dependencies(
-            self,
-            lesson: LessonModel,
-            group: str,
-            room: str,
-            teacher_name: str
-    ) -> LessonModel:
         ...
 
     @abstractmethod
@@ -166,6 +156,22 @@ class IFacadeDB(ABC):
 
     @abstractmethod
     async def get_id_lesson(self, data: LessonCreateSchema) -> UUID4:
+        ...
+
+    @abstractmethod
+    async def get_trans_lesson(self, lesson: LessonModel, lang: str) -> LessonTranslateModel:
+        ...
+
+    @abstractmethod
+    async def get_teachers_lesson(self, lesson: LessonModel, lang: str) -> List[Tuple[TeacherModel]]:
+        ...
+
+    @abstractmethod
+    async def get_groups_lesson(self, lesson: LessonModel) -> List[GroupModel]:
+        ...
+
+    @abstractmethod
+    async def get_rooms_lesson(self, lesson: LessonModel) -> List[RoomModel]:
         ...
 
     @abstractmethod
@@ -191,40 +197,11 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
-    async def create_lesson_translate(self,
-                                      data: LessonTranslateCreateSchema) -> LessonTranslateModel:
-        ...
-
-    @abstractmethod
-    async def get_by_id_lesson_translate(self, guid: UUID4) -> LessonTranslateModel:
-        ...
-
-    @abstractmethod
-    async def get_unique_lesson_translate(self, type_: str, name: str, subgroup: Optional[str],
-                                          lang: str) \
-            -> LessonTranslateModel:
-        ...
-
-    @abstractmethod
-    async def get_by_name_lesson_translate(self, name: str, lang: str) -> LessonTranslateModel:
-        ...
-
-    @abstractmethod
-    async def get_by_lesson_guid_lesson_translate(self, guid: UUID4,
-                                                  lang: str) -> LessonTranslateModel:
-        ...
-
-    @abstractmethod
-    async def update_lesson_translate(self, guid: UUID4,
-                                      data: LessonTranslateCreateSchema) -> LessonTranslateModel:
-        ...
-
-    @abstractmethod
-    async def delete_lesson_translate(self, guid: UUID4) -> None:
-        ...
-
-    @abstractmethod
     async def get_by_id_news(self, guid: UUID4) -> NewsModel:
+        ...
+
+    @abstractmethod
+    async def get_images_news(self, news: NewsModel) -> List[NewsImageModel]:
         ...
 
     @abstractmethod
@@ -310,6 +287,10 @@ class IFacadeDB(ABC):
 
     @abstractmethod
     async def get_unique_teacher(self, data: TeacherCreateSchema) -> TeacherModel:
+        ...
+
+    @abstractmethod
+    async def get_trans_teacher(self, teacher: TeacherModel, lang: str) -> TeacherTranslateModel:
         ...
 
     @abstractmethod

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from backend.api.routers.academic import router as academic_router
+# from backend.api.routers.academic import router as academic_router
 from backend.api.routers.corps import router as corps_router
 from backend.api.routers.group import router as group_router
 from backend.api.routers.lesson import router as lesson_router
@@ -16,7 +16,7 @@ tags_metadata = [
     {"name": "lesson", "description": "Работа с расписанием"},
     {"name": "room", "description": "Работа с аудиториями"},
     {"name": "teacher", "description": "Работа с преподавателями"},
-    {"name": "academic", "description": "Работа с учеными званиями"},
+    # {"name": "academic", "description": "Работа с учеными званиями"},
     {"name": "corps", "description": "Работа с корпусами"},
     {"name": "news", "description": "Работа с новостями"},
     {"name": "start_semester", "description": "Работа с датой начала семестра"},
@@ -28,7 +28,6 @@ app = FastAPI(
     title=config.BACKEND_TITLE,
     description=config.BACKEND_DESCRIPTION,
 )
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -43,7 +42,7 @@ app.include_router(lesson_router, tags=["lesson"])
 app.include_router(room_router, tags=["room"])
 app.include_router(group_router, tags=["group"])
 app.include_router(teacher_router, tags=["teacher"])
-app.include_router(academic_router, tags=["academic"])
+# app.include_router(academic_router, tags=["academic"])
 app.include_router(corps_router, tags=["corps"])
 app.include_router(news_router, tags=["news"])
 app.include_router(start_semester_router, tags=["start_semester"])

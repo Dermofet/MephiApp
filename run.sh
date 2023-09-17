@@ -34,13 +34,7 @@ delete() {
 }
 
 create_migration() {
-  if [ -z "$3" ]; then
-    echo "Unexpected parameter"
-    menu
-    return
-  fi
-
-  docker compose exec backend alembic -c backend/alembic.ini revision --autogenerate -m "$3"
+  docker compose exec backend alembic -c backend/alembic.ini revision --autogenerate -m "$1"
 }
 
 downgrade() {
@@ -59,7 +53,12 @@ alembic() {
   fi
 
   if [ "$2" = "create_migration" ]; then
-    create_migration
+    if [ -z "$3" ]; then
+      echo "Unexpected parameter"
+      menu
+      return
+    fi
+    create_migration "$3"
   elif [ "$2" = "downgrade" ]; then
     downgrade
   elif [ "$2" = "upgrade" ]; then
