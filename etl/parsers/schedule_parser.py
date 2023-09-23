@@ -7,6 +7,7 @@ from etl.schemas.lesson import LessonExtracting
 
 class ScheduleParser(BaseParser):
     url: str
+    _index = 0
 
     def __init__(
             self,
@@ -18,10 +19,12 @@ class ScheduleParser(BaseParser):
             db: int,
             login: str,
             password: str,
+            use_auth: bool,
             single_connection_client: bool = True,
             is_logged: bool = True,
     ):
         super().__init__(
+            use_auth=use_auth,
             auth_url=auth_url,
             auth_service_url=auth_service_url,
             redis_host=redis_host, 
@@ -33,10 +36,9 @@ class ScheduleParser(BaseParser):
             is_logged=is_logged
         )
         self.url = url
-        
 
     async def parse(self):
-        self.logger.info("Start etl schedule")
+        self.logger.info("Start parsing schedule")
 
         for academic_name, academic_url in await self.__get_academic_types():
             groups_info = await self.__get_groups_info(academic_name, academic_url)
@@ -47,9 +49,8 @@ class ScheduleParser(BaseParser):
 
         self.logger.info("All lessons set in the redis")
 
-
     async def __get_academic_types(self):
-        soup = await self.soup_with_auth(self.url)
+        soup = await self.soup(self.url)
 
         res = []
         base_url = self.base_url(self.url)
@@ -65,7 +66,7 @@ class ScheduleParser(BaseParser):
         return res
 
     async def __get_groups_info(self, name: str, url: str):
-        soup = await self.soup_with_auth(url)
+        soup = await self.soup(url)
 
         base_url = self.base_url(url)
 
@@ -88,7 +89,7 @@ class ScheduleParser(BaseParser):
         return await asyncio.gather(*tasks)
 
     async def __get_group_info(self, url, academic, group, course, lang):
-        soup = await self.soup_with_auth(url)
+        soup = await self.soup(url)
         self.logger.debug(f"Parsing group: {group}, {course}, {academic}")
 
         schedule = []
@@ -191,6 +192,11 @@ class ScheduleParser(BaseParser):
 
     @staticmethod
     def __extract_lesson_info(lesson):
+        if lesson.find("div", class_="label label-gray") is not None:
+            lesson.find("div", class_="label label-gray").extract()
+        if lesson.find("div", class_="label label-pink") is not None:
+            lesson.find("div", class_="label label-pink").extract()
+
         text = '#'.join(lesson.strings).replace("\n", "").replace(",", "").split('#')
         text = [item for item in text if item.strip() != '']
 
@@ -217,4 +223,5 @@ class ScheduleParser(BaseParser):
     async def __set_info_to_db(self, lessons: List[List[LessonExtracting]]):
         for lessons_group in lessons:
             for lesson in lessons_group:
-                self.db.hset(name=f"lessons:{hash(lesson)}", key="lesson", value=lesson.model_dump_redis())
+                self.db.hset(name=f"lessons:{self._index}", key="lesson", value=lesson.model_dump_redis())
+                self._index += 1

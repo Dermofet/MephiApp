@@ -2,6 +2,7 @@ from typing import Dict
 
 from fastapi import HTTPException, Response
 from pydantic import UUID4
+from backend.api.database.models.teacher_translate import TeacherTranslateModel
 
 from backend.api.schemas.lesson import (
     LessonCreateSchema,
@@ -12,6 +13,7 @@ from backend.api.schemas.lesson import (
 )
 from backend.api.schemas.lesson_translate import LessonTranslateCreateSchema
 from backend.api.schemas.teacher import TeacherSchema
+from backend.api.schemas.teacher_translate import TeacherTranslateSchema
 from backend.api.services.base_servise import BaseService
 
 
@@ -94,9 +96,14 @@ class LessonService(BaseService):
                             guid=t[0].guid,
                             url=t[0].url,
                             alt_url=t[0].alt_url,
-                            name=t[1].name,
-                            fullname=t[1].fullname,
-                            lang=t[1].lang
+                            trans=[
+                                TeacherTranslateSchema(
+                                    guid=t[1].guid,
+                                    name=t[1].name,
+                                    fullname=t[1].fullname,
+                                    lang=t[1].lang
+                                )
+                            ],
                         ) for t in await self.facade.get_teachers_lesson(lesson, lang)
                     ],
                 ).model_dump()
@@ -130,9 +137,14 @@ class LessonService(BaseService):
                             guid=t[0].guid,
                             url=t[0].url,
                             alt_url=t[0].alt_url,
-                            name=t[1].name,
-                            fullname=t[1].fullname,
-                            lang=t[1].lang
+                            trans=[
+                                TeacherTranslateSchema(
+                                    guid=t[1].guid,
+                                    name=t[1].name,
+                                    fullname=t[1].fullname,
+                                    lang=t[1].lang
+                                )
+                            ]
                         ) for t in await self.facade.get_teachers_lesson(lesson, lang)
                     ],
                 ).model_dump()

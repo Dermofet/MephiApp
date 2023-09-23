@@ -22,6 +22,7 @@ async def etl_schedule():
         db=config.REDIS_DB,
         login=config.MEPHI_LOGIN,
         password=config.MEPHI_PASSWORD,
+        use_auth=False,
     )
     es.db.flushdb()
     await es.parse()
@@ -35,6 +36,7 @@ async def etl_schedule():
         password=config.MEPHI_PASSWORD,
         auth_url=config.MEPHI_AUTH_URL.unicode_string(),
         auth_service_url=config.MEPHI_AUTH_SERVICE_URL.unicode_string(),
+        use_auth=False,
     )
     await er.parse()
     
@@ -47,6 +49,7 @@ async def etl_schedule():
         password=config.MEPHI_PASSWORD,
         auth_url=config.MEPHI_AUTH_URL.unicode_string(),
         auth_service_url=config.MEPHI_AUTH_SERVICE_URL.unicode_string(),
+        use_auth=False,
     )
     await et.parse()
 
@@ -54,6 +57,7 @@ async def etl_schedule():
         redis_host=config.REDIS_HOST,
         redis_port=config.REDIS_PORT,
         db=config.REDIS_DB,
+        langs=config.FOREIGN_LANGS
     )
     await t.transform()
 
@@ -73,7 +77,8 @@ async def etl_all_news():
         redis_host=config.REDIS_HOST,
         redis_port=config.REDIS_PORT,
         db=config.REDIS_DB,
-        chunks=50   
+        chunks=50,
+        use_auth=False,
     )
     await e.parse_all_news()
 
@@ -93,7 +98,8 @@ async def etl_new_news():
         redis_host=config.REDIS_HOST,
         redis_port=config.REDIS_PORT,
         db=config.REDIS_DB,
-        chunks=50
+        chunks=50,
+        use_auth=False,
     )
     await e.parse_new_news()
 
@@ -117,6 +123,7 @@ async def etl_start_semester():
         password=config.MEPHI_PASSWORD,
         auth_url=config.MEPHI_AUTH_URL.unicode_string(),
         auth_service_url=config.MEPHI_AUTH_SERVICE_URL.unicode_string(),
+        use_auth=False,
     )
     await e.parse()
 

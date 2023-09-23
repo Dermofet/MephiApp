@@ -102,14 +102,15 @@ class LessonDAO:
                 date_start=lesson.date_start,
                 date_end=lesson.date_end,
             )
-            db_lesson.trans.add(
-                LessonTranslateModel(
-                    name=lesson.name, 
-                    subgroup=lesson.subgroup, 
-                    type=lesson.type, 
-                    lang=lesson.lang,
+            for trans in lesson.trans:
+                db_lesson.trans.add(
+                    LessonTranslateModel(
+                        name=trans.name, 
+                        subgroup=trans.subgroup, 
+                        type=trans.type, 
+                        lang=trans.lang,
+                    )
                 )
-            )
 
             self._session.add(db_lesson)
 

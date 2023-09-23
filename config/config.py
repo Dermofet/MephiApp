@@ -25,7 +25,6 @@ class Config(_Settings):
     BACKEND_PREFIX: str = Field(..., description="Backend prefix")
 
     BACKEND_HOST: str = Field(..., description="Backend host")
-    BACKEND_LOCALHOST: str = Field(..., description="Backend localhost")
     BACKEND_PORT: int = Field(..., description="Backend port")
     BACKEND_RELOAD: bool = Field(..., description="Backend reload")
 
@@ -36,6 +35,7 @@ class Config(_Settings):
     POSTGRES_PORT: int = Field(..., description="Postgres port")
     POSTGRES_DB: str = Field(..., description="Postgres database")
     LOCAL_POSTGRES_SERVER: str = Field(..., description="Postgres server for local using")
+    LOCAL_POSTGRES_PORT: int = Field(..., description="Postgres port for local using")
 
     DB_URI: Optional[AsyncPostgresDns] = Field(None, description="Postgres uri for docker contaibers", validate_default=True)
     LOCAL_DB_URI: Optional[AsyncPostgresDns] = Field(None, description="Postgres uri for alembic", validate_default=True)
@@ -86,8 +86,7 @@ class Config(_Settings):
             username=info.data['POSTGRES_USER'],
             password=info.data['POSTGRES_PASSWORD'],
             host=info.data['POSTGRES_SERVER'],
-            port=5432,
-            # port=info.data['POSTGRES_PORT'],
+            port=info.data['POSTGRES_PORT'],
             path=info.data['POSTGRES_DB']
         )
 
@@ -100,7 +99,7 @@ class Config(_Settings):
             username=info.data['POSTGRES_USER'],
             password=info.data['POSTGRES_PASSWORD'],
             host=info.data['LOCAL_POSTGRES_SERVER'],
-            port=info.data['POSTGRES_PORT'],
+            port=info.data['LOCAL_POSTGRES_PORT'],
             path=info.data['POSTGRES_DB']
         )
 

@@ -19,7 +19,6 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-print(backend_config.DB_URI.unicode_string())
 config.set_main_option('sqlalchemy.url', backend_config.DB_URI.unicode_string())
 
 # add your model's MetaData object here
@@ -87,8 +86,13 @@ async def run_migrations_online() -> None:
 
     await connectable.dispose()
 
-
-if context.is_offline_mode():
-    run_migrations_offline()
-else:
-    asyncio.run(run_migrations_online())
+while True:
+    try:
+        if context.is_offline_mode():
+            run_migrations_offline()
+        else:
+            asyncio.run(run_migrations_online())
+        break
+    except ConnectionRefusedError:
+        print("Connection to database refused")
+        time.sleep(1)

@@ -23,10 +23,12 @@ class TeachersParser(BaseParser):
             auth_service_url: str,
             login: str,
             password: str,
+            use_auth: bool,
             single_connection_client: bool = True,
             is_logged: bool = True,
     ):
         super().__init__(
+            use_auth=use_auth,
             redis_host=redis_host, 
             redis_port=redis_port, 
             db=db,
@@ -52,7 +54,7 @@ class TeachersParser(BaseParser):
         self.set_info_to_db(teachers)
 
     async def get_categories(self):
-        soup = await self.soup_with_auth(self.url)
+        soup = await self.soup(self.url)
         
         if soup.find("ul", class_="pagination") is None:
             return []
@@ -78,7 +80,7 @@ class TeachersParser(BaseParser):
         return res
 
     async def get_teachers_fullname_from_category(self, category_url: HttpUrl):
-        soup = await self.soup_with_auth(category_url)
+        soup = await self.soup(category_url)
         res = []
         for item in soup.findAll("a", class_="list-group-item"):
             name_parts = item.text.split()

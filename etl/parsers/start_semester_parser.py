@@ -19,10 +19,12 @@ class StartSemesterParser(BaseParser):
             password: str,
             auth_url: str,
             auth_service_url: str,
+            use_auth: bool,
             single_connection_client: bool = True,
             is_logged: bool = True,
     ):
         super().__init__(
+            use_auth=use_auth,
             auth_url=auth_url,
             auth_service_url=auth_service_url,
             redis_host=redis_host, 
@@ -46,10 +48,10 @@ class StartSemesterParser(BaseParser):
         self.__set_info_to_db(date)
 
     async def __get_download_url(self):
-        soup = await self.soup_with_auth(self.url)
+        soup = await self.soup(self.url)
         schedule_url = self.base_url(self.url) + soup.find("a", class_="list-group-item text-center text-nowrap")['href']
 
-        soup = await self.soup_with_auth(schedule_url)
+        soup = await self.soup(schedule_url)
         return self.base_url(self.url) + soup.findAll("a", class_="btn btn-primary btn-outline")[-1]['href']
 
 

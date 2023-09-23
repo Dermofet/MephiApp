@@ -268,8 +268,8 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
                 "lesson_group": []
             }
             _teachers_ = [{
-                "teacher_name": teacher.name,
-                "teacher_fullname": teacher.fullname
+                "teacher_name": teacher.trans[0].name,
+                "teacher_fullname": teacher.trans[0].fullname
             } for teacher in lesson.teachers]
             _rooms_ = {room.number for room in lesson.rooms}
             _groups_ = {group.name for group in lesson.groups}
@@ -332,8 +332,8 @@ class LessonsByTeacherSchema(LessonsByBaseSchema):
                 "lesson_group": []
             }
             _teachers_ = [{
-                "teacher_name": teacher.name,
-                "teacher_fullname": teacher.fullname,
+                "teacher_name": teacher.trans[0].name,
+                "teacher_fullname": teacher.trans[0].fullname,
                 "url": teacher.url,
                 "alt_url": teacher.alt_url
             } for teacher in lesson.teachers]

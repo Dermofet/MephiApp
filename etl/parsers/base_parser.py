@@ -19,6 +19,8 @@ class AuthData:
 
 
 class BaseParser:
+    use_auth: bool
+
     is_logged: bool
     logger: Logger
 
@@ -39,6 +41,7 @@ class BaseParser:
         auth_service_url: str = None,
         login: str = None,
         password: str = None,
+        use_auth: bool = True,
         single_connection_client: bool = True,
         is_logged: bool = True,
     ):
@@ -46,6 +49,7 @@ class BaseParser:
         self.db = Redis(host=redis_host, port=redis_port, db=db, single_connection_client=single_connection_client)
         self.logger = Logger(is_logged)
 
+        self.use_auth = use_auth
         self.auth_url = auth_url
         self.auth_service_url = auth_service_url
         self.auth_data = AuthData(login, password, '', '')
@@ -57,8 +61,17 @@ class BaseParser:
 
     async def soup(self, url: str) -> bs4.BeautifulSoup:
         async for session in self.session():
-            async with session.get(url) as response:
+            if self.use_auth and self.auth_data.session_id == '':
+                await self.__auth(session)
+
+            async with session.get(url, cookies={'_session_id': self.auth_data.session_id if self.use_auth else None}) as response:
+                if response.status != 200:
+                    await asyncio.sleep(5)
+                    if self.use_auth:
+                        await self.__auth(session)
+
                 html = await response.text()
+
         return bs4.BeautifulSoup(html, "lxml")
 
     @staticmethod
@@ -66,19 +79,19 @@ class BaseParser:
         parsed = urlparse(url)
         return f'{parsed.scheme}://{parsed.netloc}'
 
-    async def soup_with_auth(self, url: str) -> bs4.BeautifulSoup:
-        async for session in self.session():
-            if self.auth_data.session_id == '':
-                await self.__auth(session)
+    # async def soup_with_auth(self, url: str) -> bs4.BeautifulSoup:
+    #     async for session in self.session():
+    #         if self.auth_data.session_id == '':
+    #             await self.__auth(session)
 
-            async with session.get(url, cookies={'_session_id': self.auth_data.session_id}) as response:
-                if response.status != 200:
-                    await asyncio.sleep(5)
-                    await self.__auth(session)
+    #         async with session.get(url, cookies={'_session_id': self.auth_data.session_id}) as response:
+    #             if response.status != 200:
+    #                 await asyncio.sleep(5)
+    #                 await self.__auth(session)
 
-                html = await response.text()
+    #             html = await response.text()
                 
-        return bs4.BeautifulSoup(html, "lxml")
+    #     return bs4.BeautifulSoup(html, "lxml")
     
     async def download_file_with_auth(self, url: str, filepath: str):
         async for session in self.session():
@@ -170,15 +183,18 @@ class BaseParser:
                 cookies={'tgt': self.auth_data.tgt},
                 allow_redirects=False,
         ) as response:
-             
+
             if response.status != 303:
                 raise Exception(f'Cannot get tgt. Response status code is {response.status}')
 
             redirect_url = bs4.BeautifulSoup(await response.text(), 'lxml').find('a')['href']
         
         async with session.get(redirect_url, allow_redirects=False) as response:
+            print(await response.text())
+
             if response.status != 302:
                 raise Exception(f'Cannot get session_id. Response status code is {response.status}')
+            
             self.auth_data.session_id = response.headers.get('set-cookie').split('=')[1].split(';')[0]
             print(f'session_id: {self.auth_data.session_id}')
 

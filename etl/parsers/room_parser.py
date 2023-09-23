@@ -18,10 +18,12 @@ class RoomParser(BaseParser):
             auth_service_url: str,
             login: str,
             password: str,
+            use_auth: bool,
             single_connection_client: bool = True,
             is_logged: bool = True,
     ):
         super().__init__(
+            use_auth=use_auth,
             redis_host=redis_host, 
             redis_port=redis_port, 
             db=db,
@@ -41,7 +43,7 @@ class RoomParser(BaseParser):
         self.set_info_to_db(res_rooms, res_corps)
 
     async def parse_rooms(self):
-        soup = await self.soup_with_auth(self.url)
+        soup = await self.soup(self.url)
 
         res_rooms = []
         res_corps = []

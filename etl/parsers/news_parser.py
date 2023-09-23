@@ -17,10 +17,18 @@ class NewsParser(BaseParser):
             redis_host: str,
             redis_port: int,
             db: int,
+            use_auth: bool,
             single_connection_client: bool = True,
             is_logged: bool = True,
     ):
-        super().__init__(redis_host, redis_port, db, single_connection_client, is_logged)
+        super().__init__(
+            redis_host=redis_host, 
+            redis_port=redis_port, 
+            db=db, 
+            single_connection_client=single_connection_client, 
+            is_logged=is_logged, 
+            use_auth=use_auth
+        )
         self.url = url
         self.chunks = chunks
 
@@ -224,7 +232,6 @@ class NewsParser(BaseParser):
             div_tag = imgs_block.find("div", class_="view-content")
             if div_tag is not None:
                 text.append(div_tag)
-
 
     async def parse_new_news(self):
         self.logger.info("Start parsing new news")

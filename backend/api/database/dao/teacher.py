@@ -37,7 +37,8 @@ class TeacherDAO:
         db_teachers = []
         for teacher in data:
             t = TeacherModel(url=teacher.url, alt_url=teacher.alt_url)
-            t.trans.add(TeacherTranslateModel(lang=teacher.lang, name=teacher.name, fullname=teacher.fullname))
+            for trans in teacher.trans:
+                t.trans.add(TeacherTranslateModel(lang=trans.lang, name=trans.name, fullname=trans.fullname))
             db_teachers.append(t)
         self._session.add_all(db_teachers)
         await self._session.flush()

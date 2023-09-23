@@ -163,7 +163,7 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
-    async def get_teachers_lesson(self, lesson: LessonModel, lang: str) -> List[Tuple[TeacherModel]]:
+    async def get_teachers_lesson(self, lesson: LessonModel, lang: str) -> List[Tuple[TeacherModel, TeacherTranslateModel]]:
         ...
 
     @abstractmethod

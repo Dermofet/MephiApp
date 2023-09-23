@@ -161,7 +161,7 @@ class FacadeDB(IFacadeDB, ABC):
     async def get_trans_lesson(self, lesson: LessonModel, lang: str) -> LessonTranslateModel:
         return await self.lesson_dao.get_trans(lesson, lang)
 
-    async def get_teachers_lesson(self, lesson: LessonModel, lang: str) -> List[Tuple[TeacherModel]]:
+    async def get_teachers_lesson(self, lesson: LessonModel, lang: str) -> List[Tuple[TeacherModel, TeacherTranslateModel]]:
         return await self.lesson_dao.get_teachers(lesson, lang)
 
     async def get_groups_lesson(self, lesson: LessonModel) -> List[GroupModel]:
