@@ -1,7 +1,7 @@
 import asyncio
 from dataclasses import dataclass
 from typing import Dict
-from urllib.parse import urlparse, quote, urlencode
+from urllib.parse import urlparse
 
 import aiohttp
 import bs4
@@ -34,9 +34,7 @@ class BaseParser:
 
     def __init__(
         self,
-        redis_host: str,
-        redis_port: int,
-        db: int,
+        redis: str,
         auth_url: str = None,
         auth_service_url: str = None,
         login: str = None,
@@ -46,7 +44,7 @@ class BaseParser:
         is_logged: bool = True,
     ):
         self.is_logged = is_logged
-        self.db = Redis(host=redis_host, port=redis_port, db=db, single_connection_client=single_connection_client)
+        self.db = Redis.from_url(redis, single_connection_client=single_connection_client)
         self.logger = Logger(is_logged)
 
         self.use_auth = use_auth
@@ -78,20 +76,6 @@ class BaseParser:
     def base_url(url):
         parsed = urlparse(url)
         return f'{parsed.scheme}://{parsed.netloc}'
-
-    # async def soup_with_auth(self, url: str) -> bs4.BeautifulSoup:
-    #     async for session in self.session():
-    #         if self.auth_data.session_id == '':
-    #             await self.__auth(session)
-
-    #         async with session.get(url, cookies={'_session_id': self.auth_data.session_id}) as response:
-    #             if response.status != 200:
-    #                 await asyncio.sleep(5)
-    #                 await self.__auth(session)
-
-    #             html = await response.text()
-                
-    #     return bs4.BeautifulSoup(html, "lxml")
     
     async def download_file_with_auth(self, url: str, filepath: str):
         async for session in self.session():

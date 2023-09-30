@@ -22,4 +22,4 @@ RUN bash -c "if [ $INSTALL_DEV = True ] ; then poetry install --no-root ; else p
 
 COPY .env /mephiapp-celery/.env
 
-CMD ["celery", "-A", "celery_worker.worker.celery", "beat", "--loglevel=info"]
+CMD ["celery", "-A", "celery_worker.worker.app", "beat", "--loglevel=info"]

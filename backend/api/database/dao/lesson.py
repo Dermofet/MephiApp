@@ -1,9 +1,11 @@
 import datetime
 from typing import List, Tuple
+
 from fastapi import HTTPException
 from pydantic import UUID4
 from sqlalchemy import and_, between, delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from backend.api.database.dao.academic import AcademicDAO
 from backend.api.database.dao.group import GroupDAO
 from backend.api.database.dao.room import RoomDAO
@@ -15,9 +17,9 @@ from backend.api.database.models.lesson_translate import LessonTranslateModel
 from backend.api.database.models.room import RoomModel
 from backend.api.database.models.teacher import TeacherModel
 from backend.api.database.models.teacher_translate import TeacherTranslateModel
-
 from backend.api.schemas.lesson import LessonCreateSchema
 from etl.schemas.lesson import LessonLoading
+
 
 class LessonDAO:
     """

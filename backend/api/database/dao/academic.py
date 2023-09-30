@@ -1,11 +1,13 @@
 from typing import List
+
 from fastapi import HTTPException
 from pydantic import UUID4
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.api.database.models.academic import AcademicModel
 
+from backend.api.database.models.academic import AcademicModel
 from backend.api.schemas.academic import AcademicCreateSchema
+
 
 class AcademicDAO:
     """

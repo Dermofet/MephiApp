@@ -1,4 +1,5 @@
 import sqlalchemy
+
 from etl.loaders.base_loader import BaseLoader
 from etl.schemas.academic import AcademicLoading
 from etl.schemas.corps import CorpsLoading
@@ -11,14 +12,12 @@ from etl.schemas.teacher import TeacherLoading
 class ScheduleLoader(BaseLoader):
     def __init__(
             self,
-            redis_host: str,
-            redis_port: int,
-            redis_db: int,
+            redis: str,
             postgres_dsn: str,
             single_connection_client: bool = True,
             is_logged: bool = True,
     ):
-        super().__init__(redis_host, redis_port, redis_db, postgres_dsn, single_connection_client, is_logged)
+        super().__init__(redis, postgres_dsn, single_connection_client, is_logged)
 
     async def load(self):
         self.logger.info("Loading schedule...")
@@ -33,7 +32,7 @@ class ScheduleLoader(BaseLoader):
             await self.facade_db.commit()
         except Exception as e:
             self.logger.error(f"Can't loading data: {e}")
-            await self.facade_db.rollback()
+            await self.facade_db.rollback() 
 
         self.logger.info("Schedule loaded successfully")
 

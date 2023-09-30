@@ -1,7 +1,9 @@
 import asyncio
 import sys
 
-from etl import celery_tasks
+from config import config
+from celery_worker import tasks
+
 
 def event_loop():
     try:
@@ -15,22 +17,20 @@ def event_loop():
 
 def schedule():
     for loop in event_loop():
-        loop.run_until_complete(celery_tasks.etl_schedule())
+        loop.run_until_complete(tasks.etl_schedule())
 
 
 def start_semester():
     for loop in event_loop():
-        loop.run_until_complete(celery_tasks.etl_start_semester())
+        loop.run_until_complete(tasks.etl_start_semester())
 
 
 def all_news():
-    for loop in event_loop():
-        loop.run_until_complete(celery_tasks.etl_all_news())
+    tasks.etl_all_news()
 
 
 def new_news():
-    for loop in event_loop():
-        loop.run_until_complete(celery_tasks.etl_new_news())
+    tasks.parse_new_news.delay()
 
 
 args = [arg for arg in sys.argv if arg != ""]

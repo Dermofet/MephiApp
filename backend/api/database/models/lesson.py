@@ -4,7 +4,7 @@ from typing import Optional
 
 from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship, WriteOnlyMapped
+from sqlalchemy.orm import Mapped, WriteOnlyMapped, mapped_column, relationship
 
 from backend.api.database.connection import Base
 from backend.api.database.models.association_tables import AT_lesson_group, AT_lesson_room, AT_lesson_teacher

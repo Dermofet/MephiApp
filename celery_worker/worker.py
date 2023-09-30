@@ -3,12 +3,21 @@ from celery.schedules import crontab
 
 from config import config
 
-celery = Celery(
+import sys
+sys.path.append("..")
+
+app = Celery(
     config.CELERY_NAME,
     broker=config.RABBITMQ_URI.unicode_string(),
+    backend=config.REDIS_URI.unicode_string(),
+    include=[
+        'celery_worker.tasks',
+        'etl.parsers.news_parser',
+    ]
 )
+# print(config.RABBITMQ_URI.unicode_string())
 
-celery.conf.beat_schedule = {
+app.conf.beat_schedule = {
     'parse_schedule_task': {
         'task': 'etl.celery_task.etl_schedule',
         'schedule': crontab(minute='0', hour='3', day_of_week='0'),

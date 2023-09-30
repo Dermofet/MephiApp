@@ -2,10 +2,11 @@ import datetime
 from abc import ABC
 from typing import List, Tuple
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from pydantic import UUID4, BaseModel
-from sqlalchemy import delete, select, update, text
+from sqlalchemy import delete, select, text, update
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from backend.api.database.connection import get_session
 from backend.api.database.dao.academic import AcademicDAO
 from backend.api.database.dao.corps import CorpsDAO
@@ -15,7 +16,6 @@ from backend.api.database.dao.news import NewsDAO
 from backend.api.database.dao.room import RoomDAO
 from backend.api.database.dao.start_semester import StartSemesterDAO
 from backend.api.database.dao.teacher import TeacherDAO
-
 from backend.api.database.facade.interface import IFacadeDB
 from backend.api.database.models import (
     AcademicModel,

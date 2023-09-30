@@ -11,9 +11,7 @@ class RoomParser(BaseParser):
     def __init__(
             self,
             url: str,
-            redis_host: str,
-            redis_port: int,
-            db: int,
+            redis: str,
             auth_url: str,
             auth_service_url: str,
             login: str,
@@ -24,9 +22,7 @@ class RoomParser(BaseParser):
     ):
         super().__init__(
             use_auth=use_auth,
-            redis_host=redis_host, 
-            redis_port=redis_port, 
-            db=db,
+            redis=redis,
             auth_url=auth_url,
             auth_service_url=auth_service_url,
             login=login,

@@ -1,8 +1,12 @@
-from typing import Optional
+from typing import List, Optional
 
-from pydantic import ConfigDict, UUID4, BaseModel, Field
+from pydantic import UUID4, BaseModel, ConfigDict, Field
 
-from backend.api.schemas.teacher_translate import TeacherTranslateBaseSchema, TeacherTranslateCreateSchema, TeacherTranslateOutputSchema, TeacherTranslateSchema
+from backend.api.schemas.teacher_translate import (
+    TeacherTranslateCreateSchema,
+    TeacherTranslateOutputSchema,
+    TeacherTranslateSchema,
+)
 
 
 class TeacherBaseSchema(BaseModel):
@@ -11,15 +15,15 @@ class TeacherBaseSchema(BaseModel):
 
 
 class TeacherCreateSchema(TeacherBaseSchema):
-    trans: list[TeacherTranslateCreateSchema] = Field(description="Список преподавателей")
+    trans: List[TeacherTranslateCreateSchema] = Field(description="Список преподавателей")
 
 
 class TeacherOutputSchema(TeacherBaseSchema):
-    trans: list[TeacherTranslateOutputSchema] = Field(description="Список преподавателей")
+    trans: List[TeacherTranslateOutputSchema] = Field(description="Список преподавателей")
 
 
 class TeacherSchema(TeacherBaseSchema):
     guid: Optional[UUID4] = Field(description="ID")
     model_config = ConfigDict(from_attributes=True)
 
-    trans: list[TeacherTranslateSchema] = Field(description="Список преподавателей")
+    trans: List[TeacherTranslateSchema] = Field(description="Список преподавателей")

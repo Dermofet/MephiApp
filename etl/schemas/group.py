@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+
 from etl.schemas.base import Base
 
 

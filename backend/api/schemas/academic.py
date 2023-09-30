@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import ConfigDict, UUID4, BaseModel, Field
+from pydantic import UUID4, BaseModel, ConfigDict, Field
 
 from backend.api.database.models.academic import AcademicModel
 

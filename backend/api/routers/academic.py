@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends
-# from starlette import status
 
 # from backend.api.schemas.academic import AcademicCreateSchema, AcademicOutputSchema
 # from backend.api.services.academic import AcademicService
 from config import config
+
+# from starlette import status
+
 
 router = APIRouter(prefix=config.BACKEND_PREFIX)
 

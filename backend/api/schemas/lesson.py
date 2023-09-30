@@ -3,7 +3,7 @@ from copy import deepcopy
 from datetime import date, time
 from typing import Optional
 
-from pydantic import field_validator, ConfigDict, UUID4, BaseModel, Field, ValidationError
+from pydantic import UUID4, BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from backend.api.database.models.lesson import LessonModel
 from backend.api.database.models.lesson_translate import LessonTranslateModel

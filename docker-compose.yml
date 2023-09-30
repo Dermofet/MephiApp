@@ -19,8 +19,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - mephiapp-network
 
   backend:
     container_name: backend
@@ -50,8 +48,6 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
       ENV: development
-    networks:
-      - mephiapp-network
 
   #  nginx:
   #    container_name: nginx
@@ -63,62 +59,50 @@ services:
   #    networks:
   #      - mephiapp-network
 
-  # celery:
-  #   container_name: celery_worker
-  #   build:
-  #     context: .
-  #     dockerfile: ./celery_worker/Dockerfile
-  #   restart: always
-  #   depends_on:
-  #     - db
-  #     - backend
-  #   volumes:
-  #     - ./celery_worker:/mephiapp-celery/celery_worker
-  #     - ./config/:/mephiapp-celery/config
-  #     - ./logging_/:/mephiapp-celery/logging_
-  #     - ./etl/:/mephiapp-celery/etl
-  #     - ./backend/:/mephiapp-celery/backend
-  #   ports:
-  #     - "7000:7000"
-  #   environment:
-  #     CELERY_NAME: ${CELERY_NAME}
-  #     CELERY_BROKER: ${CELERY_BROKER}
-  #     CELERY_BACKEND: ${CELERY_BACKEND}
-  #     CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
-  #     CELERY_BROKER_URL: ${CELERY_BROKER_URL}
-  #     CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
-  #   networks:
-  #     - mephiapp-network
+  celery:
+    container_name: celery_worker
+    build:
+      context: .
+      dockerfile: ./celery_worker/Dockerfile
+    restart: always
+    depends_on:
+      - db
+      - backend
+    volumes:
+      - ./celery_worker:/mephiapp-celery/celery_worker
+      - ./config/:/mephiapp-celery/config
+      - ./logging_/:/mephiapp-celery/logging_
+      - ./etl/:/mephiapp-celery/etl
+      - ./backend/:/mephiapp-celery/backend
+      - ./utils/:/mephiapp-celery/utils
+    ports:
+      - "9000:9000"
+    environment:
+      CELERY_NAME: ${CELERY_NAME}
 
-  # rabbitmq:
-  #   container_name: rabbitmq
-  #   image: rabbitmq:3.12
-  #   ports:
-  #     - "5672:5672"
-  #   environment:
-  #     RABBITMQ_HOST: ${RABBITMQ_HOST}
-  #     RABBITMQ_PORT: ${RABBITMQ_PORT}
-  #     RABBITMQ_USER: ${RABBITMQ_USER}
-  #     RABBITMQ_PASS: ${RABBITMQ_PASS}
-  #   networks:
-  #     - mephiapp-network
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.12
+    restart: always
+    ports:
+      - "5672:5672"
+    environment:
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbit disk_free_limit 2147483648
 
   redis:
     container_name: redis
     image: redis:7.2
+    restart: always
     ports:
       - "${REDIS_PORT}:6379"
     environment:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
-      REDIS_USER: ${REDIS_USER}
-      REDIS_PASS: ${REDIS_PASS}
       REDIS_DB: ${REDIS_DB}
-    networks:
-      - mephiapp-network
 
 volumes:
   app-db-data:
-
-networks:
-  mephiapp-network:

@@ -1,7 +1,7 @@
 import datetime
 from typing import Optional
 
-from pydantic import ConfigDict, UUID4, BaseModel, Field
+from pydantic import UUID4, BaseModel, ConfigDict, Field
 
 
 class StartSemesterBaseSchema(BaseModel):

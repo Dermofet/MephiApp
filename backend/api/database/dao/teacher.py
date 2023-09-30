@@ -1,4 +1,5 @@
 from typing import List
+
 from fastapi import HTTPException
 from pydantic import UUID4
 from sqlalchemy import delete, select, update
@@ -7,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.api.database.models.teacher import TeacherModel
 from backend.api.database.models.teacher_translate import TeacherTranslateModel
 from backend.api.schemas.teacher import TeacherCreateSchema
+
 
 class TeacherDAO:
     """
@@ -34,12 +36,16 @@ class TeacherDAO:
     Получение преподавателя по id
     """
     async def bulk_insert(self, data: List[TeacherCreateSchema]) -> None:
-        db_teachers = []
-        for teacher in data:
-            t = TeacherModel(url=teacher.url, alt_url=teacher.alt_url)
-            for trans in teacher.trans:
-                t.trans.add(TeacherTranslateModel(lang=trans.lang, name=trans.name, fullname=trans.fullname))
-            db_teachers.append(t)
+        db_teachers = [
+            TeacherModel(
+                url=teacher.url, 
+                alt_url=teacher.alt_url,
+                trans=[
+                    TeacherTranslateModel(lang=trans.lang, name=trans.name, fullname=trans.fullname)
+                    for trans in teacher.trans
+                ]
+            ) for teacher in data
+        ]
         self._session.add_all(db_teachers)
         await self._session.flush()
 

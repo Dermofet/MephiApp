@@ -63,8 +63,6 @@ class Config(_Settings):
     # Redis
     REDIS_HOST: str = Field(..., description="Redis host")
     REDIS_PORT: int = Field(..., description="Redis port")
-    REDIS_USER: str = Field(..., description="Redis user")
-    REDIS_PASS: str = Field(..., description="Redis password")
     REDIS_DB: int = Field(..., description="Redis db")
 
     REDIS_URI: Optional[RedisDsn] = Field(None, description="Redis uri", validate_default=True)
@@ -111,8 +109,6 @@ class Config(_Settings):
             scheme="redis",
             host=info.data['REDIS_HOST'],
             port=info.data['REDIS_PORT'],
-            username=info.data['REDIS_USER'],
-            password=info.data['REDIS_PASS'],
             path=str(info.data['REDIS_DB'])
         )
 

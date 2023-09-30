@@ -2,21 +2,21 @@ import asyncio
 from typing import List
 
 from etl.parsers.base_parser import BaseParser
-from etl.schemas.lesson import LessonExtracting
+from etl.schemas.lesson import LessonExtracting, RoomLessonExtracting
+from etl.schemas.room import RoomLoading
 
 
 class ScheduleParser(BaseParser):
-    url: str
+    lesson_schedule_url: str
     _index = 0
 
     def __init__(
             self,
-            url: str,
+            lesson_schedule_url: str,
+            rooms_schedule_url: str,
             auth_url: str,
             auth_service_url: str,
-            redis_host: str,
-            redis_port: int,
-            db: int,
+            redis: str,
             login: str,
             password: str,
             use_auth: bool,
@@ -27,15 +27,14 @@ class ScheduleParser(BaseParser):
             use_auth=use_auth,
             auth_url=auth_url,
             auth_service_url=auth_service_url,
-            redis_host=redis_host, 
-            redis_port=redis_port, 
-            db=db,
+            redis=redis,
             login=login,
             password=password,
             single_connection_client=single_connection_client, 
             is_logged=is_logged
         )
-        self.url = url
+        self.lesson_schedule_url = lesson_schedule_url
+        self.rooms_schedule_url = rooms_schedule_url
 
     async def parse(self):
         self.logger.info("Start parsing schedule")
@@ -45,15 +44,20 @@ class ScheduleParser(BaseParser):
 
             self.logger.info(f'{academic_name} was parsed')
 
-            await self.__set_info_to_db(groups_info)
+            await self.__set_info_to_db_lessons(groups_info)
 
-        self.logger.info("All lessons set in the redis")
+        self.logger.info("Schedule lessons parsed")
+        self.logger.info("Start parsing rooms schedule")
+        rooms = await self.__get_rooms_schedule()
+        self.logger.info(f'{len(rooms)} rooms has been parsed')
+
+        await self.__set_info_to_db_rooms(rooms)
 
     async def __get_academic_types(self):
-        soup = await self.soup(self.url)
+        soup = await self.soup(self.lesson_schedule_url)
 
         res = []
-        base_url = self.base_url(self.url)
+        base_url = self.base_url(self.lesson_schedule_url)
         for item in soup.findAll("ul", class_="nav nav-tabs btn-toolbar"):
             elems = item.findAll("a")
             res.extend(
@@ -220,8 +224,88 @@ class ScheduleParser(BaseParser):
         date_end = dates[1].strip() if len(dates) > 1 else None
         return date_start, date_end
 
-    async def __set_info_to_db(self, lessons: List[List[LessonExtracting]]):
+    async def __set_info_to_db_lessons(self, lessons: List[List[LessonExtracting]]):
         for lessons_group in lessons:
             for lesson in lessons_group:
                 self.db.hset(name=f"lessons:{self._index}", key="lesson", value=lesson.model_dump_redis())
+                self._index += 1
+
+    async def __get_rooms_url(self):
+        soup = await self.soup(self.rooms_schedule_url)
+
+        box = soup.find("div", class_="box")
+        if box is None:
+            self.logger.info('Rooms found: 0, Corps found: 0')
+            return []
+
+        rooms_list = []
+        for name, rooms in zip(box.findAll("h3", class_="light"), box.findAll("ul", class_="list-inline")):
+            rooms_list.extend(
+                [
+                    {
+                        "number": room.text,
+                        "corps": name.text,
+                        "url": self.base_url(self.rooms_schedule_url) + room['href']
+                    }
+                    for room in rooms.findAll("a")
+                ]
+            )
+        return rooms_list
+
+    async def __get_rooms_schedule(self):
+        rooms_urls = await self.__get_rooms_url()
+        rooms = [self.__get_room_schedule(room) for room in rooms_urls]
+        return await asyncio.gather(*rooms)
+
+    async def __get_room_schedule(self, room):
+        self.logger.debug(f'Parsing room: {room["number"]}, Corps: {room["corps"]}')
+        soup = await self.soup(room['url'])
+
+        schedule = []
+        for lessons, day in zip(soup.find_all("div", class_="list-group"), self.__get_weekdays(soup)):
+            for lesson in lessons.find_all("div", class_="list-group-item"):
+                time_start, time_end = self.__extract_time(lesson)
+                for lesson_item in lesson.find("div", class_="lesson-lessons").findChildren("div", recursive=False):
+                    schedule_elem = self.__extract_rooms_schedule_element(
+                        lesson_item,
+                        lesson_item.findChildren("div", recursive=False)[0].text.strip() if lesson_item.findChildren("div", recursive=False)[0] is not None else None,
+                        'ru',
+                        day,
+                        time_start,
+                        time_end
+                    )
+                    schedule.append(schedule_elem.model_copy(deep=True))
+        return schedule
+        
+    def __extract_rooms_schedule_element(self, lesson, group, lang, day, time_start, time_end):
+        dot, room = self.__extract_room(lesson)
+        lesson_type = self.__extract_lesson_type(lesson)
+        weeks = self.__extract_weeks(lesson)
+        teachers = self.__extract_teachers(lesson)
+        date_start, date_end = self.__extract_dates(lesson)
+        lesson_name, subgroup = self.__extract_lesson_info(lesson)
+
+        return RoomLessonExtracting(
+            group=group,
+            lang=lang,
+            weekday=day,
+            time_start=time_start,
+            time_end=time_end,
+            type=lesson_type,
+            weeks=weeks,
+            date_start=date_start,
+            date_end=date_end,
+            teachers=teachers,
+            name=lesson_name,
+            subgroup=subgroup,
+            dot=dot,
+            room=room,
+            day=day,
+            teacher_name=teachers,
+        )
+
+    async def __set_info_to_db_rooms(self, rooms: List[RoomLessonExtracting]):
+        for items in rooms:
+            for room in items:
+                self.db.hset(name=f"room_lessons:{self._index}", key="room_lesson", value=room.model_dump_redis())
                 self._index += 1

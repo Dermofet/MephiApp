@@ -1,6 +1,4 @@
-from typing import List
-
-from redis.client import Redis
+from redis import Redis
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -19,15 +17,13 @@ class BaseLoader:
 
     def __init__(
             self,
-            redis_host: str,
-            redis_port: int,
-            redis_db: int,
+            redis: str,
             postgres_dsn: str,
             single_connection_client: bool = True,
             is_logged: bool = True,
             debug: bool = False,
     ):
-        self.redis_db = Redis(host=redis_host, port=redis_port, db=redis_db, single_connection_client=single_connection_client)
+        self.redis_db = Redis.from_url(redis, single_connection_client=single_connection_client)
         self.logger = Logger(is_logged)
 
         self.__engine = create_async_engine(
@@ -40,7 +36,7 @@ class BaseLoader:
             class_=AsyncSession
         )
 
-    async def init_facade(self):
+    def init_facade(self):
         session = self.__async_session()
         self.facade_db = FacadeDB(session)
 

@@ -1,7 +1,9 @@
 from typing import Dict, List, Optional
 
 from pydantic import Field, field_validator
+
 from etl.schemas.base import Base
+
 
 class TeacherTranslateLoading(Base):
     lang: str = Field(description="Код страны (для перевода)")

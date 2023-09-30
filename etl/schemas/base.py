@@ -1,6 +1,8 @@
-from pydantic import BaseModel
-from typing import Union
 import json
+from typing import Union
+
+from pydantic import BaseModel
+
 
 class Base(BaseModel):
     def model_dump_redis(self):

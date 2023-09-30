@@ -1,7 +1,7 @@
 import datetime
 from typing import List, Optional
 
-from pydantic import ConfigDict, BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from backend.api.schemas.news_img import NewsImageCreateSchema, NewsImageOutputSchema, NewsImageSchema
 

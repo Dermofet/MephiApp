@@ -2,8 +2,8 @@ from typing import Dict
 
 from fastapi import HTTPException, Response
 from pydantic import UUID4
-from backend.api.database.models.teacher_translate import TeacherTranslateModel
 
+from backend.api.database.models.teacher_translate import TeacherTranslateModel
 from backend.api.schemas.lesson import (
     LessonCreateSchema,
     LessonOutputSchema,
@@ -103,7 +103,7 @@ class LessonService(BaseService):
                                     fullname=t[1].fullname,
                                     lang=t[1].lang
                                 )
-                            ],
+                            ] if t[1] else [],
                         ) for t in await self.facade.get_teachers_lesson(lesson, lang)
                     ],
                 ).model_dump()
@@ -144,7 +144,7 @@ class LessonService(BaseService):
                                     fullname=t[1].fullname,
                                     lang=t[1].lang
                                 )
-                            ]
+                            ] if t[1] else [],
                         ) for t in await self.facade.get_teachers_lesson(lesson, lang)
                     ],
                 ).model_dump()

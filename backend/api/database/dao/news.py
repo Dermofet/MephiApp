@@ -1,4 +1,5 @@
 from typing import List
+
 from pydantic import UUID4
 from sqlalchemy import delete, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.api.database.models.news import NewsModel
 from backend.api.database.models.news_image import NewsImageModel
 from backend.api.schemas.news import NewsCreateSchema
+
 
 class NewsDAO:
     """

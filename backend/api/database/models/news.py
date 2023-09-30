@@ -4,7 +4,7 @@ from typing import Optional
 
 from sqlalchemy import String, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship, WriteOnlyMapped
+from sqlalchemy.orm import Mapped, WriteOnlyMapped, mapped_column, relationship
 
 from backend.api.database.connection import Base
 

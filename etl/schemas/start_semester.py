@@ -1,6 +1,7 @@
 import datetime
 
 from pydantic import Field
+
 from etl.schemas.base import Base
 
 

@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.api.database.models.start_semester import StartSemesterModel
 from backend.api.schemas.start_semester import StartSemesterCreateSchema
 
+
 class StartSemesterDAO:
     """
     DAO для работы с начальным семестром

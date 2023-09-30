@@ -1,9 +1,15 @@
-from celery_worker import celery
+import asyncio
+
+from celery import chain, group
+from celery_worker import app
 from config import config
 from etl.loaders.news_loader import NewsLoader
+# from etl.loaders.news_loader import NewsLoader
 from etl.loaders.schedule_loader import ScheduleLoader
 from etl.loaders.start_semester_loader import StartSemesterLoader
 from etl.parsers.news_parser import NewsParser
+
+# from etl.parsers.news_parser import NewsParser
 from etl.parsers.room_parser import RoomParser
 from etl.parsers.schedule_parser import ScheduleParser
 from etl.parsers.start_semester_parser import StartSemesterParser
@@ -11,15 +17,14 @@ from etl.parsers.teachers_parser import TeachersParser
 from etl.transform.schedule_transformer import ScheduleTransformer
 
 
-@celery.task
+@app.task
 async def etl_schedule():
     es = ScheduleParser(
-        url=config.MEPHI_SCHEDULE_URL.unicode_string(),
+        lesson_schedule_url=config.MEPHI_SCHEDULE_URL.unicode_string(),
+        rooms_schedule_url=config.MEPHI_ROOM_URL.unicode_string(),
         auth_url=config.MEPHI_AUTH_URL.unicode_string(),
         auth_service_url=config.MEPHI_AUTH_SERVICE_URL.unicode_string(),
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        db=config.REDIS_DB,
+        redis=config.REDIS_URI.unicode_string(),
         login=config.MEPHI_LOGIN,
         password=config.MEPHI_PASSWORD,
         use_auth=False,
@@ -29,9 +34,7 @@ async def etl_schedule():
     
     er = RoomParser(
         url=config.MEPHI_ROOM_URL.unicode_string(),
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        db=config.REDIS_DB,
+        redis=config.REDIS_URI.unicode_string(),
         login=config.MEPHI_LOGIN,
         password=config.MEPHI_PASSWORD,
         auth_url=config.MEPHI_AUTH_URL.unicode_string(),
@@ -42,9 +45,7 @@ async def etl_schedule():
     
     et = TeachersParser(
         url=config.MEPHI_TEACHERS_URL.unicode_string(),
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        db=config.REDIS_DB,
+        redis=config.REDIS_URI.unicode_string(),
         login=config.MEPHI_LOGIN,
         password=config.MEPHI_PASSWORD,
         auth_url=config.MEPHI_AUTH_URL.unicode_string(),
@@ -54,71 +55,63 @@ async def etl_schedule():
     await et.parse()
 
     t = ScheduleTransformer(
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        db=config.REDIS_DB,
+        redis=config.REDIS_URI.unicode_string(),
         langs=config.FOREIGN_LANGS
     )
     await t.transform()
 
     l = ScheduleLoader(
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        redis_db=config.REDIS_DB,
+        redis=config.REDIS_URI.unicode_string(),
         postgres_dsn=config.LOCAL_DB_URI.unicode_string(),
     )
     await l.init_facade()
     await l.load()
 
-@celery.task
-async def etl_all_news():
+@app.task
+def etl_all_news():
     e = NewsParser(
         url=config.MEPHI_NEWS_PAGE_URL.unicode_string(),
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        db=config.REDIS_DB,
-        chunks=50,
+        redis=config.REDIS_URI.unicode_string(),
         use_auth=False,
     )
-    await e.parse_all_news()
 
+    e.create_parse_news_tasks(config.MEPHI_NEWS_PAGE_URL.unicode_string())
+    chain(e.parse_news_page_tasks(e.logger, e.db, e.url), load_news.si()).delay()
+
+@app.task
+def load_news():
     l = NewsLoader(
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        redis_db=config.REDIS_DB,
+        redis=config.REDIS_URI.unicode_string(),
         postgres_dsn=config.LOCAL_DB_URI.unicode_string(),
     )
-    await l.init_facade()
-    await l.load()
+    l.logger.debug("Loading news")
+    l.init_facade()
+    asyncio.run(l.load())
 
-@celery.task
+@app.task
+def parse_new_news():
+    asyncio.run(etl_new_news())
+
 async def etl_new_news():
     e = NewsParser(
         url=config.MEPHI_NEWS_PAGE_URL.unicode_string(),
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        db=config.REDIS_DB,
-        chunks=50,
+        redis=config.REDIS_URI.unicode_string(),
         use_auth=False,
     )
     await e.parse_new_news()
 
     l = NewsLoader(
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        redis_db=config.REDIS_DB,
+        redis=config.REDIS_URI.unicode_string(),
         postgres_dsn=config.LOCAL_DB_URI.unicode_string(),
     )
-    await l.init_facade()
+    l.init_facade()
     await l.load()
 
-@celery.task
+@app.task
 async def etl_start_semester():
     e = StartSemesterParser(
         url=config.MEPHI_SCHEDULE_URL.unicode_string(),
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        db=config.REDIS_DB,
+        redis=config.REDIS_URI.unicode_string(),
         login=config.MEPHI_LOGIN,
         password=config.MEPHI_PASSWORD,
         auth_url=config.MEPHI_AUTH_URL.unicode_string(),
@@ -128,9 +121,7 @@ async def etl_start_semester():
     await e.parse()
 
     l = StartSemesterLoader(
-        redis_host=config.REDIS_HOST,
-        redis_port=config.REDIS_PORT,
-        redis_db=config.REDIS_DB,
+        redis=config.REDIS_URI.unicode_string(),
         postgres_dsn=config.LOCAL_DB_URI.unicode_string(),
     )
     await l.init_facade()
