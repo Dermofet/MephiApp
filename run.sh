@@ -1,13 +1,9 @@
 #!/bin/bash
 
-init() {
-  source /venv/bin/activate
-  export PYTHONPATH=$PYTHONPATH:$(realpath "$(dirname "$0")")
-}
-
 parse() {
-  script_dir="$(dirname "$0")"
-  docker compose exec celery python "$script_dir/etl/etl_.py" "$2"
+  export PYTHONPATH=$PYTHONPATH:$(realpath "$(dirname "$0")")
+  echo $PYTHONPATH
+  docker compose exec -e PYTHONPATH=$PYTHONPATH:$(realpath "$(dirname "$0")") celery python "$(dirname "$0")/etl/etl_.py" "$2"
 }
 
 build() {
@@ -74,7 +70,6 @@ alembic() {
 menu() {
   echo "bash run.sh [command]"
   echo "commands:"
-  echo "  init                          -  настройка окружения"
   echo "  build                         -  собрать проект и запустить его"
   echo "  run                           -  запустить сервер"
   echo "  stop                          -  остановить сервер"
