@@ -1,15 +1,13 @@
 import asyncio
 
-from celery import chain, group
+from celery import chain
+
 from celery_worker import app
 from config import config
 from etl.loaders.news_loader import NewsLoader
-# from etl.loaders.news_loader import NewsLoader
 from etl.loaders.schedule_loader import ScheduleLoader
 from etl.loaders.start_semester_loader import StartSemesterLoader
 from etl.parsers.news_parser import NewsParser
-
-# from etl.parsers.news_parser import NewsParser
 from etl.parsers.room_parser import RoomParser
 from etl.parsers.schedule_parser import ScheduleParser
 from etl.parsers.start_semester_parser import StartSemesterParser
@@ -18,6 +16,9 @@ from etl.transform.schedule_transformer import ScheduleTransformer
 
 
 @app.task
+def parse_schedule():
+    asyncio.run(etl_schedule())
+
 async def etl_schedule():
     es = ScheduleParser(
         lesson_schedule_url=config.MEPHI_SCHEDULE_URL.unicode_string(),
@@ -29,7 +30,6 @@ async def etl_schedule():
         password=config.MEPHI_PASSWORD,
         use_auth=False,
     )
-    es.db.flushdb()
     await es.parse()
     
     er = RoomParser(
@@ -64,7 +64,7 @@ async def etl_schedule():
         redis=config.REDIS_URI.unicode_string(),
         postgres_dsn=config.LOCAL_DB_URI.unicode_string(),
     )
-    await l.init_facade()
+    l.init_facade()
     await l.load()
 
 @app.task
@@ -105,9 +105,12 @@ async def etl_new_news():
         postgres_dsn=config.LOCAL_DB_URI.unicode_string(),
     )
     l.init_facade()
-    await l.load()
+    l.load()
 
 @app.task
+def parse_start_semester():
+    asyncio.run(etl_start_semester())
+
 async def etl_start_semester():
     e = StartSemesterParser(
         url=config.MEPHI_SCHEDULE_URL.unicode_string(),
@@ -124,5 +127,5 @@ async def etl_start_semester():
         redis=config.REDIS_URI.unicode_string(),
         postgres_dsn=config.LOCAL_DB_URI.unicode_string(),
     )
-    await l.init_facade()
-    await l.load()
+    l.init_facade()
+    l.load()

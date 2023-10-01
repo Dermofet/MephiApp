@@ -66,6 +66,7 @@ class Config(_Settings):
     REDIS_DB: int = Field(..., description="Redis db")
 
     REDIS_URI: Optional[RedisDsn] = Field(None, description="Redis uri", validate_default=True)
+    LOCAL_REDIS_URI: Optional[RedisDsn] = Field(None, description="Local Redis uri", validate_default=True)
 
     # RabbitMQ
     RABBITMQ_HOST: str = Field(..., description="RabbitMQ host")
@@ -74,6 +75,7 @@ class Config(_Settings):
     RABBITMQ_PASS: str = Field(..., description="RabbitMQ password")
 
     RABBITMQ_URI: Optional[AmqpDsn] = Field(None, description="RabbitMQ uri", validate_default=True)
+    LOCAL_RABBITMQ_URI: Optional[AmqpDsn] = Field(None, description="Local RabbitMQ uri", validate_default=True)
 
     @field_validator("DB_URI", mode="before")
     def create_db_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
@@ -89,7 +91,7 @@ class Config(_Settings):
         )
 
     @field_validator("LOCAL_DB_URI", mode="before")
-    def create_alembic_db_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
+    def create_local_db_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
         if isinstance(v, str):
             return v
         return AsyncPostgresDns.build(
@@ -111,6 +113,17 @@ class Config(_Settings):
             port=info.data['REDIS_PORT'],
             path=str(info.data['REDIS_DB'])
         )
+    
+    @field_validator("LOCAL_REDIS_URI", mode="before")
+    def create_local_redis_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
+        if isinstance(v, str):
+            return v
+        return RedisDsn.build(
+            scheme="redis",
+            host="localhost",
+            port=info.data['REDIS_PORT'],
+            path=str(info.data['REDIS_DB'])
+        )
 
     @field_validator("RABBITMQ_URI", mode="before", check_fields=False)
     def create_rabbitmq_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
@@ -119,6 +132,18 @@ class Config(_Settings):
         return AmqpDsn.build(
             scheme="amqp",
             host=info.data['RABBITMQ_HOST'],
+            port=info.data['RABBITMQ_PORT'],
+            username=info.data['RABBITMQ_USER'],
+            password=info.data['RABBITMQ_PASS'],
+        )
+    
+    @field_validator("LOCAL_RABBITMQ_URI", mode="before", check_fields=False)
+    def create_local_rabbitmq_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
+        if isinstance(v, str):
+            return v
+        return AmqpDsn.build(
+            scheme="amqp",
+            host="localhost",
             port=info.data['RABBITMQ_PORT'],
             username=info.data['RABBITMQ_USER'],
             password=info.data['RABBITMQ_PASS'],
