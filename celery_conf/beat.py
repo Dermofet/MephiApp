@@ -15,19 +15,19 @@ beat_app = Celery(
 
 beat_app.conf.beat_schedule = {
     'parse_schedule_task': {
-        'task': 'celery_conf.tasks.parse_schedule',
+        'task': 'celery_conf.beat_tasks.parse_schedule',
         'schedule': crontab(minute='0', hour='3', day_of_week='0'),
     },
     'parse_news_task': {
-        'task': 'celery_conf.tasks.parse_new_news',
+        'task': 'celery_conf.beat_tasks.parse_new_news',
         'schedule': crontab(minute='30'),
     },
     'parse_start_semester_task_09': {
-        'task': 'celery_conf.tasks.etl_start_semester',
+        'task': 'celery_conf.beat_tasks.etl_start_semester',
         'schedule': crontab(day_of_month=1, month_of_year=9),
     },
     'parse_start_semester_task_02': {
-        'task': 'celery_worker.tasks.etl_start_semester',
+        'task': 'celery_worker.beat_tasks.etl_start_semester',
         'schedule': crontab(day_of_month=8, month_of_year=2),
     },
 }
