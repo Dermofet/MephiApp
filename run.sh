@@ -2,7 +2,7 @@
 
 parse() {
   script_dir="$(dirname "$0")"
-  venv/Scripts/python.exe "$script_dir/etl/etl_.py" "$2"
+  docker compose exec celery_worker python "$script_dir/etl/etl_.py" "$2"
 }
 
 build() {

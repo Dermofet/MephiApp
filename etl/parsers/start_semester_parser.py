@@ -13,21 +13,13 @@ class StartSemesterParser(BaseParser):
             self,
             url: str,
             redis: str,
-            login: str,
-            password: str,
-            auth_url: str,
-            auth_service_url: str,
             use_auth: bool,
             single_connection_client: bool = True,
             is_logged: bool = True,
     ):
         super().__init__(
             use_auth=use_auth,
-            auth_url=auth_url,
-            auth_service_url=auth_service_url,
             redis=redis,
-            login=login,
-            password=password,
             single_connection_client=single_connection_client, 
             is_logged=is_logged
         )

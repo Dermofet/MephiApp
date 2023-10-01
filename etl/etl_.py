@@ -1,34 +1,21 @@
-import asyncio
 import sys
 
-from celery_worker import tasks
-from config import config
-
-
-# def event_loop():
-#     try:
-#         loop = asyncio.get_event_loop()
-#     except RuntimeError:
-#         loop = asyncio.new_event_loop()
-#     yield loop
-
-#     if not loop.is_closed:
-#         loop.close()
+from celery_conf import beat_tasks
 
 def schedule():
-    tasks.parse_schedule.delay()
+    beat_tasks.parse_schedule.delay()
 
 
 def start_semester():
-    tasks.parse_start_semester.delay()
+    beat_tasks.parse_start_semester.delay()
 
 
 def all_news():
-    tasks.etl_all_news.delay()
+    beat_tasks.etl_all_news.delay()
 
 
 def new_news():
-    tasks.parse_new_news.delay()
+    beat_tasks.parse_new_news.delay()
 
 
 args = [arg for arg in sys.argv if arg != ""]

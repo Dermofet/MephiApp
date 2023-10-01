@@ -27,6 +27,7 @@ celery = "^5.3.1"
 redis = "^5.0.1"
 loguru = "^0.7.0"
 deep_translator = "^1.11.4"
+eventlet = "^0.33.3"
 
 
 [tool.poetry.dev-dependencies]

@@ -79,13 +79,14 @@ class BaseParser:
     
     async def download_file_with_auth(self, url: str, filepath: str):
         async for session in self.session():
-            if self.auth_data.session_id == '':
+            if self.use_auth and self.auth_data.session_id == '':
                 await self.__auth(session)
             
             async with session.get(url, cookies={'_session_id': self.auth_data.session_id}) as response:
                 if response.status != 200:
                     await asyncio.sleep(5)
-                    await self.__auth(session)
+                    if self.use_auth:
+                        await self.__auth(session)
                 
                 with open(filepath, 'wb') as file:
                     file.write(await response.read())

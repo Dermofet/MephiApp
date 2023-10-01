@@ -58,11 +58,13 @@ class Config(_Settings):
     MEPHI_URL: HttpUrl = Field(..., description="Mephi url")
 
     # Celery
-    CELERY_NAME: str = Field(..., description="Celery name")
+    WORKER_CELERY_NAME: str = Field(..., description="Worker celery name")
+    BEAT_CELERY_NAME: str = Field(..., description="Beat celery name")
 
     # Redis
     REDIS_HOST: str = Field(..., description="Redis host")
     REDIS_PORT: int = Field(..., description="Redis port")
+    LOCAL_REDIS_PORT: int = Field(..., description="Local redis port")
     REDIS_DB: int = Field(..., description="Redis db")
 
     REDIS_URI: Optional[RedisDsn] = Field(None, description="Redis uri", validate_default=True)
@@ -121,7 +123,7 @@ class Config(_Settings):
         return RedisDsn.build(
             scheme="redis",
             host="localhost",
-            port=info.data['REDIS_PORT'],
+            port=info.data['LOCAL_REDIS_PORT'],
             path=str(info.data['REDIS_DB'])
         )
 

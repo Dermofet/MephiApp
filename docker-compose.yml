@@ -60,16 +60,16 @@ services:
   #      - mephiapp-network
 
   celery:
-    container_name: celery_worker
+    container_name: celery
     build:
       context: .
-      dockerfile: ./celery_worker/Dockerfile
+      dockerfile: ./celery_conf/Dockerfile
     restart: always
     depends_on:
       - db
       - backend
     volumes:
-      - ./celery_worker:/mephiapp-celery/celery_worker
+      - ./celery_conf:/mephiapp-celery/celery_conf
       - ./config/:/mephiapp-celery/config
       - ./logging_/:/mephiapp-celery/logging_
       - ./etl/:/mephiapp-celery/etl
@@ -78,7 +78,8 @@ services:
     ports:
       - "9000:9000"
     environment:
-      CELERY_NAME: ${CELERY_NAME}
+      WORKER_CELERY_NAME: ${WORKER_CELERY_NAME}
+      BEAT_CELERY_NAME: ${BEAT_CELERY_NAME}
 
   rabbitmq:
     container_name: rabbitmq
@@ -98,7 +99,7 @@ services:
     image: redis:7.2
     restart: always
     ports:
-      - "${REDIS_PORT}:6379"
+      - "${LOCAL_REDIS_PORT}:${REDIS_PORT}"
     environment:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}

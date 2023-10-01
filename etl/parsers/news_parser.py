@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from celery import group
 from redis import Redis
 
-from celery_worker import app
+from celery_conf import beat_app
 from config import config
 from etl.parsers.base_parser import BaseParser
 from etl.schemas.news import NewsLoading
@@ -96,7 +96,7 @@ class NewsParser(BaseParser):
         return group(async_results)
 
     @staticmethod
-    @app.task
+    @beat_app.task
     def parse_news_page(base_url_str, url, tag):
         try:
             logger = Logger()
