@@ -17,21 +17,28 @@ from logging_.logger import Logger
 
 class NewsParser(BaseParser):
     url: str
-    chunks: int
 
     def __init__(
             self,
             url: str,
-            redis: str,
-            use_auth: bool,
-            single_connection_client: bool = True,
-            is_logged: bool = True,
+            redis: str, 
+            auth_url: str = None, 
+            auth_service_url: str = None, 
+            login: str = None, 
+            password: str = None, 
+            use_auth: bool = True, 
+            single_connection_client: bool = True, 
+            is_logged: bool = True
     ):
         super().__init__(
             redis=redis, 
-            single_connection_client=single_connection_client, 
-            is_logged=is_logged, 
-            use_auth=use_auth
+            auth_url=auth_url, 
+            auth_service_url=auth_service_url,
+            login=login, 
+            password=password,
+            use_auth=use_auth,
+            single_connection_client=single_connection_client,
+            is_logged=is_logged
         )
         self.url = url
 
@@ -50,7 +57,7 @@ class NewsParser(BaseParser):
                             "url": f'{url}?category={tag[1]}&page={i}',
                             "tag": tag[0],
                         }
-                    ) for i in range(page_count)
+                    ) for i in range(page_count))
                 ]
                 self.set_data_to_db(self.db, tasks, "news_tasks", "task")
 
@@ -278,70 +285,3 @@ class NewsParser(BaseParser):
         for item in data:
             db.hset(f"{pattern_field}:{hash(item)}", key=key_field, value=item)
             
-    async def parse_new_news(self):
-        self.logger.info("Start parsing new news")
-        try:
-            tags = self.parse_tags(self.url)
-
-            tasks = []
-            for tag in tags:
-                tasks.extend(await self.__get_tasks_from_category(tag))
-
-            self.logger.info(f"Total news {len(tasks)}")
-            news = await asyncio.gather(*tasks)
-
-            self.__set_info_to_db(news)
-            self.logger.info("New news parsed")
-
-        except Exception as e:
-            self.logger.error(f"Error[parse_new_news]: {traceback.format_exc()}")
-
-    def __get_tasks_from_page(self, last_news_id, soup, tag):
-        tasks = []
-
-        if soup.find("div", class_="view-content") is None:
-            return tasks, False
-        
-        for preview in soup.find("div", class_="view-content").findAll("div", class_="views-row"):
-            if last_news_id != self.__get_news_id(preview):
-                tasks.append(self.parse_full_news(self.logger, self.url, preview, tag[0]))
-            else:
-                return tasks, True
-        return tasks, False
-
-    async def __get_tasks_from_category(self, tag):
-        tasks = []
-        page_count = self.parse_count_pages(f'{self.url}?category={tag[1]}')
-        found_in_db = False
-        last_news_id = self.__get_last_news_id(tag[0])
-        self.logger.info(f"Parsing category {tag[0]}")
-        for i in range(page_count):
-            if found_in_db:
-                self.__set_last_news_id_to_db(tag[0], last_news_id)
-                break
-
-            soup = await self.soup(f'{self.url}?category={tag[1]}&page={i}')
-            new_tasks, found_in_db = self.__get_tasks_from_page(last_news_id, soup, tag)
-            tasks.extend(new_tasks)
-        self.logger.info(f"Category {tag[0]} has {len(tasks)} news")
-        return tasks
-
-    def __get_last_news_id(self, tag) -> str:
-        return self.db.hget("last_news_id", tag)
-
-    def __get_news_id(self, preview):
-        preview_fields = preview.select(".field-content")
-        if len(preview_fields) == 4:
-            news_url = self.base_url(self.url) + preview_fields[3].find("a")['href']
-        else:
-            news_url = self.base_url(self.url) + preview_fields[2].find("a")['href']
-        return news_url.split("news/")[1]
-
-    def __set_info_to_db(self, news: List[NewsLoading]):
-        for _ in news:
-            for item in _:
-                self.db.hset(f"news:{item.news_id}", key="news", value=item.model_dump_redis())
-
-    @staticmethod
-    def __set_last_news_id_to_db(db, tag, news_id):
-        db.hset("last_news_id", tag, news_id)

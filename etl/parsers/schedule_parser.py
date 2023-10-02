@@ -3,7 +3,6 @@ from typing import List
 
 from etl.parsers.base_parser import BaseParser
 from etl.schemas.lesson import LessonExtracting, RoomLessonExtracting
-from etl.schemas.room import RoomLoading
 
 
 class ScheduleParser(BaseParser):

@@ -7,6 +7,7 @@ from config import config
 from etl.loaders.news_loader import NewsLoader
 from etl.loaders.schedule_loader import ScheduleLoader
 from etl.loaders.start_semester_loader import StartSemesterLoader
+from etl.parsers.new_news_parser import NewNewsParser
 from etl.parsers.news_parser import NewsParser
 from etl.parsers.room_parser import RoomParser
 from etl.parsers.schedule_parser import ScheduleParser
@@ -97,9 +98,10 @@ def parse_new_news():
     asyncio.run(etl_new_news())
 
 async def etl_new_news():
-    e = NewsParser(
+    e = NewNewsParser(
         url=config.MEPHI_NEWS_PAGE_URL.unicode_string(),
         redis=config.REDIS_URI.unicode_string(),
+        postgres_dsn=config.DB_URI.unicode_string(),
         use_auth=False,
     )
     await e.parse_new_news()

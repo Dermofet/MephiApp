@@ -23,3 +23,9 @@ class NewsLoading(Base):
             date_.reverse()
             return "-".join(date_)
         return None
+
+    def __hash__(self) -> int:
+        return hash(self.news_id)
+    
+    def __eq__(self, other) -> bool:
+        return self.news_id == other.news_id

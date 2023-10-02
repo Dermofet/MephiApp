@@ -39,6 +39,3 @@ class BaseLoader:
     def init_facade(self):
         session = self.__async_session()
         self.facade_db = FacadeDB(session)
-
-    def __del__(self):
-        self.__async_session.close_all()

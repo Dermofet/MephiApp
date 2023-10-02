@@ -63,9 +63,10 @@ class BaseParser:
                 await self.__auth(session)
 
             while True:
+                await asyncio.sleep(1)
                 async with session.get(url, cookies={'_session_id': self.auth_data.session_id if self.use_auth else None}) as response:
                     if response.status != 200:
-                        await asyncio.sleep(1)
+                        self.logger.info(f'Error status: {response.status}. Try again...')
                         if self.use_auth:
                             await self.__auth(session)
                     else:
