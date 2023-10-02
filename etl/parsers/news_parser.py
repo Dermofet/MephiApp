@@ -57,7 +57,7 @@ class NewsParser(BaseParser):
                             "url": f'{url}?category={tag[1]}&page={i}',
                             "tag": tag[0],
                         }
-                    ) for i in range(page_count))
+                    ) for i in range(page_count)
                 ]
                 self.set_data_to_db(self.db, tasks, "news_tasks", "task")
 
@@ -107,10 +107,8 @@ class NewsParser(BaseParser):
     def parse_news_page(base_url_str, url, tag):
         try:
             logger = Logger()
-            db = Redis(
-                host=config.REDIS_HOST, 
-                port=config.REDIS_PORT, 
-                db=config.REDIS_DB,
+            db = Redis.from_url(
+                config.REDIS_URI.unicode_string(),
                 single_connection_client=True
             )
 

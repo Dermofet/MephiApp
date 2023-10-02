@@ -96,7 +96,7 @@ services:
 
   redis:
     container_name: redis
-    image: redis:7.2
+    image: bitnami/redis:6.2.13
     restart: always
     ports:
       - "${LOCAL_REDIS_PORT}:${REDIS_PORT}"
@@ -104,6 +104,7 @@ services:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
       REDIS_DB: ${REDIS_DB}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
 
 volumes:
   app-db-data:

@@ -64,6 +64,7 @@ class Config(_Settings):
     # Redis
     REDIS_HOST: str = Field(..., description="Redis host")
     REDIS_PORT: int = Field(..., description="Redis port")
+    REDIS_PASSWORD: str = Field(..., description="Redis password")
     LOCAL_REDIS_PORT: int = Field(..., description="Local redis port")
     REDIS_DB: int = Field(..., description="Redis db")
 
@@ -113,6 +114,7 @@ class Config(_Settings):
             scheme="redis",
             host=info.data['REDIS_HOST'],
             port=info.data['REDIS_PORT'],
+            password=info.data['REDIS_PASSWORD'],
             path=str(info.data['REDIS_DB'])
         )
     
@@ -124,6 +126,7 @@ class Config(_Settings):
             scheme="redis",
             host="localhost",
             port=info.data['LOCAL_REDIS_PORT'],
+            password=info.data['REDIS_PASSWORD'],
             path=str(info.data['REDIS_DB'])
         )
 
