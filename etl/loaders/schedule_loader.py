@@ -88,13 +88,15 @@ class ScheduleLoader(BaseLoader):
 
         self.logger.debug("Teachers are loaded")
 
-    async def __load_lessons(self):
+    async def __load_lessons(self):          
         lessons = [
             LessonLoading.model_validate_redis(self.redis_db.hget(name=key.decode("utf-8"), key="lesson"))
             for key in self.redis_db.scan_iter("lessons:*")
         ]
 
-        await self.facade_db.bulk_insert_lesson(lessons)
+        chunk = 1000
+        for i in range(0, len(lessons), chunk):
+            await self.facade_db.bulk_insert_lesson(lessons[i:i + chunk])
 
         for key in self.redis_db.scan_iter("lessons:*"):
             self.redis_db.delete(key)
