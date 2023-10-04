@@ -26,7 +26,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 
 
 @router.get(
-    "/teachers/all",
+    "/teachers",
     response_model=dict[str, list[str]],
     status_code=status.HTTP_200_OK,
     description="Получить полные ФИО всеx преподавателей",

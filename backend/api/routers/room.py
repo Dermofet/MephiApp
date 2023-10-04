@@ -46,7 +46,7 @@ async def get_empty(
 
 
 @router.get(
-    "/rooms/all",
+    "/rooms",
     response_model=List[str],
     status_code=status.HTTP_200_OK,
     description="Получить все аудитории",

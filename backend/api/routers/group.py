@@ -25,7 +25,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 
 
 @router.get(
-    "/groups/all",
+    "/groups",
     response_model=dict[str, list[str]],
     status_code=status.HTTP_200_OK,
     description="Получить все группы",
