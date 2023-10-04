@@ -77,13 +77,13 @@ class LessonService(BaseService):
         if not lessons:
             raise HTTPException(404, "Занятий не найдено")
 
-        lessons = []
+        lessons_schemes = []
         for lesson in lessons:
             trans = await self.facade.get_trans_lesson(lesson, lang)
-            if not trans:
-                HTTPException(404, "Занятие не найдено")
+            if trans is None:
+                raise HTTPException(404, "Занятие не найдено")
 
-            lesson.append(
+            lessons_schemes.append(
                 LessonOutputSchema(
                     **LessonSchema(
                         guid=lesson.guid,
@@ -116,7 +116,7 @@ class LessonService(BaseService):
                 )
             )
 
-        return LessonsByGroupSchema(lessons=lessons, group=group, lang=lang).dict()
+        return LessonsByGroupSchema(lessons=lessons_schemes, group=group, lang=lang).dict()
 
     async def get_by_teacher(self, teacher: str, lang: str) -> Dict:
         lessons = await self.facade.get_by_teacher_lesson(teacher, lang)
@@ -124,13 +124,13 @@ class LessonService(BaseService):
         if not lessons:
             raise HTTPException(404, "Занятий не найдено")
 
-        lessons = []
+        lessons_schemes = []
         for lesson in lessons:
             trans = await self.facade.get_trans_lesson(lesson, lang)
-            if not trans:
-                HTTPException(404, "Занятие не найдено")
+            if trans is None:
+                raise HTTPException(404, "Занятие не найдено")
 
-            lesson.append(
+            lessons_schemes.append(
                 LessonOutputSchema(
                     **LessonSchema(
                         guid=lesson.guid,
@@ -166,7 +166,7 @@ class LessonService(BaseService):
         t = await self.facade.get_by_name_teacher(teacher)
         t_trans = await self.facade.get_trans_teacher(t, lang=lang)
         return LessonsByTeacherSchema(
-            lessons=lessons,
+            lessons=lessons_schemes,
             name=t_trans.name,
             fullname=t_trans.fullname,
             url=t.url,
