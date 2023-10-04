@@ -1,7 +1,7 @@
 import datetime
 from copy import deepcopy
 from datetime import date, time
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import UUID4, BaseModel, ConfigDict, Field, ValidationError, field_validator
 
@@ -95,56 +95,9 @@ class LessonSchema(LessonBaseSchema):
     date_start: Optional[str] = Field(description="Дата начала занятия")
     date_end: Optional[str] = Field(description="Дата начала занятия")
     trans: LessonTranslateSchema = Field(description="Список полей, нуждающихся в переводе, на разных языках")
-    groups: list[GroupSchema] = Field(description="Список групп, которые находятся на занятии")
-    teachers: list[TeacherSchema] = Field(description="Список преподавателей, которые находятся на занятии")
-    rooms: list[RoomSchema] = Field(description="Список аудиторий, в которой проводится занятие")
-
-    def clone(self):
-        return LessonSchema(
-            guid=self.guid,
-            time_start=self.time_start,
-            time_end=self.time_end,
-            date_start=self.date_start,
-            date_end=self.date_end,
-            dot=self.dot,
-            weeks=self.weeks,
-            day=self.day,
-            trans=[self.trans.clone()],
-            groups=[group.clone() for group in self.groups],
-            teachers=[teacher.clone() for teacher in self.teachers],
-            rooms=[room.clone() for room in self.rooms]
-        )
-
-    def to_model(self):
-        date_start = self.date_start.split('.') \
-                if self.date_start is not None else None
-
-        if date_start is not None:
-            date_start.reverse()
-            date_start = datetime.datetime.strptime("-".join(date_start),
-                                                    '%Y-%m-%d').date()
-
-        date_end = self.date_start.split('.') \
-            if self.date_start is not None else None
-
-        if date_end is not None:
-            date_end.reverse()
-            date_end = datetime.datetime.strptime("-".join(date_end), '%Y-%m-%d').date()
-
-        return LessonModel(
-            guid=self.guid,
-            time_start=datetime.datetime.strptime(self.time_start, "%H:%M").time(),
-            time_end=datetime.datetime.strptime(self.time_end, "%H:%M").time(),
-            date_start=date_start,
-            date_end=date_end,
-            dot=self.dot,
-            weeks=self.weeks,
-            day=self.day,
-            trans=[self.trans.to_model()],
-            groups=[group.to_model() for group in self.groups],
-            teachers=[teacher.to_model() for teacher in self.teachers],
-            rooms=[room.to_model() for room in self.rooms]
-        )
+    groups: List[GroupSchema] = Field(description="Список групп, которые находятся на занятии")
+    teachers: List[TeacherSchema] = Field(description="Список преподавателей, которые находятся на занятии")
+    rooms: List[RoomSchema] = Field(description="Список аудиторий, в которой проводится занятие")
 
     def __eq__(self, other):
         if isinstance(other, LessonSchema):
@@ -171,14 +124,10 @@ class LessonSchema(LessonBaseSchema):
 
     @field_validator("trans", mode="before")
     def check_trans(cls, trans):
-        if not isinstance(trans, list):
-            raise ValueError(f"trans - {type(trans)}, должен быть list")
-        for tr in trans:
-            if isinstance(tr, (LessonTranslateModel, LessonTranslateSchema)):
-                return tr
-            else:
-                raise ValueError(f"trans содержит {type(tr)}, "
-                                 f"должен быть LessonTranslateModel или LessonTranslateSchema.")
+        if isinstance(trans, (LessonTranslateModel, LessonTranslateSchema)):
+            return trans
+        raise ValueError(f"trans содержит {type(trans)}, должен быть LessonTranslateModel или LessonTranslateSchema.")
+            
 
     @field_validator("time_start", mode="before")
     def change_time_start(cls, value):

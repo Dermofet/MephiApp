@@ -7,6 +7,7 @@ from config import config
 engine = create_async_engine(
     config.DB_URI.unicode_string(),
     echo=config.DEBUG,
+    pool_pre_ping=True
 )
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
