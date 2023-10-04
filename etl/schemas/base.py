@@ -11,8 +11,12 @@ class Base(BaseModel):
 
     @classmethod
     def model_validate_redis(cls, model: Union[str, bytes]):
-        model = model.decode('utf-8')
-        if not isinstance(model, str):
-            raise TypeError('model must be a string')
-        obj = model.replace('"true"', 'true').replace('"false"', 'false')
-        return cls(**json.loads(obj))
+        try:
+            model = model.decode('utf-8')
+            if not isinstance(model, str):
+                raise TypeError('model must be a string')
+            obj = model.replace('"true"', 'true').replace('"false"', 'false')
+            return cls(**json.loads(obj))
+        except Exception as e:
+            print(f"Error obj: {obj}")
+            raise e
