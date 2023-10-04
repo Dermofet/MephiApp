@@ -20,7 +20,7 @@ beat_app.conf.beat_schedule = {
     },
     'parse_news_task': {
         'task': 'celery_conf.beat_tasks.parse_new_news',
-        'schedule': crontab(minute='30'),
+        'schedule': crontab(minute='0'),
     },
     'parse_start_semester_task_09': {
         'task': 'celery_conf.beat_tasks.etl_start_semester',

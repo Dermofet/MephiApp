@@ -1,4 +1,5 @@
 import asyncio
+import time
 from typing import List
 
 from etl.parsers.base_parser import BaseParser
@@ -89,7 +90,14 @@ class ScheduleParser(BaseParser):
 
         self.logger.debug(f"Created {len(tasks)} tasks")
 
-        return await asyncio.gather(*tasks)
+        res = []
+        run_tasks_count = 20
+        for i in range(0, len(tasks), run_tasks_count):
+            a = tasks[i:i + run_tasks_count]
+            res.extend(await asyncio.gather(*a))
+            time.sleep(10)
+
+        return res
 
     async def __get_group_info(self, url, academic, group, course, lang):
         soup = await self.soup(url)
@@ -253,8 +261,14 @@ class ScheduleParser(BaseParser):
 
     async def __get_rooms_schedule(self):
         rooms_urls = await self.__get_rooms_url()
-        rooms = [self.__get_room_schedule(room) for room in rooms_urls]
-        return await asyncio.gather(*rooms)
+        res = []
+        run_tasks_count = 20
+        for i in range(0, len(rooms_urls), run_tasks_count):
+            t = rooms_urls[i:i + run_tasks_count]
+            res.extend(await asyncio.gather(*[self.__get_room_schedule(room) for room in t]))
+            time.sleep(10)
+
+        return res
 
     async def __get_room_schedule(self, room):
         self.logger.debug(f'Parsing room: {room["number"]}, Corps: {room["corps"]}')

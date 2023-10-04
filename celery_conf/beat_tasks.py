@@ -81,7 +81,6 @@ def etl_all_news():
     e.create_parse_news_tasks(config.MEPHI_NEWS_PAGE_URL.unicode_string())
     chain(e.parse_news_page_tasks(e.logger, e.db, e.url), load_news.si()).delay()
 
-
 @beat_app.task
 def load_news():
     l = NewsLoader(
