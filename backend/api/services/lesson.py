@@ -124,38 +124,44 @@ class LessonService(BaseService):
         if not lessons:
             raise HTTPException(404, "Занятий не найдено")
 
-        lessons = [
-            LessonOutputSchema(
-                **LessonSchema(
-                    guid=lesson.guid,
-                    time_start=lesson.time_start,
-                    time_end=lesson.time_end,
-                    date_start=lesson.date_start,
-                    date_end=lesson.date_end,
-                    dot=lesson.dot,
-                    weeks=lesson.weeks,
-                    day=lesson.day,
-                    trans=await self.facade.get_trans_lesson(lesson, lang),
-                    rooms=await self.facade.get_rooms_lesson(lesson),
-                    groups=await self.facade.get_groups_lesson(lesson),
-                    teachers=[
-                        TeacherSchema(
-                            guid=t[0].guid,
-                            url=t[0].url,
-                            alt_url=t[0].alt_url,
-                            trans=[
-                                TeacherTranslateSchema(
-                                    guid=t[1].guid,
-                                    name=t[1].name,
-                                    fullname=t[1].fullname,
-                                    lang=t[1].lang
-                                )
-                            ] if t[1] else [],
-                        ) for t in await self.facade.get_teachers_lesson(lesson, lang)
-                    ],
-                ).model_dump()
-            ) for lesson in lessons
-        ]
+        lessons = []
+        for lesson in lessons:
+            trans = await self.facade.get_trans_lesson(lesson, lang)
+            if not trans:
+                HTTPException(404, "Занятие не найдено")
+
+            lesson.append(
+                LessonOutputSchema(
+                    **LessonSchema(
+                        guid=lesson.guid,
+                        time_start=lesson.time_start,
+                        time_end=lesson.time_end,
+                        date_start=lesson.date_start,
+                        date_end=lesson.date_end,
+                        dot=lesson.dot,
+                        weeks=lesson.weeks,
+                        day=lesson.day,
+                        trans=trans,
+                        rooms=await self.facade.get_rooms_lesson(lesson),
+                        groups=await self.facade.get_groups_lesson(lesson),
+                        teachers=[
+                            TeacherSchema(
+                                guid=t[0].guid,
+                                url=t[0].url,
+                                alt_url=t[0].alt_url,
+                                trans=[
+                                    TeacherTranslateSchema(
+                                        guid=t[1].guid,
+                                        name=t[1].name,
+                                        fullname=t[1].fullname,
+                                        lang=t[1].lang
+                                    )
+                                ] if t[1] else [],
+                            ) for t in await self.facade.get_teachers_lesson(lesson, lang)
+                        ],
+                    ).model_dump()
+                )
+            )
 
         t = await self.facade.get_by_name_teacher(teacher)
         t_trans = await self.facade.get_trans_teacher(t, lang=lang)
