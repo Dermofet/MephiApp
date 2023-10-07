@@ -1,9 +1,11 @@
 import asyncio
 import traceback
 from typing import List
+
 from etl.loaders.base_loader import BaseLoader
 from etl.parsers.news_parser import NewsParser
 from etl.schemas.news import NewsLoading
+
 
 class WrapperBaseLoader:
     loader: BaseLoader

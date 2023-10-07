@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from dotenv import find_dotenv
 from pydantic import AmqpDsn, Field, HttpUrl, PostgresDsn, RedisDsn, field_validator
@@ -51,7 +51,7 @@ class Config(_Settings):
     MEPHI_PASSWORD: str = Field(..., description="Mephi password")
 
     # Translating
-    FOREIGN_LANGS: List[str] = Field(..., description="Foreign langs")
+    FOREIGN_LANGS: List[Tuple[str, str]] = Field(..., description="List of pairs languages for translating")
 
     # News
     MEPHI_NEWS_PAGE_URL: HttpUrl = Field(..., description="Mephi news page url")
@@ -105,6 +105,13 @@ class Config(_Settings):
             port=info.data['LOCAL_POSTGRES_PORT'],
             path=info.data['POSTGRES_DB']
         )
+    
+    @field_validator("FOREIGN_LANGS", mode="before")
+    def create_foreign_langs(cls, v: Optional[List], info: FieldValidationInfo) -> Any:
+        if isinstance(v, list):
+            res = [("ru", "en")]
+            res.extend(("en", item) for item in v)
+            return res
 
     @field_validator("REDIS_URI", mode="before")
     def create_redis_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:

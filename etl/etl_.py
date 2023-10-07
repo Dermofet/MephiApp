@@ -2,6 +2,7 @@ import sys
 
 from celery_conf import beat_tasks
 
+
 def schedule():
     beat_tasks.parse_schedule.delay()
 

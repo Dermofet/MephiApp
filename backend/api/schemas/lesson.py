@@ -1,7 +1,7 @@
 import datetime
 from copy import deepcopy
 from datetime import date, time
-from typing import Optional, List
+from typing import List, Optional
 
 from pydantic import UUID4, BaseModel, ConfigDict, Field, ValidationError, field_validator
 

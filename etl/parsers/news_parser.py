@@ -1,8 +1,8 @@
-import asyncio
 import json
 import traceback
 from typing import List
 from urllib.parse import urlparse
+
 import requests
 from bs4 import BeautifulSoup
 from celery import group
@@ -14,6 +14,7 @@ from etl.parsers.base_parser import BaseParser
 from etl.schemas.news import NewsLoading
 from etl.schemas.news_img import NewsImageLoading
 from logging_.logger import Logger
+
 
 class NewsParser(BaseParser):
     url: str
@@ -57,7 +58,7 @@ class NewsParser(BaseParser):
                             "url": f'{url}?category={tag[1]}&page={i}',
                             "tag": tag[0],
                         }
-                    ) for i in range(page_count)
+                    ) for i in range(2,4)
                 ]
                 self.set_data_to_db(self.db, tasks, "news_tasks", "task")
 
@@ -70,6 +71,10 @@ class NewsParser(BaseParser):
     def base_url(url):
         parsed = urlparse(url)
         return f'{parsed.scheme}://{parsed.netloc}'
+    
+    @staticmethod
+    def full_url(base_url: str, url: str):
+        return f'{base_url}{url}' if base_url not in url else url
     
     @staticmethod
     def get_soup(url):
@@ -96,7 +101,7 @@ class NewsParser(BaseParser):
 
         async_results = []
         for key in db.scan_iter("news_tasks:*"):
-            async_result = NewsParser.parse_news_page.s(url, **json.loads(db.hget(name=key, key="task")))
+            async_result = NewsParser.parse_news_page.s(NewsParser.base_url(url), **json.loads(db.hget(name=key, key="task")))
             async_results.append(async_result)
             db.delete(key)
 
@@ -119,8 +124,6 @@ class NewsParser(BaseParser):
                 res = NewsParser.parse_full_news(logger, base_url_str, preview, tag)
                 if res is not None:
                     result.append(res)
-                if url.split('=')[-1] == '0':
-                    NewsParser.__set_last_news_id_to_db(db, tag, res.news_id)
 
             NewsParser.set_news_to_db(db, result)
 
@@ -164,7 +167,7 @@ class NewsParser(BaseParser):
                     'date': preview_fields[1].find("span", class_="date-display-single").text,
                     'tag': tag,
                 }
-                news_url = f"{NewsParser.base_url(base_url_str)}{preview_fields[3].find('a')['href']}"
+                news_url = NewsParser.full_url(base_url_str, preview_fields[3].find('a')['href'])
             else:
                 news_data = {
                     'preview_url': None,
@@ -172,7 +175,7 @@ class NewsParser(BaseParser):
                     'date': preview_fields[0].find("span", class_="date-display-single").text,
                     'tag': tag
                 }
-                news_url = f"{NewsParser.base_url(base_url_str)}{preview_fields[2].find('a')['href']}"
+                news_url = NewsParser.full_url(base_url_str, preview_fields[2].find('a')['href'])
             return news_data, news_url
         except Exception as e:
             logger.error(f"Error[parse_preview]: {traceback.format_exc()}")
@@ -191,7 +194,7 @@ class NewsParser(BaseParser):
     def parse_news(logger, base_url_str, url: str):
         try:
             soup = NewsParser.get_soup(url)
-                
+
             result = {
                 "id": url.split("news/")[1],
                 "news_imgs": []
@@ -203,9 +206,10 @@ class NewsParser(BaseParser):
             if text:
                 preview_url = NewsParser.process_text(logger, base_url_str, result, text, preview_url)
 
-                if imgs_block := soup.find("div", class_="region region-content").find(
+                imgs_block = soup.find("div", class_="region region-content").find(
                     "div", id="block-views-modern-gallery-block"
-                ):
+                ) 
+                if imgs_block is not None:
                     NewsParser.process_image_block(logger, base_url_str, result, imgs_block, text)
 
             result["news_text"] = text.prettify() if text else ""
@@ -216,32 +220,31 @@ class NewsParser(BaseParser):
             raise Exception(f"Error[parse_news]: {traceback.format_exc(), url}")
 
     @staticmethod
-    def get_image_source(logger, img, base_url_str):
-        if "https" not in img:
-            try:
-                img = NewsParser.base_url(base_url_str) + img['src']
-            except Exception as e:
-                logger.error(f"Error[get_image_source]: {traceback.format_exc()}")
-        return img if img != '' else None
+    def get_image_source(img, base_url_str):
+        return NewsParser.full_url(base_url_str, img['src']) if img != '' else None
 
     @staticmethod
     def process_text(logger, base_url_str, result, text, preview_url):
         rtecenter_paragraphs = text.findAll("p", class_="rtecenter")
         first_img_removed = False  # Flag to track if the first <img> has been removed
+        first_img_text_removed = False  # Flag to track if the first <p> with text has been removed
 
         for i, field in enumerate(rtecenter_paragraphs):
             if img := field.find("img"):
-                img_src = NewsParser.get_image_source(logger, img, base_url_str)
+                img_src = NewsParser.get_image_source(img, base_url_str)
                 if img_src and NewsParser.is_valid(logger, img_src):
                     if not preview_url:
                         preview_url = img_src
                     result["news_imgs"].append({"img": img_src, "text": ""})
 
                     if not first_img_removed:
-                        img.extract()
+                        field.extract()
                         first_img_removed = True
                 else:
                     field.extract()
+            elif not first_img_text_removed:
+                field.extract()
+                first_img_text_removed = True
             elif i + 1 < len(rtecenter_paragraphs) and not rtecenter_paragraphs[i + 1].find("img"):
                 rtecenter_paragraphs[i + 1].extract()
 
@@ -254,24 +257,24 @@ class NewsParser(BaseParser):
             img = tag_a.find("img")
             if img is not None:
                 img['src'] = tag_a['href']
-                img_src = NewsParser.get_image_source(logger, img, base_url_str)
+                img_src = NewsParser.get_image_source(img, base_url_str)
 
                 if img_src is not None and NewsParser.is_valid(logger, img_src):
                     result["news_imgs"].append(
                         {'img': img_src, 'text': None}
                     )
 
-            for tag in imgs_block.findAll("a"):
-                img = tag.find("img")
-                img['src'] = tag['href']
-                del img['height']
-                del img['width']
-                tag.insert_before(img)
-                tag.extract()
+        for tag in imgs_block.findAll("a"):
+            img = tag.find("img")
+            img['src'] = tag['href']
+            del img['height']
+            del img['width']
+            tag.insert_before(img)
+            tag.extract()
 
-            div_tag = imgs_block.find("div", class_="view-content")
-            if div_tag is not None:
-                text.append(div_tag)
+        div_tag = imgs_block.find("div", class_="view-content")
+        if div_tag is not None:
+            text.append(div_tag)
     
     @staticmethod
     def set_news_to_db(db: Redis, data: List[NewsLoading]):

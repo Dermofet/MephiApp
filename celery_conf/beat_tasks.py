@@ -16,7 +16,6 @@ from etl.parsers.teachers_parser import TeachersParser
 from etl.transform.schedule_transformer import ScheduleTransformer
 
 
-
 @beat_app.task
 def parse_schedule():
     asyncio.run(etl_schedule())
