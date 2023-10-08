@@ -111,6 +111,8 @@ async def etl_new_news():
     l.init_facade()
     await l.load()
 
+    await asyncio.sleep(1)
+
 
 @beat_app.task
 def parse_start_semester():

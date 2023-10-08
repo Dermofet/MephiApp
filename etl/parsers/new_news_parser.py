@@ -24,7 +24,7 @@ class WrapperBaseLoader:
         debug: bool = False,
         is_logged: bool = True
     ):
-        super().__init__(  # Вызываем конструктор NewsParser
+        super().__init__(
             url=url,
             redis=redis, 
             auth_url=auth_url, 
@@ -122,9 +122,9 @@ class NewNewsParser(WrapperBaseLoader, NewsParser):
     def __get_news_id(self, preview):
         preview_fields = preview.select(".field-content")
         if len(preview_fields) == 4:
-            news_url = self.base_url(self.url) + preview_fields[3].find("a")['href']
+            news_url = self.full_url(self.url, preview_fields[3].find("a")['href'])
         else:
-            news_url = self.base_url(self.url) + preview_fields[2].find("a")['href']
+            news_url = self.full_url(self.url, preview_fields[2].find("a")['href'])
         return news_url.split("news/")[1]
 
     def __set_info_to_db(self, news: List[NewsLoading]):
