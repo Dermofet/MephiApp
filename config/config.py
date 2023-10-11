@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+import os
 from typing import Any, Dict, List, Optional, Tuple
 
 from dotenv import find_dotenv
@@ -51,7 +52,9 @@ class Config(_Settings):
     MEPHI_PASSWORD: str = Field(..., description="Mephi password")
 
     # Translating
-    FOREIGN_LANGS: List[Tuple[str, str]] = Field(..., description="List of pairs languages for translating")
+    FOREIGN_LANGS: List[str] = Field(..., description="List of pairs languages for translating")
+    IAM_TOKEN: Optional[str] = Field(..., description="Iam token")
+    FOLDER_ID: Optional[str] = Field(..., description="Folder id")
 
     # News
     MEPHI_NEWS_PAGE_URL: HttpUrl = Field(..., description="Mephi news page url")
@@ -105,13 +108,6 @@ class Config(_Settings):
             port=info.data['LOCAL_POSTGRES_PORT'],
             path=info.data['POSTGRES_DB']
         )
-    
-    @field_validator("FOREIGN_LANGS", mode="before")
-    def create_foreign_langs(cls, v: Optional[List], info: FieldValidationInfo) -> Any:
-        if isinstance(v, list):
-            res = [("ru", "en")]
-            res.extend(("en", item) for item in v)
-            return res
 
     @field_validator("REDIS_URI", mode="before")
     def create_redis_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
@@ -164,6 +160,10 @@ class Config(_Settings):
 
 @lru_cache()
 def get_config(env_file: str = ".env") -> Config:
+    # iam_token = os.environ.get('IAM_TOKEN', None)
+    # print(f"IAM = {iam_token}")
+    # return Config(IAM_TOKEN=iam_token,_env_file=find_dotenv(env_file))
     return Config(_env_file=find_dotenv(env_file))
+    
 
 

@@ -47,11 +47,11 @@ class ScheduleParser(BaseParser):
             await self.__set_info_to_db_lessons(groups_info)
 
         self.logger.info("Schedule lessons parsed")
-        self.logger.info("Start parsing rooms schedule")
-        rooms = await self.__get_rooms_schedule()
-        self.logger.info(f'{len(rooms)} rooms has been parsed')
+        # self.logger.info("Start parsing rooms schedule")
+        # rooms = await self.__get_rooms_schedule()
+        # self.logger.info(f'{len(rooms)} rooms has been parsed')
 
-        await self.__set_info_to_db_rooms(rooms)
+        # await self.__set_info_to_db_rooms(rooms)
 
     async def __get_academic_types(self):
         soup = await self.soup(self.lesson_schedule_url)
@@ -77,7 +77,9 @@ class ScheduleParser(BaseParser):
         courses = soup.findAll("div", class_="list-group")
         tasks = []
         for groups, i in zip(courses, range(len(courses))):
-            tasks.extend(
+            item = groups.findAll("a")[0]
+            # change append to extend
+            tasks.append(
                 self.__get_group_info(
                     url=f"{base_url}{item['href']}",
                     academic=name,
@@ -85,7 +87,7 @@ class ScheduleParser(BaseParser):
                     course=i + 1,
                     lang="ru",
                 )
-                for item in groups.findAll("a")
+                # for item in groups.findAll("a")
             )
 
         self.logger.debug(f"Created {len(tasks)} tasks")

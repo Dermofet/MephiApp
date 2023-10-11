@@ -2,47 +2,9 @@ import asyncio
 import traceback
 from typing import List
 
-from etl.loaders.base_loader import BaseLoader
+from etl.loaders.base_loader import BaseLoader, WrapperBaseLoader
 from etl.parsers.news_parser import NewsParser
 from etl.schemas.news import NewsLoading
-
-
-class WrapperBaseLoader:
-    loader: BaseLoader
-
-    def __init__(
-        self,
-        url: str,
-        redis: str,
-        postgres_dsn: str,
-        auth_url: str = None, 
-        auth_service_url: str = None, 
-        login: str = None, 
-        password: str = None, 
-        use_auth: bool = True, 
-        single_connection_client: bool = True,
-        debug: bool = False,
-        is_logged: bool = True
-    ):
-        super().__init__(
-            url=url,
-            redis=redis, 
-            auth_url=auth_url, 
-            auth_service_url=auth_service_url,
-            login=login, 
-            password=password,
-            use_auth=use_auth,
-            single_connection_client=single_connection_client,
-            is_logged=is_logged
-        )
-        self.loader = BaseLoader(
-            redis=redis,
-            postgres_dsn=postgres_dsn,
-            single_connection_client=single_connection_client,
-            is_logged=is_logged,
-            debug=debug
-        )
-        self.loader.init_facade()
 
 class NewNewsParser(WrapperBaseLoader, NewsParser):
     def __init__(

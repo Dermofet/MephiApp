@@ -143,6 +143,10 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
+    async def get_all_lesson(self, limit: int, offset: int) -> List[LessonModel]:
+        ...
+
+    @abstractmethod
     async def get_by_id_lesson(self, guid: UUID4) -> LessonModel:
         ...
 
@@ -280,6 +284,10 @@ class IFacadeDB(ABC):
     @abstractmethod
     async def get_all_teacher(self, lang: str) -> List[str]:
         ...
+
+    @abstractmethod
+    async def get_all_full_teacher(self, lang: str) -> List[str]:
+        ...    
 
     @abstractmethod
     async def get_by_name_teacher(self, name: str) -> TeacherModel:

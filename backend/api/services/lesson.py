@@ -110,7 +110,7 @@ class LessonService(BaseService):
                                         lang=t[1].lang
                                     )
                                 ] if t[1] else [],
-                            ) for t in await self.facade.get_teachers_lesson(lesson, lang)
+                            ) for t in await self.facade.get_teachers_lesson(lesson, "ru" if lang == "ru" else "en")
                         ],
                     ).model_dump()
                 )

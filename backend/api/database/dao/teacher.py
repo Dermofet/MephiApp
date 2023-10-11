@@ -65,6 +65,14 @@ class TeacherDAO:
             .where(TeacherTranslateModel.lang == lang)
         )
         return teachers.scalars().unique().all()
+    
+    async def get_all_full(self, lang: str) -> List[str]:
+        teachers = await self._session.execute(
+            select(TeacherModel)
+            .join(TeacherTranslateModel, TeacherTranslateModel.teacher_guid == TeacherModel.guid)
+            .where(TeacherTranslateModel.lang == lang)
+        )
+        return teachers.scalars().unique().all()
 
     """
     Получение преподавателя по имени

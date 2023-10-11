@@ -19,8 +19,9 @@ COPY ../pyproject.toml poetry.lock* /mephiapp-celery/
 # Allow installing dev dependencies to run tests
 ARG INSTALL_DEV=False
 RUN bash -c "if [ $INSTALL_DEV = True ] ; then poetry install --no-root ; else poetry install --no-root --without dev ; fi"
-# RUN pip install argostranslate packaging
 
 COPY .env /mephiapp-celery/.env
+
+RUN curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
 
 CMD ["bash", "celery_conf/run_celery.sh"]

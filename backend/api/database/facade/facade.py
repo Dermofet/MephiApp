@@ -149,6 +149,9 @@ class FacadeDB(IFacadeDB, ABC):
     async def get_by_id_lesson(self, guid: UUID4) -> LessonModel:
         return await self.lesson_dao.get_by_id(guid)
 
+    async def get_all_lesson(self, limit: int, offset: int) -> List[LessonModel]:
+        return await self.lesson_dao.get_all(limit, offset)
+
     async def get_unique_lesson(self, data: LessonCreateSchema) -> LessonModel:
         return await self.lesson_dao.get_unique(data)
 
@@ -253,6 +256,9 @@ class FacadeDB(IFacadeDB, ABC):
 
     async def get_all_teacher(self, lang: str) -> List[str]:
         return await self.teacher_dao.get_all(lang)
+    
+    async def get_all_full_teacher(self, lang: str) -> List[str]:
+        return await self.teacher_dao.get_all_full(lang)
 
     async def get_by_name_teacher(self, name: str) -> TeacherModel:
         return await self.teacher_dao.get_by_name(name)

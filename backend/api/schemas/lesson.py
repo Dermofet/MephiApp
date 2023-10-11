@@ -216,6 +216,7 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
                 "time_end": lesson.time_end,
                 "lesson_group": []
             }
+            print(lesson.teachers)
             _teachers_ = [{
                 "teacher_name": teacher.trans[0].name,
                 "teacher_fullname": teacher.trans[0].fullname

@@ -1,4 +1,5 @@
 import asyncio
+import subprocess
 
 from celery import chain
 
@@ -14,6 +15,7 @@ from etl.parsers.schedule_parser import ScheduleParser
 from etl.parsers.start_semester_parser import StartSemesterParser
 from etl.parsers.teachers_parser import TeachersParser
 from etl.transform.schedule_transformer import ScheduleTransformer
+from etl.transform.schedule_translate import ScheduleTranslate
 
 
 @beat_app.task
@@ -57,7 +59,9 @@ async def etl_schedule():
 
     t = ScheduleTransformer(
         redis=config.REDIS_URI.unicode_string(),
-        langs=config.FOREIGN_LANGS
+        langs=config.FOREIGN_LANGS,
+        iam_token=config.IAM_TOKEN,
+        folder_id=config.FOLDER_ID,
     )
     await t.transform()
 
@@ -68,6 +72,31 @@ async def etl_schedule():
     l.init_facade()
     await l.load()
 
+
+@beat_app.task
+def translate_schedule():        
+    asyncio.run(etl_translate_schedule())
+
+async def etl_translate_schedule():
+    # result = subprocess.run(['bash', "yandex_auth.sh"], capture_output=True, text=True)
+    # output = result.stdout
+    # return_code = result.returncode
+
+    # if return_code == 0:
+    #     print(f"Скрипт успешно выполнен. Вывод: {output}")
+    # else:
+    #     print(f"Ошибка при выполнении скрипта. Код завершения: {return_code}, Вывод: {output}")
+    #     raise Exception
+
+    t = ScheduleTranslate(
+        langs=config.FOREIGN_LANGS,
+        iam_token=config.IAM_TOKEN,
+        folder_id=config.FOLDER_ID,
+        redis=config.REDIS_URI.unicode_string(),
+        postgres_dsn=config.DB_URI.unicode_string(),
+    )
+    t.init_facade()
+    await t.translate()
 
 @beat_app.task
 def etl_all_news():

@@ -18,6 +18,9 @@ def all_news():
 def new_news():
     beat_tasks.parse_new_news.delay()
 
+def translate_schedule():
+    beat_tasks.translate_schedule.delay()
+
 
 args = [arg for arg in sys.argv if arg != ""]
 
@@ -41,5 +44,7 @@ else:
         schedule()
     elif parameter == "start_semester":
         start_semester()
+    elif parameter == "translate_schedule":
+        translate_schedule()
     else:
         print(f"Unknown parameter: {parameter}")

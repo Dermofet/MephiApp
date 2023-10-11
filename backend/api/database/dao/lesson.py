@@ -134,6 +134,10 @@ class LessonDAO:
         lesson = await self._session.execute(select(LessonModel).where(LessonModel.guid == guid).limit(1))
         return lesson.scalar()
 
+    async def get_all(self, limit: int, offset: int) -> List[LessonModel]:
+        lessons = await self._session.execute(select(LessonModel).offset(offset).limit(limit))
+        return lessons.scalars().unique().all()
+
     """
     Получение уникального занятия
     """
