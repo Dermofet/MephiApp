@@ -39,6 +39,10 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
+    async def flush(self) -> None:
+        ...
+
+    @abstractmethod
     async def refresh(self, model: BaseModel) -> BaseModel:
         ...
 

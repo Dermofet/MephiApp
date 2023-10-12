@@ -66,6 +66,9 @@ class FacadeDB(IFacadeDB, ABC):
     async def commit(self) -> None:
         await self._session.commit()
 
+    async def flush(self) -> None:
+        await self._session.flush()
+
     async def refresh(self, model: BaseModel) -> BaseModel:
         await self._session.refresh(model)
         return model
