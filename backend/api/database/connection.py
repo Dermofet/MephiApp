@@ -8,9 +8,9 @@ engine = create_async_engine(
     config.DB_URI.unicode_string(),
     echo=config.DEBUG,
     pool_pre_ping=True,
+    pool_recycle=1800,
     pool_size=20,
-    max_overflow=30,
-    pool_timeout=60
+    pool_timeout=10
 )
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
