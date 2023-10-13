@@ -23,16 +23,6 @@ class RoomDAO:
 
     _session: AsyncSession
 
-    weekdays = {
-    0: "Понедельник",
-    1: "Вторник",
-    2: "Среда",
-    3: "Четверг",
-    4: "Пятница",
-    5: "Суббота",
-    6: "Воскресенье"
-}
-
     def __init__(self, session: AsyncSession):
         self._session = session
 
@@ -107,7 +97,9 @@ class RoomDAO:
         }
 
         occupied_rooms = await self._get_occupied_rooms(room_filter, corps, week, weekdays)
+        print(f"occupied_rooms = {occupied_rooms}")
         full_time_free_rooms = await self._get_full_time_free_rooms(corps, occupied_rooms)
+        print(f"full_time_free_rooms = {full_time_free_rooms}")
         return self._get_free_rooms(room_filter, occupied_rooms, full_time_free_rooms)
 
     async def _get_occupied_rooms(self, room_filter: RoomFilter, corps: List[str], week: List[int], weekdays: Dict[int, str]) -> \

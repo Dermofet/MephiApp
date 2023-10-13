@@ -137,6 +137,15 @@ class LessonDAO:
     async def get_all(self, limit: int, offset: int) -> List[LessonModel]:
         lessons = await self._session.execute(select(LessonModel).offset(offset).limit(limit))
         return lessons.scalars().unique().all()
+    
+    async def get_all_with_trans(self, limit: int, offset: int, lang: str) -> List[LessonModel]:
+        lessons = await self._session.execute(
+            select(LessonModel)
+            .join(LessonTranslateModel, LessonModel.guid == LessonTranslateModel.lesson_guid)
+            .where(LessonTranslateModel.lang == lang)
+            .offset(offset)
+            .limit(limit))
+        return lessons.scalars().unique().all()
 
     """
     Получение уникального занятия

@@ -12,7 +12,7 @@ engine = create_async_engine(
     pool_size=20,
     pool_timeout=10
 )
-async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession, autoflush=False)
 
 class Base(DeclarativeBase):
     __allow_unmapped__ = True
