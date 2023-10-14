@@ -18,7 +18,7 @@ from backend.api.database.models.room import RoomModel
 from backend.api.database.models.teacher import TeacherModel
 from backend.api.database.models.teacher_translate import TeacherTranslateModel
 from backend.api.schemas.lesson import LessonCreateSchema
-from etl.schemas.lesson import LessonLoading
+from etl.schemas.lesson import LessonLoading, LessonTranslateLoading
 
 
 class LessonDAO:
@@ -138,14 +138,16 @@ class LessonDAO:
         lessons = await self._session.execute(select(LessonModel).offset(offset).limit(limit))
         return lessons.scalars().unique().all()
     
-    async def get_all_with_trans(self, limit: int, offset: int, lang: str) -> List[LessonModel]:
-        lessons = await self._session.execute(
-            select(LessonModel)
-            .join(LessonTranslateModel, LessonModel.guid == LessonTranslateModel.lesson_guid)
+    async def get_all_trans(self, limit: int, offset: int, lang: str) -> List[LessonModel]:
+        trans = await self._session.execute(
+            select(LessonTranslateModel)
             .where(LessonTranslateModel.lang == lang)
             .offset(offset)
             .limit(limit))
-        return lessons.scalars().unique().all()
+        return trans.scalars().unique().all()
+    
+    async def bulk_insert_trans(self, data: List[LessonTranslateModel]) -> None:
+        self._session.add_all(data)
 
     """
     Получение уникального занятия

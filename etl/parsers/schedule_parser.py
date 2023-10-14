@@ -77,9 +77,9 @@ class ScheduleParser(BaseParser):
         courses = soup.findAll("div", class_="list-group")
         tasks = []
         for groups, i in zip(courses, range(len(courses))):
-            # item = groups.findAll("a")[0]
+            item = groups.findAll("a")[0]
             # change append to extend
-            tasks.extend(
+            tasks.append(
                 self.__get_group_info(
                     url=f"{base_url}{item['href']}",
                     academic=name,
@@ -87,7 +87,7 @@ class ScheduleParser(BaseParser):
                     course=i + 1,
                     lang="ru",
                 )
-                for item in groups.findAll("a")
+                # for item in groups.findAll("a")
             )
 
         self.logger.debug(f"Created {len(tasks)} tasks")

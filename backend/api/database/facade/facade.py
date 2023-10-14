@@ -39,7 +39,7 @@ from backend.api.schemas.news import NewsCreateSchema
 from backend.api.schemas.room import RoomCreateSchema
 from backend.api.schemas.start_semester import StartSemesterCreateSchema
 from backend.api.schemas.teacher import TeacherCreateSchema
-from etl.schemas.lesson import LessonLoading
+from etl.schemas.lesson import LessonLoading, LessonTranslateLoading
 
 
 class FacadeDB(IFacadeDB, ABC):
@@ -154,6 +154,12 @@ class FacadeDB(IFacadeDB, ABC):
 
     async def get_all_lesson(self, limit: int, offset: int) -> List[LessonModel]:
         return await self.lesson_dao.get_all(limit, offset)
+    
+    async def get_all_trans_lesson(self, limit: int, offset: int, lang: str) -> List[LessonModel]:
+        return await self.lesson_dao.get_all_trans(limit, offset, lang)
+    
+    async def bulk_insert_trans_lesson(self, data: List[LessonTranslateLoading]) -> None:
+        return await self.lesson_dao.bulk_insert_trans(data)
 
     async def get_unique_lesson(self, data: LessonCreateSchema) -> LessonModel:
         return await self.lesson_dao.get_unique(data)

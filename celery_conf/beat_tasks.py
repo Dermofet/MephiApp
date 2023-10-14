@@ -60,8 +60,6 @@ async def etl_schedule():
     t = ScheduleTransformer(
         redis=config.REDIS_URI.unicode_string(),
         langs=config.FOREIGN_LANGS,
-        iam_token=config.IAM_TOKEN,
-        folder_id=config.FOLDER_ID,
     )
     await t.transform()
 

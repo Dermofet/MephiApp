@@ -26,6 +26,7 @@ from backend.api.schemas.news import NewsCreateSchema
 from backend.api.schemas.room import RoomCreateSchema
 from backend.api.schemas.start_semester import StartSemesterCreateSchema
 from backend.api.schemas.teacher import TeacherCreateSchema
+from etl.schemas.lesson import LessonTranslateLoading
 
 
 class IFacadeDB(ABC):
@@ -148,6 +149,14 @@ class IFacadeDB(ABC):
 
     @abstractmethod
     async def get_all_lesson(self, limit: int, offset: int) -> List[LessonModel]:
+        ...
+
+    @abstractmethod
+    async def get_all_trans_lesson(self, limit: int, offset: int, lang: str) -> List[LessonModel]:
+        ...
+
+    @abstractmethod
+    async def bulk_insert_trans_lesson(self, data: List[LessonTranslateLoading]) -> None:
         ...
 
     @abstractmethod

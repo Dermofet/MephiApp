@@ -48,62 +48,54 @@ class ScheduleTranslate(BaseLoader):
         offset = 0
 
         while True:
-            lessons = await self.facade_db.get_all_lesson(limit=limit, offset=offset)
-            if len(lessons) == 0:
+            trans = await self.facade_db.get_all_trans_lesson(limit=limit, offset=offset, lang="ru")
+            if len(trans) == 0:
                 break
 
             for lang in self.langs:
                 self.logger.debug(f"Translate lessons for {lang}")
-                translated_lessons = await self.translate_lessons_by_lang(lang, lessons)
-                await self.update_lessons_translations(lessons, translated_lessons, lang)
+                translated_lessons = await self.translate_lessons_by_lang(lang, trans)
+                tr = self.create_lessons_translations(trans, translated_lessons, lang)
+                await self.facade_db.bulk_insert_trans_lesson(tr)
 
             offset += limit
 
-    async def translate_lessons_by_lang(self, lang, lessons):
+    async def translate_lessons_by_lang(self, lang, trans):
         translated_lessons = []
         text = []
         total_len = 0
-        for lesson in lessons:
-            trans = await self.facade_db.get_trans_lesson(lesson, "ru")
-
-            subgroup_len = len(trans.subgroup) if trans.subgroup is not None else 0
-            type_len = len(trans.type) if trans.type is not None else 0
-            if total_len + len(trans.name) + subgroup_len + type_len < self.max_chars_per_request:
-                text.extend((trans.name, trans.subgroup, trans.type))
-                total_len += len(trans.name) + subgroup_len + type_len
+        for t in trans:
+            subgroup_len = len(t.subgroup) if t.subgroup is not None else 0
+            type_len = len(t.type) if t.type is not None else 0
+            if total_len + len(t.name) + subgroup_len + type_len < self.max_chars_per_request:
+                text.extend((t.name, t.subgroup, t.type))
+                total_len += len(t.name) + subgroup_len + type_len
             else:
                 tr = self.translator.translate(source="ru", target=lang, text=text)
                 translated_lessons.extend(tr)
 
-                text = [trans.name, trans.subgroup, trans.type]
-                total_len = len(trans.name) + subgroup_len + type_len
+                text = [t.name, t.subgroup, t.type]
+                total_len = len(t.name) + subgroup_len + type_len
 
         tr = self.translator.translate(source="ru", target=lang, text=text)
         translated_lessons.extend(tr)
 
         return translated_lessons
 
-    async def update_lessons_translations(self, lessons, translated_lessons, lang):
+    def create_lessons_translations(self, trans, translated_lessons, lang):
         chunk_size = 3
-        chunk_flush = 1000
-        i = 1
-        for lesson, chunk in zip(lessons, zip(*[iter(translated_lessons)] * chunk_size)):
-            if i % chunk_flush == 0:
-                self.logger.debug(f"Insert {i} lessons")
-                await self.facade_db.flush()
-            
-            lesson.trans.add(
-                LessonTranslateModel(
-                    name=chunk[0],
-                    subgroup=chunk[1],
-                    type=chunk[2],
-                    lang=lang,
-                )
+        return [
+            LessonTranslateModel(
+                lesson_guid=tr.lesson_guid,
+                name=chunk[0],
+                subgroup=chunk[1],
+                type=chunk[2],
+                lang=lang,
             )
-            i += 1
-
-        self.logger.debug(f"Insert {i} lessons")
-        await self.facade_db.flush()
+            for tr, chunk in zip(
+                trans, zip(*[iter(translated_lessons)] * chunk_size)
+            )
+        ]
 
     async def translate_lesson_types(self):
         types = {}
