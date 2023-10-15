@@ -25,7 +25,6 @@ class YandexTranslator:
                 text[i] = ""
 
         text_len = len("".join(text))
-        print(text_len)
         if text_len > 10000:
             raise InvalidMaxLengthError(10000, text_len)
 

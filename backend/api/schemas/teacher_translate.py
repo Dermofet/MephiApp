@@ -10,7 +10,7 @@ class TeacherTranslateBaseSchema(BaseModel):
 
 
 class TeacherTranslateCreateSchema(TeacherTranslateBaseSchema):
-    pass
+    teacher_guid: Optional[UUID4] = Field(description="ID преподавателя")
 
 
 class TeacherTranslateOutputSchema(TeacherTranslateBaseSchema):

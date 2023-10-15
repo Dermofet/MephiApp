@@ -1,12 +1,16 @@
-from typing import List
-from backend.api.database.models.lesson_translate import LessonTranslateModel
-from backend.api.database.models.teacher_translate import TeacherTranslateModel
+from typing import List, Union
 from etl.loaders.base_loader import BaseLoader
+from etl.schemas.lesson import LessonTranslateLoading
+from etl.schemas.teacher import TeacherTranslateLoading
 
 from etl.translate.translator import YandexTranslator
 
 class ScheduleTranslate(BaseLoader):
     max_chars_per_request = 10000
+    translator: YandexTranslator
+    langs: List[str]
+    index = 0
+
     def __init__(
             self, 
             langs: List[str], 
@@ -35,11 +39,10 @@ class ScheduleTranslate(BaseLoader):
         try:
             await self.translate_lessons()
             await self.translate_teachers()
-            await self.facade_db.commit()
             self.logger.info("Schedule were translated successfully")
-        except Exception:
+        except Exception as e:
             self.logger.error("Can't translate schedule")
-            await self.facade_db.rollback()
+            raise e
 
     async def translate_lessons(self):
         self.logger.info("Translate lessons...")
@@ -56,7 +59,7 @@ class ScheduleTranslate(BaseLoader):
                 self.logger.debug(f"Translate lessons for {lang}")
                 translated_lessons = await self.translate_lessons_by_lang(lang, trans)
                 tr = self.create_lessons_translations(trans, translated_lessons, lang)
-                await self.facade_db.bulk_insert_trans_lesson(tr)
+                self.set_to_redis(tr, "lesson_translate", "trans")
 
             offset += limit
 
@@ -64,18 +67,21 @@ class ScheduleTranslate(BaseLoader):
         translated_lessons = []
         text = []
         total_len = 0
+
         for t in trans:
             subgroup_len = len(t.subgroup) if t.subgroup is not None else 0
             type_len = len(t.type) if t.type is not None else 0
-            if total_len + len(t.name) + subgroup_len + type_len < self.max_chars_per_request:
+            name_len = len(t.name)
+            
+            if total_len + name_len + subgroup_len + type_len < self.max_chars_per_request:
                 text.extend((t.name, t.subgroup, t.type))
-                total_len += len(t.name) + subgroup_len + type_len
+                total_len += name_len + subgroup_len + type_len
             else:
                 tr = self.translator.translate(source="ru", target=lang, text=text)
                 translated_lessons.extend(tr)
 
                 text = [t.name, t.subgroup, t.type]
-                total_len = len(t.name) + subgroup_len + type_len
+                total_len = name_len + subgroup_len + type_len
 
         tr = self.translator.translate(source="ru", target=lang, text=text)
         translated_lessons.extend(tr)
@@ -85,8 +91,8 @@ class ScheduleTranslate(BaseLoader):
     def create_lessons_translations(self, trans, translated_lessons, lang):
         chunk_size = 3
         return [
-            LessonTranslateModel(
-                lesson_guid=tr.lesson_guid,
+            LessonTranslateLoading(
+                lesson_guid=str(tr.lesson_guid),
                 name=chunk[0],
                 subgroup=chunk[1],
                 type=chunk[2],
@@ -112,8 +118,8 @@ class ScheduleTranslate(BaseLoader):
     async def translate_teachers(self):
         self.logger.info("Translate teachers...")
 
-        teachers = await self.facade_db.get_all_full_teacher("ru")
-        if teachers is None:
+        trans = await self.facade_db.get_all_trans_teacher(lang="ru")
+        if trans is None:
             return
 
         self.logger.debug("Translate teachers for en")
@@ -121,35 +127,33 @@ class ScheduleTranslate(BaseLoader):
         total_len = 0
         text = []
         translated_teachers = []
-        for teacher in teachers:
-            trans = await self.facade_db.get_trans_teacher(teacher, "ru")
-            if total_len + len(trans.fullname) < self.max_chars_per_request:
-                text.append(trans.fullname)
-                total_len += len(trans.fullname)
+        for t in trans:
+            if total_len + len(t.fullname) < self.max_chars_per_request:
+                text.append(t.fullname)
+                total_len += len(t.fullname)
             else:
                 translated_teachers.extend(self.translator.translate(source="ru", target="en", text=text))
-                text = [trans.fullname]
-                total_len = len(trans.fullname)
+                text = [t.fullname]
+                total_len = len(t.fullname)
 
-        await self.update_teachers_translations(teachers, translated_teachers)
+        tr = self.create_teachers_translations(trans, translated_teachers)
+        self.set_to_redis(tr, "teacher_translate", "trans")
 
-    async def update_teachers_translations(self, teachers, translated_teachers):
-        chunk_flush = 1000
-        i = 1
-        for teacher, fullname in zip(teachers, translated_teachers):
-            if i % chunk_flush == 0:
-                self.logger.debug(f"Insert {i} teachers")
-                await self.facade_db.flush()
-
+    def create_teachers_translations(self, trans, translated_teachers):
+        res = []
+        for t, fullname in zip(trans, translated_teachers):
             name_parts = fullname.split()
-            teacher.trans.add(
-                TeacherTranslateModel(
+            res.append(
+                TeacherTranslateLoading(
+                    teacher_guid=str(t.teacher_guid),
                     name=f"{name_parts[0]} {'.'.join([i[0] for i in name_parts[1:]])}.",
                     fullname=fullname,
                     lang="en"
                 )
             )
-            i += 1
+        return res
 
-        self.logger.debug(f"Insert {i} teachers")
-        await self.facade_db.flush()
+    def set_to_redis(self, data: List[Union[LessonTranslateLoading, TeacherTranslateLoading]], name, key):
+        for item in data:
+            self.redis_db.hset(name=f"{name}:{self.index}", key=key, value=item.model_dump_redis())
+            self.index += 1

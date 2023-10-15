@@ -83,10 +83,17 @@ class RoomLessonExtracting(Base):
 
 
 class LessonTranslateLoading(Base):
+    lesson_guid: Optional[str] = Field(description="GUID занятия")
     type: Optional[str] = Field(description="Тип занятия")
     name: str = Field(description="Название занятия")
     subgroup: Optional[str] = Field(description="Подгруппа, у которой проводится занятие")
     lang: str = Field(description="Язык (для перевода)")
+
+    def __hash__(self):
+        return hash(self.name + self.lang)
+    
+    def __eq__(self, other):
+        return self.name == other.name and self.lang == other.lang
 
 
 class LessonLoading(Base):

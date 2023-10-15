@@ -27,6 +27,7 @@ from backend.api.schemas.room import RoomCreateSchema
 from backend.api.schemas.start_semester import StartSemesterCreateSchema
 from backend.api.schemas.teacher import TeacherCreateSchema
 from etl.schemas.lesson import LessonTranslateLoading
+from etl.schemas.teacher import TeacherTranslateLoading
 
 
 class IFacadeDB(ABC):
@@ -192,13 +193,11 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
-    async def get_by_group_lesson(self, group: str, lang: str, date_: datetime.date = datetime.date.today()) -> List[
-        LessonModel]:
+    async def get_by_group_lesson(self, group: str, lang: str, date_: datetime.date = datetime.date.today()) -> List[LessonModel]:
         ...
 
     @abstractmethod
-    async def get_by_teacher_lesson(self, teacher: str, lang: str, date_: datetime.date = datetime.date.today()) -> \
-            List[LessonModel]:
+    async def get_by_teacher_lesson(self, teacher: str, lang: str, date_: datetime.date = datetime.date.today()) -> List[LessonModel]:
         ...
 
     @abstractmethod
@@ -291,6 +290,10 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
+    async def bulk_insert_trans_teacher(self, data: List[TeacherTranslateLoading]) -> None:
+        ...
+
+    @abstractmethod
     async def get_by_id_teacher(self, guid: UUID4) -> TeacherModel:
         ...
 
@@ -301,6 +304,10 @@ class IFacadeDB(ABC):
     @abstractmethod
     async def get_all_full_teacher(self, lang: str) -> List[str]:
         ...    
+
+    @abstractmethod
+    async def get_all_trans_teacher(self, limit: int = -1, offset: int = -1, lang: str = "ru") -> List[TeacherTranslateModel]:
+        ...
 
     @abstractmethod
     async def get_by_name_teacher(self, name: str) -> TeacherModel:

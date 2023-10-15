@@ -1,5 +1,4 @@
-import asyncio
-import subprocess
+import utils.asyncio as asyncio
 
 from celery import chain
 
@@ -8,6 +7,7 @@ from config import config
 from etl.loaders.news_loader import NewsLoader
 from etl.loaders.schedule_loader import ScheduleLoader
 from etl.loaders.start_semester_loader import StartSemesterLoader
+from etl.loaders.translate_loader import TranslateLoader
 from etl.parsers.new_news_parser import NewNewsParser
 from etl.parsers.news_parser import NewsParser
 from etl.parsers.room_parser import RoomParser
@@ -95,6 +95,13 @@ async def etl_translate_schedule():
     )
     t.init_facade()
     await t.translate()
+
+    l = TranslateLoader(
+        redis=config.REDIS_URI.unicode_string(),
+        postgres_dsn=config.DB_URI.unicode_string(),
+    )
+    l.init_facade()
+    await l.load()
 
 @beat_app.task
 def etl_all_news():

@@ -6,15 +6,16 @@ from etl.schemas.base import Base
 
 
 class TeacherTranslateLoading(Base):
+    teacher_guid: Optional[str] = Field(description="GUID преподавателя")
     lang: str = Field(description="Код страны (для перевода)")
     name: str = Field(description="ФИО приподавателя")
     fullname: Optional[str] = Field(description="Полное ФИО преподавателя")
 
     def __hash__(self):
-        return hash(self.name)
+        return hash(self.fullname)
 
     def __eq__(self, other):
-        return self.name == other.name
+        return self.fullname == other.fullname
 
 
 class TeacherLoading(Base):

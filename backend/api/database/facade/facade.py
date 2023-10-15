@@ -40,6 +40,7 @@ from backend.api.schemas.room import RoomCreateSchema
 from backend.api.schemas.start_semester import StartSemesterCreateSchema
 from backend.api.schemas.teacher import TeacherCreateSchema
 from etl.schemas.lesson import LessonLoading, LessonTranslateLoading
+from etl.schemas.teacher import TeacherTranslateLoading
 
 
 class FacadeDB(IFacadeDB, ABC):
@@ -259,6 +260,9 @@ class FacadeDB(IFacadeDB, ABC):
 
     async def bulk_insert_teacher(self, data: List[TeacherCreateSchema]) -> None:
         return await self.teacher_dao.bulk_insert(data)
+    
+    async def bulk_insert_trans_teacher(self, data: List[TeacherTranslateLoading]) -> None:
+        return await self.teacher_dao.bulk_insert_trans(data)
 
     async def get_by_id_teacher(self, guid: UUID4) -> TeacherModel:
         return await self.teacher_dao.get_by_id(guid)
@@ -268,6 +272,9 @@ class FacadeDB(IFacadeDB, ABC):
     
     async def get_all_full_teacher(self, lang: str) -> List[str]:
         return await self.teacher_dao.get_all_full(lang)
+
+    async def get_all_trans_teacher(self, limit: int = -1, offset: int = -1, lang: str = "ru") -> List[TeacherTranslateModel]:
+        return await self.teacher_dao.get_all_trans(limit=limit, offset=offset, lang=lang)
 
     async def get_by_name_teacher(self, name: str) -> TeacherModel:
         return await self.teacher_dao.get_by_name(name)

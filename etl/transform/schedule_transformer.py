@@ -67,6 +67,7 @@ class ScheduleTransformer(BaseTransformer):
                     alt_url=item.alt_url,
                     trans=[
                         TeacherTranslateLoading(
+                            teacher_guid=None,
                             lang=item.lang,
                             name=item.name,
                             fullname=item.fullname,
@@ -135,6 +136,7 @@ class ScheduleTransformer(BaseTransformer):
                 rooms=set(),
                 trans=[
                     LessonTranslateLoading(
+                        lesson_guid=None,
                         type=lesson.type,
                         subgroup=lesson.subgroup,
                         name=lesson.name,
