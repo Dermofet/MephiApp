@@ -88,12 +88,19 @@ class TeacherDAO:
         )
         return teachers.scalars().unique().all()
     
-    async def get_all_trans(self, lang: str) -> List[TeacherModel]:
-        teachers = await self._session.execute(
+    async def get_all_trans(self, limit: int = -1, offset: int = -1, lang: str = "ru") -> List[TeacherTranslateModel]:
+        query = (
             select(TeacherTranslateModel)
             .where(TeacherTranslateModel.lang == lang)
         )
-        return teachers.scalars().unique().all()
+        
+        if offset != -1:
+            query = query.offset(offset)
+        if limit != -1:
+            query = query.limit(limit)
+
+        trans = await self._session.execute(query)
+        return trans.scalars().unique().all()
 
     """
     Получение преподавателя по имени
@@ -109,7 +116,14 @@ class TeacherDAO:
         return teacher.scalar()
 
     async def get_trans(self, teacher: TeacherModel, lang: str = None) -> TeacherTranslateModel:
-        trans = await self._session.execute(teacher.trans.select().where(TeacherTranslateModel.lang == lang).limit(1))
+        trans = await self._session.execute(
+            select(TeacherTranslateModel)
+            .where(
+                TeacherTranslateModel.teacher_guid == teacher.guid, 
+                TeacherTranslateModel.lang == lang
+            )
+            .limit(1)
+        )
         return trans.scalar()
     
     async def get_all_trans(self, limit: int = -1, offset: int = -1, lang: str = "ru") -> List[TeacherTranslateModel]:

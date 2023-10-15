@@ -1,7 +1,5 @@
-import asyncio
 from redis import Redis
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine, async_sessionmaker
 
 from backend.api.database.facade import FacadeDB, IFacadeDB
 from logging_.logger import Logger
@@ -14,7 +12,7 @@ class BaseLoader:
     logger: Logger
 
     __engine: AsyncEngine
-    __async_session: sessionmaker
+    __async_session: async_sessionmaker
 
     def __init__(
             self,
@@ -30,16 +28,21 @@ class BaseLoader:
         self.__engine = create_async_engine(
             postgres_dsn,
             echo=debug,
+            pool_pre_ping=True,
+            pool_recycle=1800,
         )
-        self.__async_session = sessionmaker(
-            self.__engine,
-            expire_on_commit=False,
-            class_=AsyncSession
-        )
+        self.__async_session = async_sessionmaker(self.__engine, expire_on_commit=False, class_=AsyncSession, autoflush=False)
 
     def init_facade(self):
-        session = self.__async_session()
-        self.facade_db = FacadeDB(session)
+        self.facade_db = FacadeDB(self.get_session())
+
+    async def get_session(self) -> AsyncSession:
+        async with self.__async_session() as session:
+            yield session
+
+    def __del__(self):
+        self.redis_db.close()
+        
 
 class WrapperBaseLoader:
     loader: BaseLoader

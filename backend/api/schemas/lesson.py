@@ -216,11 +216,16 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
                 "time_end": lesson.time_end,
                 "lesson_group": []
             }
-            print(lesson.teachers)
-            _teachers_ = [{
-                "teacher_name": teacher.trans[0].name,
-                "teacher_fullname": teacher.trans[0].fullname
-            } for teacher in lesson.teachers]
+            _teachers_ = []
+            for teacher in lesson.teachers:
+                try:
+                    _teachers_.append({
+                        "teacher_name": teacher.trans[0].name,
+                        "teacher_fullname": teacher.trans[0].fullname
+                    })
+                except Exception as e:
+                    print(lesson)
+                    raise e
             _rooms_ = {room.number for room in lesson.rooms}
             _groups_ = {group.name for group in lesson.groups}
             day = associative_dict[lesson.day]

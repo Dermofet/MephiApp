@@ -46,7 +46,7 @@ from etl.schemas.teacher import TeacherTranslateLoading
 class FacadeDB(IFacadeDB, ABC):
     _session: AsyncSession
 
-    def __init__(self, session: AsyncSession = Depends(get_session)):
+    def __init__(self, session: AsyncSession):
         self._session = session
         self.academic_dao = AcademicDAO(session=session)
         self.corps_dao = CorpsDAO(session=session)
