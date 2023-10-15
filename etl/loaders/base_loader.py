@@ -1,3 +1,4 @@
+from utils import asyncio
 from redis import Redis
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine, async_sessionmaker
 
@@ -13,6 +14,7 @@ class BaseLoader:
 
     __engine: AsyncEngine
     __async_session: async_sessionmaker
+    session: AsyncSession
 
     def __init__(
             self,
@@ -34,13 +36,11 @@ class BaseLoader:
         self.__async_session = async_sessionmaker(self.__engine, expire_on_commit=False, class_=AsyncSession, autoflush=False)
 
     def init_facade(self):
-        self.facade_db = FacadeDB(self.get_session())
-
-    async def get_session(self) -> AsyncSession:
-        async with self.__async_session() as session:
-            yield session
+        self.session = self.__async_session()
+        self.facade_db = FacadeDB(self.session)
 
     def __del__(self):
+        asyncio.run(self.session.close())
         self.redis_db.close()
         
 

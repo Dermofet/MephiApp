@@ -51,6 +51,9 @@ class ScheduleTranslate(BaseLoader):
         offset = 0
 
         while True:
+            await self.session.close()
+            self.init_facade()
+
             trans = await self.facade_db.get_all_trans_lesson(limit=limit, offset=offset, lang="ru")
             if len(trans) == 0:
                 break
@@ -118,6 +121,9 @@ class ScheduleTranslate(BaseLoader):
     async def translate_teachers(self):
         self.logger.info("Translate teachers...")
 
+        await self.session.close()
+        self.init_facade()
+
         trans = await self.facade_db.get_all_trans_teacher(lang="ru")
         if trans is None:
             return
@@ -135,6 +141,8 @@ class ScheduleTranslate(BaseLoader):
                 translated_teachers.extend(self.translator.translate(source="ru", target="en", text=text))
                 text = [t.fullname]
                 total_len = len(t.fullname)
+
+        translated_teachers.extend(self.translator.translate(source="ru", target="en", text=text))
 
         tr = self.create_teachers_translations(trans, translated_teachers)
         self.set_to_redis(tr, "teacher_translate", "trans")
