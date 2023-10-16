@@ -27,18 +27,19 @@ def translate(text: list, dest='en'):
 @dispatch(str)
 def translate(text: str, dest='en'):
     if dest != 'ru':
-        res = ""
-        for substr in tr_split(text, 5000):
-            res += translator.translate(substr, dest=dest).text
-        return res
+        return "".join(
+            translator.translate(substr, dest=dest).text
+            for substr in tr_split(text, 5000)
+        )
     return text
 
 
 def tr_split(text: str, length: int):
     if len(text) <= length:
         return [text]
-    res = []
-    for i in range(0, len(text) // length):
-        res.append(text[i * length:(i + 1) * length])
+    res = [
+        text[i * length : (i + 1) * length]
+        for i in range(0, len(text) // length)
+    ]
     res.append(text[(len(text) // length)*length:])
     return res

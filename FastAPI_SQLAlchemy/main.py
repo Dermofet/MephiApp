@@ -46,110 +46,151 @@ async def main():
 @app.get("/all_lessons_by_group/", response_model=dict)
 async def get_lessons_by_group(group_name: str, lang: str = 'ru', db: Session = Depends(get_db)):
     try:
-        logging.info("API: get_lessons_by_group | --args: {} | --status: Get requests".format(group_name))
+        logging.info(
+            f"API: get_lessons_by_group | --args: {group_name} | --status: Get requests"
+        )
         db_lessons = crud.get_lessons_by_GroupName(db, group_name)
         if len(db_lessons) == 0:
-            logging.error("API: get_lessons_by_group | --args: {} | --status: Status_code = 406".format(group_name))
+            logging.error(
+                f"API: get_lessons_by_group | --args: {group_name} | --status: Status_code = 406"
+            )
             raise HTTPException(status_code=406, detail=rd.unexpected_parameters_406)
         lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
-        logging.info("API: get_lessons_by_group | --args: {} | --status: Status_code = 200".format(group_name))
+        logging.info(
+            f"API: get_lessons_by_group | --args: {group_name} | --status: Status_code = 200"
+        )
         return lessons
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
-        logging.info("API: get_lessons_by_group | --args: {} | --status: Status_code = 500".format(group_name))
+        logging.info(
+            f"API: get_lessons_by_group | --args: {group_name} | --status: Status_code = 500"
+        )
         raise HTTPException(status_code=500, detail=rd.server_error_500)
 
 
 @app.get("/all_lessons_by_group_and_day/", response_model=dict)
 async def get_lessons_by_group_day(group_name: str, day: str, lang: str = 'ru', db: Session = Depends(get_db)):
     try:
-        logging.info("API: get_lessons_by_group_day | --args: {}, {} | --status: Get request".format(group_name, day))
+        logging.info(
+            f"API: get_lessons_by_group_day | --args: {group_name}, {day} | --status: Get request"
+        )
         db_lessons = crud.get_lessons_by_DayAndGroupName(db, group_name, day)
         if len(db_lessons) == 0:
             logging.error(
-                "API: get_lessons_by_group_day | --args: {}, {} | --status: Status_code = 406".format(group_name, day))
+                f"API: get_lessons_by_group_day | --args: {group_name}, {day} | --status: Status_code = 406"
+            )
             raise HTTPException(status_code=406, detail=rd.unexpected_parameters_406)
         lessons = {"group": group_name} | tools.output_From_DBLesson(db_lessons, db=db, dest=lang)
         logging.info(
-            "API: get_lessons_by_group_day | --args: {}, {} | --status: Status_code = 200".format(group_name, day))
+            f"API: get_lessons_by_group_day | --args: {group_name}, {day} | --status: Status_code = 200"
+        )
         return lessons
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
         logging.info(
-            "API: get_lessons_by_group_day | --args: {}, {} | --status: Status_code = 500".format(group_name, day))
+            f"API: get_lessons_by_group_day | --args: {group_name}, {day} | --status: Status_code = 500"
+        )
         raise HTTPException(status_code=500, detail=rd.server_error_500)
 
 
 @app.get("/all_lessons_by_teacher/", response_model=dict)
 async def get_lessons_by_teacher(teacher_name: str, lang: str = 'ru', db: Session = Depends(get_db)):
     try:
-        logging.info("API: get_lessons_by_teacher | --args: {} | --status: Get request".format(teacher_name))
+        logging.info(
+            f"API: get_lessons_by_teacher | --args: {teacher_name} | --status: Get request"
+        )
         db_lessons = crud.get_lessons_by_TeacherName(db, teacher_name=teacher_name)
         if len(db_lessons) == 0:
-            logging.error("API: get_lessons_by_teacher | --args: {} | --status: Status_code = 406".format(teacher_name))
+            logging.error(
+                f"API: get_lessons_by_teacher | --args: {teacher_name} | --status: Status_code = 406"
+            )
             raise HTTPException(status_code=406, detail=rd.unexpected_parameters_406)
         res = {"teachers": teacher_name,
                "tr_teachers": tr.translate(teacher_name, dest=lang),
                "tr_teachers_fullname": tr.translate(crud.get_teacher_by_Name(db, teacher_name).fullname, dest=lang)} \
             | tools.output_From_DBLessonT(db_lessons, db=db, dest=lang)
-        logging.info("API: get_lessons_by_teacher | --args: {} | --status: Status_code = 200".format(teacher_name))
+        logging.info(
+            f"API: get_lessons_by_teacher | --args: {teacher_name} | --status: Status_code = 200"
+        )
         return res
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
-        logging.info("API: get_lessons_by_teacher | --args: {} | --status: Status_code = 500".format(teacher_name))
+        logging.info(
+            f"API: get_lessons_by_teacher | --args: {teacher_name} | --status: Status_code = 500"
+        )
         raise HTTPException(status_code=500, detail=rd.server_error_500)
 
 
 @app.get("/teacher_info/")
 async def get_teacher_info(teacher_name: str, lang: str = 'ru', db: Session = Depends(get_db)):
     try:
-        logging.info("API: get_teacher_info | --args: {} | --status: Get request".format(teacher_name))
+        logging.info(
+            f"API: get_teacher_info | --args: {teacher_name} | --status: Get request"
+        )
         db_teacher = crud.get_teacher_by_Name(db, teacher_name=teacher_name)
         if db_teacher is None:
-            logging.error("API: get_teacher_info | --args: {} | --status: Status_code = 406".format(teacher_name))
+            logging.error(
+                f"API: get_teacher_info | --args: {teacher_name} | --status: Status_code = 406"
+            )
             raise HTTPException(status_code=406, detail=rd.unexpected_parameters_406)
         res = tools.output_From_DBTeacher(db_teacher, dest=lang)
-        logging.info("API: get_lessons_by_teacher | --args: {} | --status: Status_code = 200".format(teacher_name))
+        logging.info(
+            f"API: get_lessons_by_teacher | --args: {teacher_name} | --status: Status_code = 200"
+        )
         return res
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
-        logging.info("API: get_lessons_by_teacher | --args: {} | --status: Status_code = 500".format(teacher_name))
+        logging.info(
+            f"API: get_lessons_by_teacher | --args: {teacher_name} | --status: Status_code = 500"
+        )
         raise HTTPException(status_code=500, detail=rd.server_error_500)
 
 
 @app.get("/all_groups_by_course/", response_model=dict[str, list[schemas.GroupOutput]])
 async def get_groups_by_course(course: int, db: Session = Depends(get_db)):
     try:
-        logging.info("API: get_groups_by_course | --args: {} | --status: Get request".format(course))
+        logging.info(
+            f"API: get_groups_by_course | --args: {course} | --status: Get request"
+        )
         db_groups = crud.get_groups_by_Course(db, course=course)
         if len(db_groups) == 0:
-            logging.error("API: get_groups_by_course | --args: {} | --status: Status_code = 406".format(course))
+            logging.error(
+                f"API: get_groups_by_course | --args: {course} | --status: Status_code = 406"
+            )
             raise HTTPException(status_code=406, detail=rd.unexpected_parameters_406)
-        logging.info("API: get_groups_by_course | --args: {} | --status: Status_code = 200".format(course))
+        logging.info(
+            f"API: get_groups_by_course | --args: {course} | --status: Status_code = 200"
+        )
         return tools.output_From_DBGroups(db_groups)
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
-        logging.info("API: get_groups_by_course | --args: {} | --status: Status_code = 500".format(course))
+        logging.info(
+            f"API: get_groups_by_course | --args: {course} | --status: Status_code = 500"
+        )
         raise HTTPException(status_code=500, detail=rd.server_error_500)
 
 
 @app.get("/all_groups_by_course_acType/", response_model=dict[str, list[schemas.GroupOutput]])
 async def get_groups_by_course_acType(course: int, acType: str, db: Session = Depends(get_db)):
     try:
-        logging.info("API: get_groups_by_course_acType | --args: {}, {} | --status: Get request".format(course, acType))
+        logging.info(
+            f"API: get_groups_by_course_acType | --args: {course}, {acType} | --status: Get request"
+        )
         db_groups = crud.get_groups_by_CourseAndAcType(db, course=course, acType=acType)
         if len(db_groups) == 0:
             logging.error(
-                "API: get_groups_by_course_acType | --args: {}, {} | --status: Status_code = 406".format(course,
-                                                                                                         acType))
+                f"API: get_groups_by_course_acType | --args: {course}, {acType} | --status: Status_code = 406"
+            )
             raise HTTPException(status_code=406, detail=rd.unexpected_parameters_406)
         logging.info(
-            "API: get_groups_by_course_acType | --args: {}, {} | --status: Status_code = 200".format(course, acType))
+            f"API: get_groups_by_course_acType | --args: {course}, {acType} | --status: Status_code = 200"
+        )
         return tools.output_From_DBGroups(db_groups)
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
         logging.info(
-            "API: get_groups_by_course_acType | --args: {}, {} | --status: Status_code = 500".format(course, acType))
+            f"API: get_groups_by_course_acType | --args: {course}, {acType} | --status: Status_code = 500"
+        )
         raise HTTPException(status_code=500, detail=rd.server_error_500)
 
 
@@ -163,7 +204,7 @@ async def get_all_groups(db: Session = Depends(get_db)):
             raise HTTPException(status_code=406, detail=rd.unexpected_parameters_406)
         logging.info("API: get_all_groups | --status: Status_code = 200")
         return {"groups": db_groups}
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
         logging.info("API: get_all_groups | --status: Status_code = 500")
         raise HTTPException(status_code=500, detail=rd.server_error_500)
@@ -180,7 +221,7 @@ async def get_all_teachers(lang: str = 'ru', db: Session = Depends(get_db)):
         logging.info("API: get_all_teachers | --status: Status_code = 200")
         db_teachers.sort()
         return {"teachers": tr.translate(" | ".join(db_teachers), dest=lang).split(" | ")}
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
         logging.info("API: get_all_teachers | --status: Status_code = 500")
         raise HTTPException(status_code=500, detail=rd.server_error_500)
@@ -189,24 +230,34 @@ async def get_all_teachers(lang: str = 'ru', db: Session = Depends(get_db)):
 @app.get("/news_preview_by_id/")
 async def get_news_preview_by_id(_id_: int, db: Session = Depends(get_db)):
     try:
-        logging.info("API: get_news_preview_by_id | --args: {} | --status: Get request".format(_id_))
+        logging.info(
+            f"API: get_news_preview_by_id | --args: {_id_} | --status: Get request"
+        )
         db_news = crud.get_news_by_Id(db, input_parse_info.idInverter(_id_))
         if db_news is None:
-            logging.error("API: get_news_preview_by_id | --args: {} | --status: Status_code = 406".format(_id_))
+            logging.error(
+                f"API: get_news_preview_by_id | --args: {_id_} | --status: Status_code = 406"
+            )
             raise HTTPException(status_code=406, detail=rd.unexpected_parameters_406)
-        logging.info("API: get_news_preview_by_id | --args: {} | --status: Status_code = 200".format(_id_))
+        logging.info(
+            f"API: get_news_preview_by_id | --args: {_id_} | --status: Status_code = 200"
+        )
         with open(db_news.pathToPreview, 'r', encoding='utf-8') as fp:
             return json.load(fp=fp)
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
-        logging.info("API: get_news_preview_by_id | --args: {} | --status: Status_code = 500".format(_id_))
+        logging.info(
+            f"API: get_news_preview_by_id | --args: {_id_} | --status: Status_code = 500"
+        )
         raise HTTPException(status_code=500, detail=rd.server_error_500)
 
 
 @app.get("/news_previews_by_id/")
 async def get_news_previews_by_id(start: int, end: int, db: Session = Depends(get_db)):
     try:
-        logging.info("API: get_news_previews_by_id | --args: {}, {} | --status: Get request".format(start, end))
+        logging.info(
+            f"API: get_news_previews_by_id | --args: {start}, {end} | --status: Get request"
+        )
         db_news = {"news": []}
         for _id_ in range(start, end):
             with open(crud.get_news_by_Id(db, input_parse_info.idInverter(_id_)).pathToPreview, 'r',
@@ -214,30 +265,43 @@ async def get_news_previews_by_id(start: int, end: int, db: Session = Depends(ge
                 db_news["news"].append(json.load(fp=fp))
         if len(db_news["news"]) == 0:
             logging.error(
-                "API: get_news_previews_by_id | --args: {}, {} | --status: Status_code = 406".format(start, end))
+                f"API: get_news_previews_by_id | --args: {start}, {end} | --status: Status_code = 406"
+            )
             raise HTTPException(status_code=406, detail=rd.unexpected_parameters_406)
-        logging.info("API: get_news_previews_by_id | --args: {}, {} | --status: Status_code = 200".format(start, end))
+        logging.info(
+            f"API: get_news_previews_by_id | --args: {start}, {end} | --status: Status_code = 200"
+        )
         return db_news
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
-        logging.info("API: get_news_previews_by_id | --args: {}, {} | --status: Status_code = 500".format(start, end))
+        logging.info(
+            f"API: get_news_previews_by_id | --args: {start}, {end} | --status: Status_code = 500"
+        )
         raise HTTPException(status_code=500, detail=rd.server_error_500)
 
 
 @app.get("/news_page_by_id/")
 async def get_news_page_by_id(_id_: int, db: Session = Depends(get_db)):
     try:
-        logging.info("API: get_news_page_by_id | --args: {} | --status: Get request".format(_id_))
+        logging.info(
+            f"API: get_news_page_by_id | --args: {_id_} | --status: Get request"
+        )
         db_news = crud.get_news_by_Id(db, input_parse_info.idInverter(_id_))
         if db_news is None:
-            logging.error("API: get_news_page_by_id | --args: {} | --status: Status_code = 406".format(_id_))
+            logging.error(
+                f"API: get_news_page_by_id | --args: {_id_} | --status: Status_code = 406"
+            )
             raise HTTPException(status_code=406, detail=rd.unexpected_parameters_406)
-        logging.info("API: get_news_page_by_id | --args: {} | --status: Status_code = 200".format(_id_))
+        logging.info(
+            f"API: get_news_page_by_id | --args: {_id_} | --status: Status_code = 200"
+        )
         with open(db_news.pathToNews, 'r', encoding='utf-8') as fp:
             return json.load(fp=fp)
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
-        logging.info("API: get_news_page_by_id | --args: {} | --status: Status_code = 500".format(_id_))
+        logging.info(
+            f"API: get_news_page_by_id | --args: {_id_} | --status: Status_code = 500"
+        )
         raise HTTPException(status_code=500, detail=rd.server_error_500)
 
 
@@ -245,38 +309,46 @@ async def get_news_page_by_id(_id_: int, db: Session = Depends(get_db)):
 def parsing_schedule(schedule: bool = True, teacher: bool = True):
     try:
         logging.info(
-            "API: parsing_schedule | --args: {}, {} | --status: Start parsing schedule".format(schedule, teacher))
+            f"API: parsing_schedule | --args: {schedule}, {teacher} | --status: Start parsing schedule"
+        )
         if schedule:
             sp.parse_schedule()
         if teacher:
             sp.parse_teachers_fullname()
         logging.info(
-            "API: parsing_schedule | --args: {}, {} | --status: Successful parsing schedule".format(schedule, teacher))
-    except (Exception,) as err:
+            f"API: parsing_schedule | --args: {schedule}, {teacher} | --status: Successful parsing schedule"
+        )
+    except Exception as err:
         logging.exception(err)
-        logging.info("API: parsing_schedule | --args: {}, {} | --status: Status_code = 500".format(schedule, teacher))
+        logging.info(
+            f"API: parsing_schedule | --args: {schedule}, {teacher} | --status: Status_code = 500"
+        )
         raise HTTPException(status_code=500, detail=rd.server_error_500)
 
 
 @app.get("/fill_db/")
 def fill_db(schedule: bool = True, news: bool = True, teacher_fullname: bool = True, db: Session = Depends(get_db)):
     try:
-        logging.info("API: fill_db | --args: {}, {}, {} | --status: Start filling db"
-                     .format(schedule, news, teacher_fullname))
+        logging.info(
+            f"API: fill_db | --args: {schedule}, {news}, {teacher_fullname} | --status: Start filling db"
+        )
         if schedule:
             input_parse_info.schedule_info_to_db(db)
-            logging.info("API: fill_db | --args: {}, {}, {} | --status: Successful filling schedule"
-                         .format(schedule, news, teacher_fullname))
+            logging.info(
+                f"API: fill_db | --args: {schedule}, {news}, {teacher_fullname} | --status: Successful filling schedule"
+            )
         if news:
             input_parse_info.news_info_to_db(db)
-            logging.info("API: fill_db | --args: {}, {}, {} | --status: Successful filling news"
-                         .format(schedule, news, teacher_fullname))
+            logging.info(
+                f"API: fill_db | --args: {schedule}, {news}, {teacher_fullname} | --status: Successful filling news"
+            )
         if teacher_fullname:
             input_parse_info.teachers_fullname_to_db(db)
-            logging.info("API: fill_db | --args: {}, {}, {} | --status: Successful filling teachers fullname"
-                         .format(schedule, news, teacher_fullname))
+            logging.info(
+                f"API: fill_db | --args: {schedule}, {news}, {teacher_fullname} | --status: Successful filling teachers fullname"
+            )
         logging.info("API: fill_db | --status: Successful filling db")
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
         logging.info("API: fill_db | --status: Status_code = 500")
         raise HTTPException(status_code=500, detail=rd.server_error_500)
@@ -288,7 +360,7 @@ async def parsing_news():
         logging.info("API: parsing_news | --status: Start parsing news")
         np.parse()
         logging.info("API: parsing_news | --status: Successful parsing news")
-    except (Exception,) as err:
+    except Exception as err:
         logging.exception(err)
         logging.info("API: parsing_news | --status: Status_code = 500")
         raise HTTPException(status_code=500, detail=rd.server_error_500)

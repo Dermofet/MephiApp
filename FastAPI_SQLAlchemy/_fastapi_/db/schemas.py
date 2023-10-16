@@ -59,7 +59,7 @@ class TeacherOutput(TeacherBase):
         self.alt_online_url = item.alt_online_url
 
     def translate_str(self):
-        return self.name + " _ " + self.fullname + " _ " + self.online_url + " _ " + self.alt_online_url
+        return f"{self.name} _ {self.fullname} _ {self.online_url} _ {self.alt_online_url}"
 
 
 class Teacher(TeacherBase):
@@ -99,11 +99,11 @@ class LessonOutput(LessonBase):
         self.cabinet = item.cabinet
         self.type = item.type
         if item.weeks == "еженед":
-            self.weeks = [i for i in range(1, 17)]
+            self.weeks = list(range(1, 17))
         elif item.weeks == "чет":
-            self.weeks = [i for i in range(2, 17, 2)]
+            self.weeks = list(range(2, 17, 2))
         else:
-            self.weeks = [i for i in range(1, 16, 2)]
+            self.weeks = list(range(1, 16, 2))
         self.name = item.name
         self.subgroup = item.subgroup
         teachers = item.teachers(db)
@@ -114,41 +114,37 @@ class LessonOutput(LessonBase):
 
     def translate_str(self):
         type_ = "#"
-        if self.type == 'Лек':
+        if self.type == 'Лаб':
+            type_ = "Лабораторная работа"
+
+        elif self.type == 'Лек':
             type_ = "Лекция"
         elif self.type == 'Пр':
             type_ = "Практика"
-        elif self.type == 'Лаб':
-            type_ = "Лабораторная работа"
-
         # trans = name + teacher_name + teacher_fullname + subgroup + type
         #     # = None
         if self.subgroup is None:
             if len(self.teacher_name) == 0:
-                if len(self.teacher_fullname) == 0:
-                    return "{} + # + # + # + {} | ".format(self.name, type_)
-                else:
-                    return "{} + # + {} + # + {} | ".format(self.name, " _ ".join(self.teacher_fullname), type_)
+                return (
+                    f"{self.name} + # + # + # + {type_} | "
+                    if len(self.teacher_fullname) == 0
+                    else f'{self.name} + # + {" _ ".join(self.teacher_fullname)} + # + {type_} | '
+                )
             else:
-                if len(self.teacher_fullname) == 0:
-                    return "{} + {} + # + # + {} | ".format(self.name, " _ ".join(self.teacher_name), type_)
-                else:
-                    return "{} + {} + {} + # + {} | ".format(self.name, " _ ".join(self.teacher_name),
-                                                             " _ ".join(self.teacher_fullname), type_)
+                return (
+                    f'{self.name} + {" _ ".join(self.teacher_name)} + # + # + {type_} | '
+                    if len(self.teacher_fullname) == 0
+                    else f'{self.name} + {" _ ".join(self.teacher_name)} + {" _ ".join(self.teacher_fullname)} + # + {type_} | '
+                )
+        elif len(self.teacher_name) == 0:
+            if len(self.teacher_fullname) == 0:
+                return f"{self.name} + # + # + {self.subgroup} + {type_} | "
+            else:
+                return f'{self.name} + # + {" _ ".join(self.teacher_fullname)} + {self.subgroup} + {type_} | '
+        elif len(self.teacher_fullname) == 0:
+            return f'{self.name} + {" _ ".join(self.teacher_name)} + # + {self.subgroup} + {type_} | '
         else:
-            if len(self.teacher_name) == 0:
-                if len(self.teacher_fullname) == 0:
-                    return "{} + # + # + {} + {} | ".format(self.name, self.subgroup, type_)
-                else:
-                    return "{} + # + {} + {} + {} | ".format(self.name, " _ ".join(self.teacher_fullname),
-                                                             self.subgroup, type_)
-            else:
-                if len(self.teacher_fullname) == 0:
-                    return "{} + {} + # + {} + {} | ".format(self.name, " _ ".join(self.teacher_name),
-                                                             self.subgroup, type_)
-                else:
-                    return "{} + {} + {} + {} + {} | ".format(self.name, " _ ".join(self.teacher_name),
-                                                              " _ ".join(self.teacher_fullname), self.subgroup, type_)
+            return f'{self.name} + {" _ ".join(self.teacher_name)} + {" _ ".join(self.teacher_fullname)} + {self.subgroup} + {type_} | '
 
 
 class LessonOutputT(LessonBase):
@@ -162,29 +158,29 @@ class LessonOutputT(LessonBase):
         self.cabinet = item.cabinet
         self.type = item.type
         if item.weeks == "еженед":
-            self.weeks = [i for i in range(1, 17)]
+            self.weeks = list(range(1, 17))
         elif item.weeks == "чет":
-            self.weeks = [i for i in range(2, 17, 2)]
+            self.weeks = list(range(2, 17, 2))
         else:
-            self.weeks = [i for i in range(1, 16, 2)]
+            self.weeks = list(range(1, 16, 2))
         self.name = item.name
         self.subgroup = item.subgroup
-        self.group_name = [it for it in item.groups(db)]
+        self.group_name = list(item.groups(db))
 
     def translate_str(self):
         type_ = "#"
-        if self.type == 'Лек':
+        if self.type == 'Лаб':
+            type_ = "Лабораторная работа"
+
+        elif self.type == 'Лек':
             type_ = "Лекция"
         elif self.type == 'Пр':
             type_ = "Практика"
-        elif self.type == 'Лаб':
-            type_ = "Лабораторная работа"
-
         # trans = name + subgroup + type
         if self.subgroup is None:
-            return "{} + # + {} | ".format(self.name, type_)
+            return f"{self.name} + # + {type_} | "
         else:
-            return "{} + {} + {} | ".format(self.name, self.subgroup, type_)
+            return f"{self.name} + {self.subgroup} + {type_} | "
 
 
 class Lesson(LessonBase):

@@ -66,10 +66,7 @@ def get_groups_by_Course(db: Session, course: int):
 
 
 def get_all_groups(db: Session):
-    res = []
-    for element in db.query(models.Group).all():
-        res.append(element.name)
-    return res
+    return [element.name for element in db.query(models.Group).all()]
 
 
 def get_groups_by_CourseAndAcType(db: Session, course: int, acType: str):
@@ -81,10 +78,7 @@ def get_teacher_by_Name(db: Session, teacher_name: str):
 
 
 def get_all_teachers(db: Session):
-    res = []
-    for elem in db.query(models.Teacher).all():
-        res.append(elem.name)
-    return res
+    return [elem.name for elem in db.query(models.Teacher).all()]
 
 
 def get_lessons_by_Day(db: Session, day: str):
@@ -93,10 +87,14 @@ def get_lessons_by_Day(db: Session, day: str):
 
 def get_lessons_by_TeacherName(db: Session, teacher_name: str):
     teacher = db.query(models.Teacher).filter(models.Teacher.name == teacher_name).first()
-    res = []
-    for item in db.query(models.LessonTeacher).filter(models.LessonTeacher.teacher_id == teacher.id).all():
-        res.append(db.query(models.Lesson).filter(models.Lesson.id == item.lesson_id).first())
-    return res
+    return [
+        db.query(models.Lesson)
+        .filter(models.Lesson.id == item.lesson_id)
+        .first()
+        for item in db.query(models.LessonTeacher)
+        .filter(models.LessonTeacher.teacher_id == teacher.id)
+        .all()
+    ]
 
 
 def get_lessons_by_GroupName(db: Session, group_name: str):

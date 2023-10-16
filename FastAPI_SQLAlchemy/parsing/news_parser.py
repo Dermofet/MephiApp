@@ -13,9 +13,10 @@ def get_urlNews(url):
     text = sp.getText(url)
     tree = etree.HTML(text)
     container = tree.xpath("//div[@class='view-content']")[0]
-    res_urlNews = []
-    for element in container:
-        res_urlNews.append(settings.HOST_URL + element[0][0][0].attrib['href'])
+    res_urlNews = [
+        settings.HOST_URL + element[0][0][0].attrib['href']
+        for element in container
+    ]
     if len(tree.xpath("//li[@class='pager-next']")) != 0:
         return res_urlNews + get_urlNews(settings.HOST_URL + tree.xpath("//li[@class='pager-next']")[0][0].attrib['href'])
     else:
@@ -36,13 +37,16 @@ def parse_preview(url):
     text = sp.getText(url)
     tree = etree.HTML(text)
     container = tree.xpath("//div[@class='view-content']")[0]
-    res = []
-    for element in container:
-        res.append({"img_url": element.xpath(".//img")[0].xpath(".//@src")[0],
-                    "date": element.xpath(".//span[@class='date-display-single']")[0].text,
-                    "text": element.xpath(".//a")[1].text
-                    })
-    return res
+    return [
+        {
+            "img_url": element.xpath(".//img")[0].xpath(".//@src")[0],
+            "date": element.xpath(".//span[@class='date-display-single']")[
+                0
+            ].text,
+            "text": element.xpath(".//a")[1].text,
+        }
+        for element in container
+    ]
 
 
 def parse_WebPage(url):
@@ -52,7 +56,9 @@ def parse_WebPage(url):
     container = tree.xpath("//div[@class='node node-news clearfix']")[0]
     content = container.xpath(".//div[@class='field-item even']")[0]
 
-    res["date"] = container[0][0].text + ' ' + container[0][1].text + ' ' + container[0][2].text
+    res[
+        "date"
+    ] = f'{container[0][0].text} {container[0][1].text} {container[0][2].text}'
     res_text = ""
     for paragraph in content:
         text = etree.tostring(paragraph).decode('utf-8')
@@ -88,7 +94,7 @@ def parse_previews(URLs, pathToWrite):
     try:
         print("- Start parsing previews -")
         for page_url in URLs:
-            print("current page: {}".format(j))
+            print(f"current page: {j}")
             res = parse_preview(page_url)
             for preview in res:
                 with open(pathToWrite + str(j) + ".json", 'w', encoding='utf-8') as fp:
@@ -103,8 +109,8 @@ def parse_previews(URLs, pathToWrite):
         i -= 1
         print("-!!! An exception occurred !!!-")
 
-    print("- Pages were parsed: {} -".format(i))
-    print("- Previews were parsed: {} -".format(j))
+    print(f"- Pages were parsed: {i} -")
+    print(f"- Previews were parsed: {j} -")
     print("- Successful parsing -\n")
 
 
@@ -113,7 +119,7 @@ def parse_news(URLs, pathToWrite):
     try:
         print("- Start parsing pages -")
         for page_url in URLs:
-            print("   current page: {}".format(i))
+            print(f"   current page: {i}")
             with open(pathToWrite + str(i) + ".json", 'w', encoding='utf-8') as fp:
                 json.dump(parse_WebPage(page_url), fp=fp, ensure_ascii=False, indent=3)
                 i += 1
@@ -125,20 +131,30 @@ def parse_news(URLs, pathToWrite):
         i -= 1
         print("-!!! An exception occurred !!!-")
 
-    print("- News were parsed: {} -".format(i))
+    print(f"- News were parsed: {i} -")
     print("- Successful parsing -\n")
 
 
 def parse_category(category: tuple):
-    if not os.path.exists("./FastAPI_SQLAlchemy/parsing/news/" + str(category[0])):
-        os.makedirs("./FastAPI_SQLAlchemy/parsing/news/" + str(category[0]))
-    if not os.path.exists("./FastAPI_SQLAlchemy/parsing/preview/" + str(category[0])):
-        os.makedirs("./FastAPI_SQLAlchemy/parsing/preview/" + str(category[0]))
-    parse_previews(get_urlPages(category[1]), "./FastAPI_SQLAlchemy/parsing/preview/{}/".format(category[0]))
-    parse_news(get_urlNews(category[1]), "./FastAPI_SQLAlchemy/parsing/news/{}/".format(category[0]))
+    if not os.path.exists(
+        f"./FastAPI_SQLAlchemy/parsing/news/{str(category[0])}"
+    ):
+        os.makedirs(f"./FastAPI_SQLAlchemy/parsing/news/{str(category[0])}")
+    if not os.path.exists(
+        f"./FastAPI_SQLAlchemy/parsing/preview/{str(category[0])}"
+    ):
+        os.makedirs(f"./FastAPI_SQLAlchemy/parsing/preview/{str(category[0])}")
+    parse_previews(
+        get_urlPages(category[1]),
+        f"./FastAPI_SQLAlchemy/parsing/preview/{category[0]}/",
+    )
+    parse_news(
+        get_urlNews(category[1]),
+        f"./FastAPI_SQLAlchemy/parsing/news/{category[0]}/",
+    )
 
 
 def parse():
     for category in settings.NEWS_CAT_URLS.items():
-        print("- Parse category: {} -".format(category[0]))
+        print(f"- Parse category: {category[0]} -")
         parse_category(category)

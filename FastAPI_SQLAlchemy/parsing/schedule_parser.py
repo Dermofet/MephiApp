@@ -25,13 +25,10 @@ def getText(url):
 
 
 def getAcademicTypes():
-    res = []
     text = getText(settings.URL_ALL_SCHEDULE)
     tree = etree.HTML(text)
     container = tree.xpath("//ul[@class='nav nav-tabs btn-toolbar']/li")
-    for item in container:
-        res.append(item[0].text.replace('\n', ''))
-    return res
+    return [item[0].text.replace('\n', '') for item in container]
 
 
 def getAcademicGroupList(name, url):
@@ -66,10 +63,10 @@ def getGroupList(url):
 def getTeachersFullname():
     text = getText(settings.URL_TEACHERS_SCHEDULE)
     tree = etree.HTML(text)
-    categories = []
-    for item in tree.xpath("//ul[@class='pagination']")[0]:
-        categories.append(settings.URL_HOME_MEPHI + item[0].attrib['href'])
-
+    categories = [
+        settings.URL_HOME_MEPHI + item[0].attrib['href']
+        for item in tree.xpath("//ul[@class='pagination']")[0]
+    ]
     res = {"teachers_fullname": []}
     for category in categories:
         text = getText(category)
@@ -88,12 +85,10 @@ def getGroupSchedule(url):
     text = getText(url)
     tree = etree.HTML(text)
     schedule = {}
-    i = 0
-    for day in tree.xpath("//div[@class='list-group']"):
+    for i, day in enumerate(tree.xpath("//div[@class='list-group']")):
         schedule[DAYS[i]] = []
 
-        j = 0
-        for node in day:
+        for j, node in enumerate(day):
             schedule[DAYS[i]].append({})
             time = node[0].text.replace('\n', '').split(' — ')
             schedule[DAYS[i]][j]['time_start'] = time[0]
@@ -110,12 +105,18 @@ def getGroupSchedule(url):
                     schedule_elem['dot'] = False
                     schedule_elem['cabinet'] = elem.xpath(".//div[@class='pull-right']")[0][1].text
 
-                if len(elem.xpath(".//div[@class='label label-default label-lesson']")) == 1:
-                    schedule_elem['lesson_type'] = elem.xpath(".//div[@class='label label-default label-lesson']")[0] \
-                        .text.replace('\n', '')
-                else:
-                    schedule_elem['lesson_type'] = None
-
+                schedule_elem['lesson_type'] = (
+                    elem.xpath(
+                        ".//div[@class='label label-default label-lesson']"
+                    )[0].text.replace('\n', '')
+                    if len(
+                        elem.xpath(
+                            ".//div[@class='label label-default label-lesson']"
+                        )
+                    )
+                    == 1
+                    else None
+                )
                 weeks = elem.xpath(".//span")
                 for a in weeks:
                     a = a.xpath("./@class")[0].replace('\n', '')
@@ -128,7 +129,7 @@ def getGroupSchedule(url):
 
                 strings = [v.replace('\n', '').replace(',', '') for v in elem.xpath(".//div/following-sibling::text()")
                            if len(v.replace('\n', '').replace(',', '')) > 0]
-                schedule_elem['lesson_name'] = None if len(strings) < 1 else strings[0]
+                schedule_elem['lesson_name'] = None if not strings else strings[0]
                 schedule_elem['subgroup'] = None if len(strings) < 2 else strings[1]
 
                 schedule_elem['teacher_name'] = []
@@ -155,35 +156,35 @@ def getGroupSchedule(url):
                         schedule_elem["date_end"] = date[1].replace('(', '').replace(')', '')
 
                 schedule[DAYS[i]][j]["lessons"].append(schedule_elem)
-            j += 1
-
-        i += 1
     return schedule
 
 
 def setInfoToFile(dict_json, filename, mode, encoding, indent, ensure_ascii):
     dict_dump = {"name": filename.split(".")[0],
                  "courses": []}
-    i = 0
-    for course in dict_json["courses"]:
+    for i, course in enumerate(dict_json["courses"]):
         dict_dump["courses"].append({"name": course["name"].split()[0],
                                      "groups": []})
         for group in course["groups"]:
             print("   " + group["name"])
             dict_dump["courses"][i]["groups"].append({"name": group["name"],
                                                       "lessons": getGroupSchedule(group["url"])})
-        i += 1
-
     with open(filename, mode, encoding=encoding) as fp:
         json.dump(dict_dump, fp=fp, indent=indent, ensure_ascii=ensure_ascii)
 
 
 def parse_schedule():
     for academic in ['Специалитет']:
-        print(academic + ":")
+        print(f"{academic}:")
         groups_list = getAcademicGroupList(academic, url=settings.URL_ALL_SCHEDULE)
-        setInfoToFile(groups_list, "FastAPI_SQLAlchemy/parsing/schedule/" + academic + ".json", mode='w',
-                      encoding='utf-8', indent=3, ensure_ascii=False)
+        setInfoToFile(
+            groups_list,
+            f"FastAPI_SQLAlchemy/parsing/schedule/{academic}.json",
+            mode='w',
+            encoding='utf-8',
+            indent=3,
+            ensure_ascii=False,
+        )
 
 
 def parse_teachers_fullname():

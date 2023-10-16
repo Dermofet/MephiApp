@@ -29,11 +29,7 @@ class Teacher(Base):
 
     @hybrid_method
     def __repr__(self):
-        return "ModelTeacher:\n" \
-               "   - name: {}\n" \
-               "   - fullname: {}\n" \
-               "   - online_url: {}\n" \
-               "   - alt_online_url: {})".format(self.name, self.fullname, self.online_url, self.alt_online_url)
+        return f"ModelTeacher:\n   - name: {self.name}\n   - fullname: {self.fullname}\n   - online_url: {self.online_url}\n   - alt_online_url: {self.alt_online_url})"
 
 
 class Lesson(Base):
@@ -59,23 +55,29 @@ class Lesson(Base):
 
     @hybrid_method
     def teachers(self, db: Session):
-        res = []
-        for item in db.query(LessonTeacher).filter(LessonTeacher.lesson_id == self.id).all():
-            res.append(db.query(Teacher).filter(Teacher.id == item.teacher_id).first())
-        return res
+        return [
+            db.query(Teacher).filter(Teacher.id == item.teacher_id).first()
+            for item in db.query(LessonTeacher)
+            .filter(LessonTeacher.lesson_id == self.id)
+            .all()
+        ]
 
     @hybrid_method
     def groups(self, db: Session):
-        res = []
-        for item in db.query(Lesson).filter(Lesson.time_start == self.time_start,
-                                            Lesson.time_end == self.time_end,
-                                            Lesson.weeks == self.weeks,
-                                            Lesson.date_start == self.date_start,
-                                            Lesson.date_end == self.date_end,
-                                            Lesson.day == self.day,
-                                            Lesson.name == self.name).all():
-            res.append(item.group_name)
-        return res
+        return [
+            item.group_name
+            for item in db.query(Lesson)
+            .filter(
+                Lesson.time_start == self.time_start,
+                Lesson.time_end == self.time_end,
+                Lesson.weeks == self.weeks,
+                Lesson.date_start == self.date_start,
+                Lesson.date_end == self.date_end,
+                Lesson.day == self.day,
+                Lesson.name == self.name,
+            )
+            .all()
+        ]
 
     @hybrid_method
     def __eq__(self, other):
@@ -93,12 +95,7 @@ class Lesson(Base):
 
     @hybrid_method
     def __repr__(self):
-        return "Model.Lesson({}\n" \
-               "             {}\n" \
-               "             {}\n" \
-               "             {}\n" \
-               "             {}\n" \
-               ")".format(self.name, self.day, self.group_name, self.time_start, self.weeks)
+        return f"Model.Lesson({self.name}\n             {self.day}\n             {self.group_name}\n             {self.time_start}\n             {self.weeks}\n)"
 
 
 class LessonTeacher(Base):

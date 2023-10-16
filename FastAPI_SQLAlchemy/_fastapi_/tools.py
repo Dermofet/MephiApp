@@ -82,8 +82,7 @@ def output_From_DBLesson(db_lessons: list, db: Session, dest='en'):
         _ = time.time()
         trans = tr.translate(trans, dest=dest)
         print(time.time() - _)
-        i = 1
-        for field in trans.split("|")[:-1]:
+        for i, field in enumerate(trans.split("|")[:-1], start=1):
             items = field.split(" + ")
 
             # name
@@ -92,21 +91,19 @@ def output_From_DBLesson(db_lessons: list, db: Session, dest='en'):
             # teacher_name
             schemas_lessons[i - 1].tr_teacher_name = []
             if items[1].find("#") == -1:
-                for item in items[1].split(" _ "):
-                    schemas_lessons[i - 1].tr_teacher_name.append(delete_spaces(item))
-
+                schemas_lessons[i - 1].tr_teacher_name.extend(
+                    delete_spaces(item) for item in items[1].split(" _ ")
+                )
             # teacher_fullname
             schemas_lessons[i - 1].tr_teacher_fullname = []
             if items[2].find("#") == -1:
-                for item in items[2].split(" _ "):
-                    schemas_lessons[i - 1].tr_teacher_fullname.append(delete_spaces(item))
-
+                schemas_lessons[i - 1].tr_teacher_fullname.extend(
+                    delete_spaces(item) for item in items[2].split(" _ ")
+                )
             # subgroup
-            if items[3].find("#") == -1:
-                schemas_lessons[i - 1].subgroup = delete_spaces(items[3])
-            else:
-                schemas_lessons[i - 1].subgroup = None
-
+            schemas_lessons[i - 1].subgroup = (
+                delete_spaces(items[3]) if items[3].find("#") == -1 else None
+            )
             # type
             if items[4].find("#") == -1:
                 schemas_lessons[i - 1].type = delete_spaces(items[4])
@@ -118,8 +115,6 @@ def output_From_DBLesson(db_lessons: list, db: Session, dest='en'):
                     lessons["schedule"][DayChanger[schemas_lesson_day[i - 1]]]["lessons"][time_["lesson"]].append(
                         schemas_lessons[i - 1])
                     break
-            i += 1
-
     return lessons
 
 
@@ -147,8 +142,8 @@ def output_From_DBLessonT(db_lessons: list, db: Session, dest='en'):
         }
     }
 
+    buffer_lessons = []
     if dest == 'ru':
-        buffer_lessons = []
         for db_lesson in db_lessons:
             if db_lesson in buffer_lessons:
                 continue
@@ -172,7 +167,6 @@ def output_From_DBLessonT(db_lessons: list, db: Session, dest='en'):
         trans = ""
         schemas_lessons = []
         schemas_lesson_day = []
-        buffer_lessons = []
         for db_lesson in db_lessons:
             if db_lesson in buffer_lessons:
                 continue
@@ -185,18 +179,15 @@ def output_From_DBLessonT(db_lessons: list, db: Session, dest='en'):
 
         trans = tr.translate(trans, dest=dest)
 
-        i = 1
-        for field in trans.split("|")[:-1]:
+        for i, field in enumerate(trans.split("|")[:-1], start=1):
             items = field.split(" + ")
             # name
             schemas_lessons[i - 1].name = delete_spaces(items[0])
 
             # subgroup
-            if items[1].find("#") == -1:
-                schemas_lessons[i - 1].subgroup = delete_spaces(items[1])
-            else:
-                schemas_lessons[i - 1].subgroup = None
-
+            schemas_lessons[i - 1].subgroup = (
+                delete_spaces(items[1]) if items[1].find("#") == -1 else None
+            )
             # type
             if items[2].find("#") == -1:
                 schemas_lessons[i - 1].type = delete_spaces(items[2])
@@ -208,8 +199,6 @@ def output_From_DBLessonT(db_lessons: list, db: Session, dest='en'):
                     lessons["schedulet"][DayChanger[schemas_lesson_day[i - 1]]]["lessons"][time["lesson"]].append(
                         schemas_lessons[i - 1])
                     break
-            i += 1
-
     return lessons
 
 
@@ -219,17 +208,14 @@ def check_date(date_start: Union[str, None] = None, date_end: Union[str, None] =
         date_start = datetime.datetime.strptime(date_start, "%d.%m.%Y")
         date_end = datetime.datetime.strptime(date_end, "%d.%m.%Y")
         return date_start <= datetime.datetime(day=today.day, month=today.month, year=today.year) <= date_end
-    if date_start is not None and date_end is None:
+    if date_start is not None:
         date_start = datetime.datetime.strptime(date_start, "%d.%m.%Y")
         return date_start == datetime.datetime(day=today.day, month=today.month, year=today.year)
     return True
 
 
 def delete_spaces(string: str):
-    res = ""
-    for item in string.split():
-        if len(item) > 0:
-            res += item + " "
+    res = "".join(f"{item} " for item in string.split() if len(item) > 0)
     return res[:-1]
 
 
@@ -248,5 +234,4 @@ def output_From_DBTeacher(db_teacher, dest='en'):
         db_teacher.fullname = trans[1]
         db_teacher.online_url = trans[2]
         db_teacher.alt_online_url = trans[3]
-    teacher = schemas.TeacherOutput(item=db_teacher)
-    return teacher
+    return schemas.TeacherOutput(item=db_teacher)

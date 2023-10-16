@@ -14,10 +14,10 @@ AC_TYPES = ["Бакалавриат", "Специалитет", "Магистр�
 def schedule_info_to_db(db: Session):
     types = sp.getAcademicTypes()
     for ac_type in types:
-        filename = "FastAPI_SQLAlchemy/parsing/schedule/" + ac_type + ".json"
+        filename = f"FastAPI_SQLAlchemy/parsing/schedule/{ac_type}.json"
         if os.path.exists(filename):
             with open(filename, "r", encoding='utf-8') as fp:
-                print("Filename: " + filename)
+                print(f"Filename: {filename}")
                 dict_json = json.loads(fp.read().replace("'", '"'))
                 for course in dict_json["courses"]:
                     print("   course: " + course["name"])
@@ -102,9 +102,9 @@ def teachers_fullname_to_db(db: Session):
             for fullname in dict_json['teachers_fullname']:
                 buffer = fullname.split()
                 if len(buffer) == 2:
-                    shortname = buffer[0] + " " + buffer[1][0] + "."
+                    shortname = f"{buffer[0]} {buffer[1][0]}."
                 else:
-                    shortname = buffer[0] + " " + buffer[1][0] + "." + buffer[2][0] + "."
+                    shortname = f"{buffer[0]} {buffer[1][0]}.{buffer[2][0]}."
                 crud.update_teacher(db, old_shortname=shortname, fullname=fullname)
 
 
@@ -126,5 +126,5 @@ def news_info_to_db(db: Session):
 
 def idInverter(_id_: int):
     news = os.listdir(NEWS_DIR)
-    print("_id_ = {}\nnew _id_ = {}".format(_id_, len(news) - _id_ + 1))
+    print(f"_id_ = {_id_}\nnew _id_ = {len(news) - _id_ + 1}")
     return len(news) - _id_ + 1
