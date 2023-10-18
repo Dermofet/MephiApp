@@ -1,0 +1,43 @@
+# Общие настройки Traefik
+log:
+  level: INFO
+
+api:
+  dashboard: true
+
+# Провайдер Docker
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock" # Путь к сокету Docker
+
+# HTTP сервер и точки входа
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+# TLS (SSL) конфигурация
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: "pi-777@inbox.ru" # Ваш электронный адрес для ACME
+      storage: "/letsencrypt/acme.json" # Путь к файлу хранения данных ACME
+      httpChallenge:
+        entryPoint: web
+
+# Правила маршрутизации
+http:
+  routers:
+    backend:
+      rule: "Host(`acm-mephi.site`)" # Замените на ваш домен
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: myresolver
+
+  services:
+    backend:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:8000"
