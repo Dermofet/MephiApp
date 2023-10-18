@@ -41,7 +41,7 @@ class AcademicDAO:
     Получение ученого звания по имени
     """
     async def get_by_id(self, guid: UUID4) -> AcademicModel:
-        academic = await self.session.execute(select(AcademicModel). where(AcademicModel.guid == guid).limit(1))
+        academic = await self.session.execute(select(AcademicModel).where(AcademicModel.guid == guid).limit(1))
         return academic.scalar()
 
     """

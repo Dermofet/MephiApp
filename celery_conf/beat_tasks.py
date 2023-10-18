@@ -1,7 +1,6 @@
-import utils.asyncio as asyncio
-
 from celery import chain
 
+import utils.asyncio as asyncio
 from celery_conf import beat_app
 from config import config
 from etl.loaders.news_loader import NewsLoader
@@ -76,16 +75,6 @@ def translate_schedule():
     asyncio.run(etl_translate_schedule())
 
 async def etl_translate_schedule():
-    # result = subprocess.run(['bash', "yandex_auth.sh"], capture_output=True, text=True)
-    # output = result.stdout
-    # return_code = result.returncode
-
-    # if return_code == 0:
-    #     print(f"Скрипт успешно выполнен. Вывод: {output}")
-    # else:
-    #     print(f"Ошибка при выполнении скрипта. Код завершения: {return_code}, Вывод: {output}")
-    #     raise Exception
-
     t = ScheduleTranslate(
         langs=config.FOREIGN_LANGS,
         iam_token=config.IAM_TOKEN,

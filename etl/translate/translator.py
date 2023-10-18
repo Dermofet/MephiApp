@@ -1,4 +1,5 @@
 from typing import List, Union
+
 import requests
 
 from etl.translate.error import InvalidMaxLengthError
@@ -54,5 +55,11 @@ class YandexTranslator:
             for t in response.json()["translations"]
         ]
 
+# class GoogleTranslator:
+#     token: str
 
+#     def __init__(self, token: str) -> None:
+#         self.token = token
 
+#     def translate(self, source: str, target: str, text: Union[str, List[Union[str, NoneType]]]) -> List[str]:
+    

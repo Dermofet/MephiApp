@@ -58,7 +58,7 @@ class NewsParser(BaseParser):
                             "url": f'{url}?category={tag[1]}&page={i}',
                             "tag": tag[0],
                         }
-                    ) for i in range(2,4)
+                    ) for i in range(page_count)
                 ]
                 self.set_data_to_db(self.db, tasks, "news_tasks", "task")
 

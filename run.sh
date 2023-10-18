@@ -1,5 +1,4 @@
 #!/bin/bash
-
 parse() {
   docker compose exec -e PYTHONPATH=$PYTHONPATH:$(realpath "$(dirname "$0")") celery python "$(dirname "$0")/etl/etl_.py" "$2"
 }

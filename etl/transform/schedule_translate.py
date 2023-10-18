@@ -1,9 +1,10 @@
 from typing import List, Union
+
 from etl.loaders.base_loader import BaseLoader
 from etl.schemas.lesson import LessonTranslateLoading
 from etl.schemas.teacher import TeacherTranslateLoading
-
 from etl.translate.translator import YandexTranslator
+
 
 class ScheduleTranslate(BaseLoader):
     max_chars_per_request = 10000

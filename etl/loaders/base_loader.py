@@ -1,9 +1,9 @@
-from utils import asyncio
 from redis import Redis
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from backend.api.database.facade import FacadeDB, IFacadeDB
 from logging_.logger import Logger
+from utils import asyncio
 
 
 class BaseLoader:

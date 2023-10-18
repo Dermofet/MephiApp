@@ -6,6 +6,7 @@ from etl.loaders.base_loader import BaseLoader, WrapperBaseLoader
 from etl.parsers.news_parser import NewsParser
 from etl.schemas.news import NewsLoading
 
+
 class NewNewsParser(WrapperBaseLoader, NewsParser):
     def __init__(
         self,

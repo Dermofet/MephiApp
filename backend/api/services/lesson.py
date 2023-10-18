@@ -157,18 +157,24 @@ class LessonService(BaseService):
                                         lang=t[1].lang
                                     )
                                 ] if t[1] else [],
-                            ) for t in await self.facade.get_teachers_lesson(lesson, lang)
+                            ) for t in await self.facade.get_teachers_lesson(lesson, "ru" if lang == "ru" else "en")
                         ],
                     ).model_dump()
                 )
             )
 
         t = await self.facade.get_by_name_teacher(teacher)
-        t_trans = await self.facade.get_trans_teacher(t, lang=lang)
+        t_trans = await self.facade.get_trans_teacher(t, lang="ru")
+        name_ru = t_trans.name
+        fullname_ru = t_trans.fullname
+        if lang != "ru":
+            t_trans = await self.facade.get_trans_teacher(t, lang="en")
         return LessonsByTeacherSchema(
             lessons=lessons_schemes,
             name=t_trans.name,
             fullname=t_trans.fullname,
+            name_ru=name_ru,
+            fullname_ru=fullname_ru,
             url=t.url,
             alt_url=t.alt_url,
             lang=lang

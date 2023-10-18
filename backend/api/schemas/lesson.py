@@ -258,6 +258,8 @@ class LessonsByGroupSchema(LessonsByBaseSchema):
 class LessonsByTeacherSchema(LessonsByBaseSchema):
     name: str = Field(description="Имя")
     fullname: Optional[str] = Field(description="Фамилия")
+    name_ru: Optional[str] = Field(description="Имя на русском")
+    fullname_ru: Optional[str] = Field(description="Фамилия на русском")
     url: Optional[str] = Field(description="Ссылка на дискорд")
     alt_url: Optional[str] = Field(description="Ссылка на дискорд")
     
@@ -265,6 +267,8 @@ class LessonsByTeacherSchema(LessonsByBaseSchema):
         res = {
             "name": self.name,
             "fullname": self.fullname,
+            "name_ru": self.name_ru,
+            "fullname_ru": self.fullname_ru,
             "url": self.url,
             "alt_url": self.alt_url,
             "schedule": {

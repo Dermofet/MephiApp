@@ -1,6 +1,7 @@
 import asyncio
 from typing import Coroutine
 
+
 def run(func: Coroutine) -> None:
     try:
         loop = asyncio.get_event_loop()

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from functools import lru_cache
 import os
+from functools import lru_cache
 from typing import Any, Dict, List, Optional, Tuple
 
 from dotenv import find_dotenv
@@ -160,9 +160,6 @@ class Config(_Settings):
 
 @lru_cache()
 def get_config(env_file: str = ".env") -> Config:
-    # iam_token = os.environ.get('IAM_TOKEN', None)
-    # print(f"IAM = {iam_token}")
-    # return Config(IAM_TOKEN=iam_token,_env_file=find_dotenv(env_file))
     return Config(_env_file=find_dotenv(env_file))
     
 
