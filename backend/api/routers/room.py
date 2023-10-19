@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends, Query
 from starlette import status
 
 from backend.api.filters.room import RoomFilter
-from backend.api.schemas.room import RoomCreateSchema, RoomOutputSchema
 from backend.api.services.room import RoomService
 from config import config
 

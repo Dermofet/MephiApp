@@ -56,6 +56,10 @@ class Config(_Settings):
     IAM_TOKEN: Optional[str] = Field(..., description="Iam token")
     FOLDER_ID: Optional[str] = Field(..., description="Folder id")
 
+    # redirect
+    IOS_MARKETPLACE_URL: HttpUrl = Field(..., description="Ios marketplace url")
+    ANDROID_MARKETPLACE_URL: HttpUrl = Field(..., description="Android marketplace url")
+
     # News
     MEPHI_NEWS_PAGE_URL: HttpUrl = Field(..., description="Mephi news page url")
     MEPHI_URL: HttpUrl = Field(..., description="Mephi url")

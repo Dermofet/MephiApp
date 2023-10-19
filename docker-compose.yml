@@ -32,6 +32,7 @@ services:
       - ./config/:/mephiapp-backend/config/
       - ./logging_/:/mephiapp-backend/logging_/
       - ./etl/:/mephiapp-backend/etl/
+      - ./utils/:/mephiapp-backend/utils/
     ports:
       - "8000:${BACKEND_PORT}"
     environment:
