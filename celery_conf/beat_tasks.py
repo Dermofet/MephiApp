@@ -120,11 +120,9 @@ def load_news():
 
 @beat_app.task
 def parse_new_news():
-    print("aaaa")
     asyncio.run(etl_new_news())
 
 async def etl_new_news():
-    print("aaaa")
     e = NewNewsParser(
         url=config.MEPHI_NEWS_PAGE_URL.unicode_string(),
         redis=config.REDIS_URI.unicode_string(),
