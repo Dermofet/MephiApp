@@ -5,10 +5,10 @@ from backend.api.routers.corps import router as corps_router
 from backend.api.routers.group import router as group_router
 from backend.api.routers.lesson import router as lesson_router
 from backend.api.routers.news import router as news_router
+from backend.api.routers.redirect import router as redirect_router
 from backend.api.routers.room import router as room_router
 from backend.api.routers.start_semester import router as start_semester_router
 from backend.api.routers.teacher import router as teacher_router
-from backend.api.routers.redirect import router as redirect_router
 from config import config
 
 tags_metadata = [
@@ -19,7 +19,6 @@ tags_metadata = [
     {"name": "corps", "description": "Работа с корпусами"},
     {"name": "news", "description": "Работа с новостями"},
     {"name": "start_semester", "description": "Работа с датой начала семестра"},
-    {"name": "redirect", "description": "Перенаправить в маркетплейс в зависимости от устройства"},
 ]
 app = FastAPI(
     debug=config.DEBUG,

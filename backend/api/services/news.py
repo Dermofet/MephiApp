@@ -24,9 +24,9 @@ class NewsService(BaseService):
                         preview_url=n.preview_url,
                         date=n.date,
                         text=n.text,
-                        imgs=await self.facade.get_images_news(n)
+                        imgs=await self.facade.get_images_news(n),
                     ).model_dump()
-                ) 
+                )
                 for n in news
             ],
         }

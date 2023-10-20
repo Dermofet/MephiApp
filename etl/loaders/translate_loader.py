@@ -5,21 +5,21 @@ from etl.schemas.teacher import TeacherTranslateLoading
 
 class TranslateLoader(BaseLoader):
     def __init__(
-            self,
-            redis: str,
-            postgres_dsn: str,
-            single_connection_client: bool = True,
-            is_logged: bool = True,
-            debug: bool = False
+        self,
+        redis: str,
+        postgres_dsn: str,
+        single_connection_client: bool = True,
+        is_logged: bool = True,
+        debug: bool = False,
     ):
         super().__init__(
             redis=redis,
             postgres_dsn=postgres_dsn,
             single_connection_client=single_connection_client,
             is_logged=is_logged,
-            debug=debug
+            debug=debug,
         )
-    
+
     async def load(self):
         self.logger.info("Loading translate...")
         try:
@@ -44,7 +44,7 @@ class TranslateLoader(BaseLoader):
                 self.logger.debug(f"Loaded {i} lesson_translate")
                 trans = []
 
-        if len(trans) > 0: 
+        if len(trans) > 0:
             await self.facade_db.bulk_insert_trans_lesson(trans)
             self.logger.debug(f"Loaded {i} lesson_translate")
 

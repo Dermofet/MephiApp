@@ -21,6 +21,7 @@ from etl.transform.schedule_translate import ScheduleTranslate
 def parse_schedule():
     asyncio.run(etl_schedule())
 
+
 async def etl_schedule():
     es = ScheduleParser(
         lesson_schedule_url=config.MEPHI_SCHEDULE_URL.unicode_string(),
@@ -33,7 +34,7 @@ async def etl_schedule():
         use_auth=False,
     )
     await es.parse()
-    
+
     er = RoomParser(
         url=config.MEPHI_ROOM_URL.unicode_string(),
         redis=config.REDIS_URI.unicode_string(),
@@ -44,7 +45,7 @@ async def etl_schedule():
         use_auth=False,
     )
     await er.parse()
-    
+
     et = TeachersParser(
         url=config.MEPHI_TEACHERS_URL.unicode_string(),
         redis=config.REDIS_URI.unicode_string(),
@@ -71,8 +72,9 @@ async def etl_schedule():
 
 
 @beat_app.task
-def translate_schedule():        
+def translate_schedule():
     asyncio.run(etl_translate_schedule())
+
 
 async def etl_translate_schedule():
     t = ScheduleTranslate(
@@ -92,6 +94,7 @@ async def etl_translate_schedule():
     l.init_facade()
     await l.load()
 
+
 @beat_app.task
 def etl_all_news():
     e = NewsParser(
@@ -102,6 +105,7 @@ def etl_all_news():
 
     e.create_parse_news_tasks(config.MEPHI_NEWS_PAGE_URL.unicode_string())
     chain(e.parse_news_page_tasks(e.logger, e.db, e.url), load_news.si()).delay()
+
 
 @beat_app.task
 def load_news():
@@ -116,9 +120,11 @@ def load_news():
 
 @beat_app.task
 def parse_new_news():
+    print("aaaa")
     asyncio.run(etl_new_news())
 
 async def etl_new_news():
+    print("aaaa")
     e = NewNewsParser(
         url=config.MEPHI_NEWS_PAGE_URL.unicode_string(),
         redis=config.REDIS_URI.unicode_string(),
@@ -133,8 +139,6 @@ async def etl_new_news():
     )
     l.init_facade()
     await l.load()
-
-    await asyncio.sleep(1)
 
 
 @beat_app.task

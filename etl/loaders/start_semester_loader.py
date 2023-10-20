@@ -4,12 +4,12 @@ from etl.schemas.start_semester import StartSemesterLoading
 
 class StartSemesterLoader(BaseLoader):
     def __init__(
-            self,
-            redis: str,
-            postgres_dsn: str,
-            single_connection_client: bool = True,
-            is_logged: bool = True,
-            debug: bool = False
+        self,
+        redis: str,
+        postgres_dsn: str,
+        single_connection_client: bool = True,
+        is_logged: bool = True,
+        debug: bool = False,
     ):
         super().__init__(redis, postgres_dsn, single_connection_client, is_logged, debug)
 

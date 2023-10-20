@@ -13,8 +13,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class AsyncPostgresDns(PostgresDsn):
     allowed_schemas = ["postgres+asyncpg", "postgresql+asyncpg"]
 
+
 class _Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file_encoding="utf-8")
+
 
 class Config(_Settings):
     # Debug
@@ -38,8 +40,12 @@ class Config(_Settings):
     LOCAL_POSTGRES_SERVER: str = Field(..., description="Postgres server for local using")
     LOCAL_POSTGRES_PORT: int = Field(..., description="Postgres port for local using")
 
-    DB_URI: Optional[AsyncPostgresDns] = Field(None, description="Postgres uri for docker contaibers", validate_default=True)
-    LOCAL_DB_URI: Optional[AsyncPostgresDns] = Field(None, description="Postgres uri for alembic", validate_default=True)
+    DB_URI: Optional[AsyncPostgresDns] = Field(
+        None, description="Postgres uri for docker contaibers", validate_default=True
+    )
+    LOCAL_DB_URI: Optional[AsyncPostgresDns] = Field(
+        None, description="Postgres uri for alembic", validate_default=True
+    )
 
     # Parsers
     MEPHI_SCHEDULE_URL: HttpUrl = Field(..., description="Mephi schedule url")
@@ -65,7 +71,6 @@ class Config(_Settings):
     MEPHI_URL: HttpUrl = Field(..., description="Mephi url")
 
     # Celery
-    WORKER_CELERY_NAME: str = Field(..., description="Worker celery name")
     BEAT_CELERY_NAME: str = Field(..., description="Beat celery name")
 
     # Redis
@@ -93,11 +98,11 @@ class Config(_Settings):
             return v
         return AsyncPostgresDns.build(
             scheme="postgresql+asyncpg",
-            username=info.data['POSTGRES_USER'],
-            password=info.data['POSTGRES_PASSWORD'],
-            host=info.data['POSTGRES_SERVER'],
-            port=info.data['POSTGRES_PORT'],
-            path=info.data['POSTGRES_DB']
+            username=info.data["POSTGRES_USER"],
+            password=info.data["POSTGRES_PASSWORD"],
+            host=info.data["POSTGRES_SERVER"],
+            port=info.data["POSTGRES_PORT"],
+            path=info.data["POSTGRES_DB"],
         )
 
     @field_validator("LOCAL_DB_URI", mode="before")
@@ -106,11 +111,11 @@ class Config(_Settings):
             return v
         return AsyncPostgresDns.build(
             scheme="postgresql+asyncpg",
-            username=info.data['POSTGRES_USER'],
-            password=info.data['POSTGRES_PASSWORD'],
-            host=info.data['LOCAL_POSTGRES_SERVER'],
-            port=info.data['LOCAL_POSTGRES_PORT'],
-            path=info.data['POSTGRES_DB']
+            username=info.data["POSTGRES_USER"],
+            password=info.data["POSTGRES_PASSWORD"],
+            host=info.data["LOCAL_POSTGRES_SERVER"],
+            port=info.data["LOCAL_POSTGRES_PORT"],
+            path=info.data["POSTGRES_DB"],
         )
 
     @field_validator("REDIS_URI", mode="before")
@@ -119,12 +124,12 @@ class Config(_Settings):
             return v
         return RedisDsn.build(
             scheme="redis",
-            host=info.data['REDIS_HOST'],
-            port=info.data['REDIS_PORT'],
-            password=info.data['REDIS_PASSWORD'],
-            path=str(info.data['REDIS_DB'])
+            host=info.data["REDIS_HOST"],
+            port=info.data["REDIS_PORT"],
+            password=info.data["REDIS_PASSWORD"],
+            path=str(info.data["REDIS_DB"]),
         )
-    
+
     @field_validator("LOCAL_REDIS_URI", mode="before")
     def create_local_redis_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
         if isinstance(v, str):
@@ -132,9 +137,9 @@ class Config(_Settings):
         return RedisDsn.build(
             scheme="redis",
             host="localhost",
-            port=info.data['LOCAL_REDIS_PORT'],
-            password=info.data['REDIS_PASSWORD'],
-            path=str(info.data['REDIS_DB'])
+            port=info.data["LOCAL_REDIS_PORT"],
+            password=info.data["REDIS_PASSWORD"],
+            path=str(info.data["REDIS_DB"]),
         )
 
     @field_validator("RABBITMQ_URI", mode="before", check_fields=False)
@@ -143,12 +148,12 @@ class Config(_Settings):
             return v
         return AmqpDsn.build(
             scheme="amqp",
-            host=info.data['RABBITMQ_HOST'],
-            port=info.data['RABBITMQ_PORT'],
-            username=info.data['RABBITMQ_USER'],
-            password=info.data['RABBITMQ_PASS'],
+            host=info.data["RABBITMQ_HOST"],
+            port=info.data["RABBITMQ_PORT"],
+            username=info.data["RABBITMQ_USER"],
+            password=info.data["RABBITMQ_PASS"],
         )
-    
+
     @field_validator("LOCAL_RABBITMQ_URI", mode="before", check_fields=False)
     def create_local_rabbitmq_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
         if isinstance(v, str):
@@ -156,15 +161,12 @@ class Config(_Settings):
         return AmqpDsn.build(
             scheme="amqp",
             host="localhost",
-            port=info.data['RABBITMQ_PORT'],
-            username=info.data['RABBITMQ_USER'],
-            password=info.data['RABBITMQ_PASS'],
+            port=info.data["RABBITMQ_PORT"],
+            username=info.data["RABBITMQ_USER"],
+            password=info.data["RABBITMQ_PASS"],
         )
 
 
 @lru_cache()
 def get_config(env_file: str = ".env") -> Config:
     return Config(_env_file=find_dotenv(env_file))
-    
-
-

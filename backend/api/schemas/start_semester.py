@@ -19,4 +19,3 @@ class StartSemesterOutputSchema(StartSemesterBaseSchema):
 
 class StartSemesterSchema(StartSemesterBaseSchema):
     guid: Optional[UUID4] = Field(description="ID")
-

@@ -33,8 +33,8 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
     summary="Получить всех преподавателей",
 )
 async def get_all(
-        lang: str = "ru",
-        teacher_service: TeacherService = Depends(TeacherService.get_service),
+    lang: str = "ru",
+    teacher_service: TeacherService = Depends(TeacherService.get_service),
 ):
     return await teacher_service.get_all(lang)
 
@@ -47,9 +47,9 @@ async def get_all(
     summary="Получить ФИО преподавателя",
 )
 async def get_by_name(
-        name: str,
-        lang: str = "ru",
-        teacher_service: TeacherService = Depends(TeacherService.get_service),
+    name: str,
+    lang: str = "ru",
+    teacher_service: TeacherService = Depends(TeacherService.get_service),
 ):
     return await teacher_service.get_by_name(name=name, lang=lang)
 

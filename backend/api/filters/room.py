@@ -7,4 +7,3 @@ class RoomFilter:
     time_start: time
     time_end: time
     date_: date
-

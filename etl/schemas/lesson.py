@@ -29,7 +29,7 @@ class LessonExtracting(Base):
         if isinstance(value, str):
             if value == "":
                 return None
-            date_ = value.split('.')
+            date_ = value.split(".")
             date_.reverse()
             return "-".join(date_)
         return None
@@ -39,11 +39,11 @@ class LessonExtracting(Base):
         if isinstance(value, str):
             if value == "":
                 return None
-            date_ = value.split('.')
+            date_ = value.split(".")
             date_.reverse()
             return "-".join(date_)
         return None
-    
+
 
 class RoomLessonExtracting(Base):
     time_start: time = Field(description="Время начала занятия")
@@ -66,7 +66,7 @@ class RoomLessonExtracting(Base):
         if isinstance(value, str):
             if value == "":
                 return None
-            date_ = value.split('.')
+            date_ = value.split(".")
             date_.reverse()
             return "-".join(date_)
         return None
@@ -76,7 +76,7 @@ class RoomLessonExtracting(Base):
         if isinstance(value, str):
             if value == "":
                 return None
-            date_ = value.split('.')
+            date_ = value.split(".")
             date_.reverse()
             return "-".join(date_)
         return None
@@ -91,7 +91,7 @@ class LessonTranslateLoading(Base):
 
     def __hash__(self):
         return hash(self.name + self.lang)
-    
+
     def __eq__(self, other):
         return self.name == other.name and self.lang == other.lang
 
@@ -114,7 +114,7 @@ class LessonLoading(Base):
         if isinstance(value, str):
             if value == "":
                 return None
-            date_ = value.split('.')
+            date_ = value.split(".")
             date_.reverse()
             return "-".join(date_)
         return None
@@ -124,11 +124,11 @@ class LessonLoading(Base):
         if isinstance(value, str):
             if value == "":
                 return None
-            date_ = value.split('.')
+            date_ = value.split(".")
             date_.reverse()
             return "-".join(date_)
         return None
-    
+
     def __hash__(self):
         time_start = self.time_start.isoformat() if self.time_start is not None else None
         time_end = self.time_end.isoformat() if self.time_end is not None else None
@@ -149,12 +149,14 @@ class LessonLoading(Base):
         )
 
     def __eq__(self, other):
-        return self.time_start == other.time_start and \
-            self.time_end == other.time_end and \
-            self.dot == other.dot and \
-            self.weeks == other.weeks and \
-            self.date_start == other.date_start and \
-            self.date_end == other.date_end and \
-            self.course == other.course and \
-            self.day == other.day and \
-            self.rooms == other.rooms
+        return (
+            self.time_start == other.time_start
+            and self.time_end == other.time_end
+            and self.dot == other.dot
+            and self.weeks == other.weeks
+            and self.date_start == other.date_start
+            and self.date_end == other.date_end
+            and self.course == other.course
+            and self.day == other.day
+            and self.rooms == other.rooms
+        )

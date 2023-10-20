@@ -22,13 +22,7 @@ class CorpsSchema(CorpsBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
     def clone(self):
-        return CorpsSchema(
-            guid=self.guid,
-            name=self.name
-        )
+        return CorpsSchema(guid=self.guid, name=self.name)
 
     def to_model(self):
-        return CorpsModel(
-            guid=self.guid,
-            name=self.name
-        )
+        return CorpsModel(guid=self.guid, name=self.name)

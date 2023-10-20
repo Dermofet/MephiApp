@@ -32,7 +32,7 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
     summary="Получить все группы",
 )
 async def get_all(
-        group_service: GroupService = Depends(GroupService.get_service),
+    group_service: GroupService = Depends(GroupService.get_service),
 ):
     return await group_service.get_all()
 
@@ -45,7 +45,7 @@ async def get_all(
     summary="Получить группу по названию",
 )
 async def get(
-        name: str,
-        group_service: GroupService = Depends(GroupService.get_service),
+    name: str,
+    group_service: GroupService = Depends(GroupService.get_service),
 ):
     return await group_service.get_by_name(name=name)

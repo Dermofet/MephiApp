@@ -17,24 +17,24 @@ class CorpsService(BaseService):
         await self.facade.commit()
 
         return CorpsOutputSchema(**CorpsSchema.model_validate(corps).model_dump())
-    
+
     async def get(self, guid: UUID4) -> CorpsOutputSchema:
         corps = await self.facade.get_by_id_corps(guid)
         if corps is None:
             raise HTTPException(404, "Корпус не найден")
         return CorpsOutputSchema(**CorpsSchema.model_validate(corps).model_dump())
-    
+
     async def get_by_name(self, name: str) -> CorpsOutputSchema:
         corps = await self.facade.get_by_name_corps(name)
         if corps is None:
             raise HTTPException(404, "Корпус не найден")
         return CorpsOutputSchema(**CorpsSchema.model_validate(corps).model_dump())
-    
+
     async def get_all(self) -> Dict[str, List[str]]:
         corps = await self.facade.get_all_corps()
         corps.sort()
         return {"corps": corps}
-    
+
     async def update(self, guid: UUID4, schemas: CorpsCreateSchema) -> CorpsOutputSchema:
         corps = await self.facade.update_corps(guid, schemas)
         if corps is None:

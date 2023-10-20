@@ -73,7 +73,8 @@ services:
     restart: always
     depends_on:
       - db
-      - backend
+      - rabbitmq
+      - redis
     volumes:
       - ./celery_conf:/mephiapp-celery/celery_conf
       - ./config/:/mephiapp-celery/config

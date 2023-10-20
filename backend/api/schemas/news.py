@@ -15,7 +15,7 @@ class NewsBaseSchema(BaseModel):
     @field_validator("date", mode="before")
     def change_date_start(cls, value):
         if isinstance(value, str):
-            date_ = value.split('.')
+            date_ = value.split(".")
             date_.reverse()
             return "-".join(date_)
         return None
@@ -38,11 +38,12 @@ class NewsSchema(NewsBaseSchema):
     @field_validator("date", mode="before")
     def change_date_start(cls, value):
         if isinstance(value, datetime.date):
-            return value.strftime('%m.%d.%Y')
+            return value.strftime("%m.%d.%Y")
         elif isinstance(value, str):
             return value
         elif isinstance(value, type(None)):
             return None
         else:
             ValueError(f"date_start - неверный тип данных. Ожидалось date, было получено {type(value)}")
+
     model_config = ConfigDict(from_attributes=True)

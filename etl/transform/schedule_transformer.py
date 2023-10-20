@@ -60,8 +60,8 @@ class ScheduleTransformer(BaseTransformer):
 
         async for item in items_set:
             self.db.hset(
-                name=f"teachers:{hash(item)}", 
-                key="teacher", 
+                name=f"teachers:{hash(item)}",
+                key="teacher",
                 value=TeacherLoading(
                     url=item.url,
                     alt_url=item.alt_url,
@@ -73,25 +73,21 @@ class ScheduleTransformer(BaseTransformer):
                             fullname=item.fullname,
                         )
                     ],
-                ).model_dump_redis()
+                ).model_dump_redis(),
             )
 
     async def __transform_items(self, key_pattern, key_field, item_type):
         items_set = Set()
 
         for key in self.db.scan_iter(key_pattern):
-            item = item_type.model_validate_redis(
-                model=self.db.hget(name=key.decode("utf-8"), key=key_field)
-            )
+            item = item_type.model_validate_redis(model=self.db.hget(name=key.decode("utf-8"), key=key_field))
             await items_set.add(item)
 
         for key in self.db.scan_iter(key_pattern):
             self.db.delete(key)
 
         async for item in items_set:
-            self.db.hset(
-                name=f"{key_field}s:{hash(item)}", key=key_field, value=item.model_dump_redis()
-            )
+            self.db.hset(name=f"{key_field}s:{hash(item)}", key=key_field, value=item.model_dump_redis())
 
     async def __transform_lessons(self):
         self.logger.debug("Transform lessons")
@@ -101,7 +97,9 @@ class ScheduleTransformer(BaseTransformer):
         lessons_loading = {}
 
         await self.__transform_lesson_items("lessons:*", "lesson", LessonExtracting, academics, groups, lessons_loading)
-        await self.__transform_lesson_items("room_lessons:*", "room_lesson", RoomLessonExtracting, academics, groups, lessons_loading)
+        await self.__transform_lesson_items(
+            "room_lessons:*", "room_lesson", RoomLessonExtracting, academics, groups, lessons_loading
+        )
 
         await self.__transform_academic_items(academics)
         await self.__transform_group_items(groups)
@@ -109,9 +107,7 @@ class ScheduleTransformer(BaseTransformer):
 
     async def __transform_lesson_items(self, key_pattern, key_field, item_type, academics, groups, lessons_loading):
         for key in self.db.scan_iter(key_pattern):
-            lesson = item_type.model_validate_redis(
-                model=self.db.hget(name=key.decode("utf-8"), key=key_field)
-            )
+            lesson = item_type.model_validate_redis(model=self.db.hget(name=key.decode("utf-8"), key=key_field))
 
             if item_type == LessonExtracting:
                 await academics.add(AcademicLoading(name=lesson.academic))
@@ -152,12 +148,12 @@ class ScheduleTransformer(BaseTransformer):
                 lesson_loading.teachers.add(teacher)
 
             if lessons_loading.get(hash(lesson_loading)) is not None:
-                lessons_loading[hash(lesson_loading)].groups = lessons_loading[
-                    hash(lesson_loading)
-                ].groups.union(lesson_loading.groups)
-                lessons_loading[hash(lesson_loading)].teachers = lessons_loading[
-                    hash(lesson_loading)
-                ].teachers.union(lesson_loading.teachers)
+                lessons_loading[hash(lesson_loading)].groups = lessons_loading[hash(lesson_loading)].groups.union(
+                    lesson_loading.groups
+                )
+                lessons_loading[hash(lesson_loading)].teachers = lessons_loading[hash(lesson_loading)].teachers.union(
+                    lesson_loading.teachers
+                )
             else:
                 lessons_loading[hash(lesson_loading)] = lesson_loading
 
@@ -174,9 +170,7 @@ class ScheduleTransformer(BaseTransformer):
 
     async def __transform_group_items(self, groups):
         async for group in groups:
-            self.db.hset(
-                name=f"groups:{hash(group)}", key="group", value=group.model_dump_redis()
-            )
+            self.db.hset(name=f"groups:{hash(group)}", key="group", value=group.model_dump_redis())
 
     async def __transform_lesson_items_dict(self, lessons_loading):
         for lesson in lessons_loading.values():

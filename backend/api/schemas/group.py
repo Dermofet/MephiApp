@@ -25,18 +25,14 @@ class GroupSchema(GroupBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
     def clone(self):
-        return GroupSchema(
-            name=self.name,
-            course=self.course,
-            academic=self.academic.clone()
-        )
+        return GroupSchema(name=self.name, course=self.course, academic=self.academic.clone())
 
     def to_model(self):
         return GroupModel(
             name=self.name,
             course=self.course,
             academic_guid=self.academic.guid,
-            academic=self.academic.to_model() if self.academic.guid is None else None
+            academic=self.academic.to_model() if self.academic.guid is None else None,
         )
 
     def __eq__(self, other):

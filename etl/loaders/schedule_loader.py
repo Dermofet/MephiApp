@@ -11,11 +11,11 @@ from etl.schemas.teacher import TeacherLoading
 
 class ScheduleLoader(BaseLoader):
     def __init__(
-            self,
-            redis: str,
-            postgres_dsn: str,
-            single_connection_client: bool = True,
-            is_logged: bool = True,
+        self,
+        redis: str,
+        postgres_dsn: str,
+        single_connection_client: bool = True,
+        is_logged: bool = True,
     ):
         super().__init__(redis, postgres_dsn, single_connection_client, is_logged)
 
@@ -32,7 +32,7 @@ class ScheduleLoader(BaseLoader):
             await self.facade_db.commit()
         except Exception as e:
             self.logger.error(f"Can't loading data: {e}")
-            await self.facade_db.rollback() 
+            await self.facade_db.rollback()
 
         self.logger.info("Schedule loaded successfully")
 
@@ -88,7 +88,7 @@ class ScheduleLoader(BaseLoader):
 
         self.logger.debug("Teachers are loaded")
 
-    async def __load_lessons(self):          
+    async def __load_lessons(self):
         lessons = [
             LessonLoading.model_validate_redis(self.redis_db.hget(name=key.decode("utf-8"), key="lesson"))
             for key in self.redis_db.scan_iter("lessons:*")
@@ -96,7 +96,7 @@ class ScheduleLoader(BaseLoader):
 
         chunk = 1000
         for i in range(0, len(lessons), chunk):
-            await self.facade_db.bulk_insert_lesson(lessons[i:i + chunk])
+            await self.facade_db.bulk_insert_lesson(lessons[i : i + chunk])
 
         for key in self.redis_db.scan_iter("lessons:*"):
             self.redis_db.delete(key)

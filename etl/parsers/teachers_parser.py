@@ -14,16 +14,16 @@ class TeachersParser(BaseParser):
     url: HttpUrl
 
     def __init__(
-            self,
-            url: HttpUrl,
-            redis: str,
-            auth_url: str,
-            auth_service_url: str,
-            login: str,
-            password: str,
-            use_auth: bool,
-            single_connection_client: bool = True,
-            is_logged: bool = True,
+        self,
+        url: HttpUrl,
+        redis: str,
+        auth_url: str,
+        auth_service_url: str,
+        login: str,
+        password: str,
+        use_auth: bool,
+        single_connection_client: bool = True,
+        is_logged: bool = True,
     ):
         super().__init__(
             use_auth=use_auth,
@@ -31,8 +31,8 @@ class TeachersParser(BaseParser):
             auth_url=auth_url,
             auth_service_url=auth_service_url,
             login=login,
-            password=password, 
-            single_connection_client=single_connection_client, 
+            password=password,
+            single_connection_client=single_connection_client,
             is_logged=is_logged,
         )
         self.url = url
@@ -51,22 +51,19 @@ class TeachersParser(BaseParser):
 
     async def get_categories(self):
         soup = await self.soup(self.url)
-        
+
         if soup.find("ul", class_="pagination") is None:
             return []
-        
+
         return [
-            self.base_url(self.url) + item.find("a")['href']
+            self.base_url(self.url) + item.find("a")["href"]
             for item in soup.find("ul", class_="pagination").findAll("li")
         ]
 
     async def get_teachers(self, categories_urls: List[HttpUrl]):
         tasks = []
-        tasks.extend(
-            self.get_teachers_fullname_from_category(category_url)
-            for category_url in categories_urls
-        )
-        
+        tasks.extend(self.get_teachers_fullname_from_category(category_url) for category_url in categories_urls)
+
         self.logger.debug(f"Total teachers: {len(tasks)}")
         results = await asyncio.gather(*tasks)
 

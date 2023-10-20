@@ -17,4 +17,6 @@ class GroupModel(Base):
     academic_guid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("academics.guid"))
 
     academic: Mapped["AcademicModel"] = relationship(back_populates="groups")
-    lessons: WriteOnlyMapped["LessonModel"] = relationship(back_populates="groups", secondary=AT_lesson_group, uselist=True)
+    lessons: WriteOnlyMapped["LessonModel"] = relationship(
+        back_populates="groups", secondary=AT_lesson_group, uselist=True
+    )

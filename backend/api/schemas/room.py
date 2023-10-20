@@ -23,18 +23,14 @@ class RoomSchema(RoomBaseSchema):
     corps: CorpsSchema = Field(description="Корпус, в котором находится аудитория")
 
     def clone(self):
-        return RoomSchema(
-            guid=self.guid,
-            number=self.number,
-            corps=self.corps.clone()
-        )
+        return RoomSchema(guid=self.guid, number=self.number, corps=self.corps.clone())
 
     def to_model(self):
         return RoomModel(
             guid=self.guid,
             number=self.number,
             corps_guid=self.corps.guid,
-            corps=self.corps.to_model() if self.corps.guid is None else None
+            corps=self.corps.to_model() if self.corps.guid is None else None,
         )
 
     def __eq__(self, other):
@@ -44,4 +40,5 @@ class RoomSchema(RoomBaseSchema):
 
     def __hash__(self):
         return hash(self.number)
+
     model_config = ConfigDict(from_attributes=True)

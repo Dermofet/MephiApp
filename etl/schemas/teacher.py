@@ -21,13 +21,14 @@ class TeacherTranslateLoading(Base):
 class TeacherLoading(Base):
     url: Optional[str] = Field(description="Ссылка на дискорд")
     alt_url: Optional[str] = Field(description="Ссылка на дискорд")
-    trans: List[TeacherTranslateLoading] = Field(description="Список переводов") 
+    trans: List[TeacherTranslateLoading] = Field(description="Список переводов")
 
     def __hash__(self):
         return hash(self.trans[0].name)
 
     def __eq__(self, other):
         return self.trans[0].name == other.trans[0].name
+
 
 class TeacherFullnameLoading(Base):
     url: Optional[str] = Field(description="Ссылка на дискорд")

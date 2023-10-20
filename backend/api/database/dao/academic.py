@@ -22,6 +22,7 @@ class AcademicDAO:
     """
     Создание ученого звания
     """
+
     async def create(self, data: AcademicCreateSchema) -> AcademicModel:
         academic = AcademicModel(**data.model_dump())
         self.session.add(academic)
@@ -32,6 +33,7 @@ class AcademicDAO:
     """
     Получение ученого звания по id
     """
+
     async def bulk_insert(self, data: List[AcademicCreateSchema]) -> None:
         insert_data = [AcademicModel(**academic.model_dump()) for academic in data]
         self.session.add_all(insert_data)
@@ -40,6 +42,7 @@ class AcademicDAO:
     """
     Получение ученого звания по имени
     """
+
     async def get_by_id(self, guid: UUID4) -> AcademicModel:
         academic = await self.session.execute(select(AcademicModel).where(AcademicModel.guid == guid).limit(1))
         return academic.scalar()
@@ -47,13 +50,15 @@ class AcademicDAO:
     """
     Получение ученого звания по имени
     """
+
     async def get_by_name(self, name: str) -> AcademicModel:
         academic = await self.session.execute(select(AcademicModel).where(AcademicModel.name == name).limit(1))
         return academic.scalar()
-    
+
     """
     Получение всех ученых званий
     """
+
     async def get_all(self) -> List[AcademicModel]:
         academic = await self.session.execute(select(AcademicModel))
         return academic.scalars().all()
@@ -61,6 +66,7 @@ class AcademicDAO:
     """
     Обновление ученого звания
     """
+
     async def update(self, guid: UUID4, data: AcademicCreateSchema) -> AcademicModel:
         academic = await self.get_by_id(guid)
 
@@ -76,6 +82,7 @@ class AcademicDAO:
     """
     Удаление ученого звания
     """
+
     async def delete(self, guid: UUID4) -> None:
         await self.session.execute(delete(AcademicModel).where(AcademicModel.guid == guid))
         await self.session.flush()

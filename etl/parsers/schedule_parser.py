@@ -11,17 +11,17 @@ class ScheduleParser(BaseParser):
     _index = 0
 
     def __init__(
-            self,
-            lesson_schedule_url: str,
-            rooms_schedule_url: str,
-            auth_url: str,
-            auth_service_url: str,
-            redis: str,
-            login: str,
-            password: str,
-            use_auth: bool,
-            single_connection_client: bool = True,
-            is_logged: bool = True,
+        self,
+        lesson_schedule_url: str,
+        rooms_schedule_url: str,
+        auth_url: str,
+        auth_service_url: str,
+        redis: str,
+        login: str,
+        password: str,
+        use_auth: bool,
+        single_connection_client: bool = True,
+        is_logged: bool = True,
     ):
         super().__init__(
             use_auth=use_auth,
@@ -30,8 +30,8 @@ class ScheduleParser(BaseParser):
             redis=redis,
             login=login,
             password=password,
-            single_connection_client=single_connection_client, 
-            is_logged=is_logged
+            single_connection_client=single_connection_client,
+            is_logged=is_logged,
         )
         self.lesson_schedule_url = lesson_schedule_url
         self.rooms_schedule_url = rooms_schedule_url
@@ -42,7 +42,7 @@ class ScheduleParser(BaseParser):
         for academic_name, academic_url in await self.__get_academic_types():
             groups_info = await self.__get_groups_info(academic_name, academic_url)
 
-            self.logger.info(f'{academic_name} was parsed')
+            self.logger.info(f"{academic_name} was parsed")
 
             await self.__set_info_to_db_lessons(groups_info)
 
@@ -60,13 +60,9 @@ class ScheduleParser(BaseParser):
         base_url = self.base_url(self.lesson_schedule_url)
         for item in soup.findAll("ul", class_="nav nav-tabs btn-toolbar"):
             elems = item.findAll("a")
-            res.extend(
-                (elem['title'], f'{base_url}{elem["href"]}')
-                for elem in elems
-                if elem['href'] != "#"
-            )
+            res.extend((elem["title"], f'{base_url}{elem["href"]}') for elem in elems if elem["href"] != "#")
 
-        self.logger.info(f'Found {len(res)} academic types')
+        self.logger.info(f"Found {len(res)} academic types")
         return res
 
     async def __get_groups_info(self, name: str, url: str):
@@ -95,7 +91,7 @@ class ScheduleParser(BaseParser):
         res = []
         run_tasks_count = 20
         for i in range(0, len(tasks), run_tasks_count):
-            a = tasks[i:i + run_tasks_count]
+            a = tasks[i : i + run_tasks_count]
             res.extend(await asyncio.gather(*a))
             time.sleep(10)
 
@@ -111,14 +107,7 @@ class ScheduleParser(BaseParser):
                 time_start, time_end = self.__extract_time(lesson)
                 for lesson_item in lesson.find("div", class_="lesson-lessons").findChildren("div", recursive=False):
                     schedule_elem = self.__extract_schedule_element(
-                        lesson_item,
-                        academic,
-                        group,
-                        course,
-                        lang,
-                        day,
-                        time_start,
-                        time_end
+                        lesson_item, academic, group, course, lang, day, time_start, time_end
                     )
                     schedule.append(schedule_elem.model_copy(deep=True))
 
@@ -159,7 +148,7 @@ class ScheduleParser(BaseParser):
 
     @staticmethod
     def __extract_time(lesson):
-        time = lesson.find("div", class_="lesson-time").text.split('—')
+        time = lesson.find("div", class_="lesson-time").text.split("—")
         return time[0].strip(), time[1].strip() if len(time) == 2 else None
 
     @staticmethod
@@ -172,29 +161,19 @@ class ScheduleParser(BaseParser):
     @staticmethod
     def __extract_lesson_type(lesson):
         lesson_type = lesson.find("div", class_="label label-default label-lesson")
-        change_types = {
-            "Пр": "практика",
-            "Лек": "лекция",
-            "Лаб": "лабораторная работа",
-            "Ауд": "аудиторная работа"
-        }
+        change_types = {"Пр": "практика", "Лек": "лекция", "Лаб": "лабораторная работа", "Ауд": "аудиторная работа"}
         return change_types.get(lesson_type.text) if lesson_type else None
 
     @staticmethod
     def __extract_weeks(lesson):
         weeks = lesson.find("span", recursive=False)
-        class_mapping = {
-            "lesson-square-0": 2,
-            "lesson-square-1": 1,
-            "lesson-square-2": 0
-        }
+        class_mapping = {"lesson-square-0": 2, "lesson-square-1": 1, "lesson-square-2": 0}
         return class_mapping.get(weeks["class"][1]) if weeks else None
 
     @staticmethod
     def __extract_teachers(lesson):
         return [
-            teacher.find("a").text.replace('\xa0', ' ')
-            for teacher in lesson.find_all("span", class_="text-nowrap")
+            teacher.find("a").text.replace("\xa0", " ") for teacher in lesson.find_all("span", class_="text-nowrap")
         ]
 
     def __extract_dates(self, lesson):
@@ -210,25 +189,25 @@ class ScheduleParser(BaseParser):
         if lesson.find("div", class_="label label-pink") is not None:
             lesson.find("div", class_="label label-pink").extract()
 
-        text = '#'.join(lesson.strings).replace("\n", "").replace(",", "").split('#')
-        text = [item for item in text if item.strip() != '']
+        text = "#".join(lesson.strings).replace("\n", "").replace(",", "").split("#")
+        text = [item for item in text if item.strip() != ""]
 
         subgroup = None
 
-        if text[1] in ['Лек', 'Лаб', 'Ауд', 'Пр']:
+        if text[1] in ["Лек", "Лаб", "Ауд", "Пр"]:
             lesson_name = text[2]
-            if len(text) > 3 and '\xa0' not in text[3]:
+            if len(text) > 3 and "\xa0" not in text[3]:
                 subgroup = text[3]
         else:
             lesson_name = text[1]
-            if len(text) > 3 and '\xa0' not in text[2]:
+            if len(text) > 3 and "\xa0" not in text[2]:
                 subgroup = text[2]
 
         return lesson_name, subgroup
 
     @staticmethod
     def __parse_date_range(date_range):
-        dates = date_range.replace(', ', '—').replace('\n(', '').replace(')\n', '').split('—')
+        dates = date_range.replace(", ", "—").replace("\n(", "").replace(")\n", "").split("—")
         date_start = dates[0].strip()
         date_end = dates[1].strip() if len(dates) > 1 else None
         return date_start, date_end
@@ -244,7 +223,7 @@ class ScheduleParser(BaseParser):
 
         box = soup.find("div", class_="box")
         if box is None:
-            self.logger.info('Rooms found: 0, Corps found: 0')
+            self.logger.info("Rooms found: 0, Corps found: 0")
             return []
 
         rooms_list = []
@@ -254,7 +233,7 @@ class ScheduleParser(BaseParser):
                     {
                         "number": room.text,
                         "corps": name.text,
-                        "url": self.base_url(self.rooms_schedule_url) + room['href']
+                        "url": self.base_url(self.rooms_schedule_url) + room["href"],
                     }
                     for room in rooms.findAll("a")
                 ]
@@ -266,7 +245,7 @@ class ScheduleParser(BaseParser):
         res = []
         run_tasks_count = 20
         for i in range(0, len(rooms_urls), run_tasks_count):
-            t = rooms_urls[i:i + run_tasks_count]
+            t = rooms_urls[i : i + run_tasks_count]
             res.extend(await asyncio.gather(*[self.__get_room_schedule(room) for room in t]))
             time.sleep(10)
 
@@ -274,7 +253,7 @@ class ScheduleParser(BaseParser):
 
     async def __get_room_schedule(self, room):
         self.logger.debug(f'Parsing room: {room["number"]}, Corps: {room["corps"]}')
-        soup = await self.soup(room['url'])
+        soup = await self.soup(room["url"])
 
         schedule = []
         for lessons, day in zip(soup.find_all("div", class_="list-group"), self.__get_weekdays(soup)):
@@ -283,15 +262,17 @@ class ScheduleParser(BaseParser):
                 for lesson_item in lesson.find("div", class_="lesson-lessons").findChildren("div", recursive=False):
                     schedule_elem = self.__extract_rooms_schedule_element(
                         lesson_item,
-                        lesson_item.findChildren("div", recursive=False)[0].text.strip() if lesson_item.findChildren("div", recursive=False)[0] is not None else None,
-                        'ru',
+                        lesson_item.findChildren("div", recursive=False)[0].text.strip()
+                        if lesson_item.findChildren("div", recursive=False)[0] is not None
+                        else None,
+                        "ru",
                         day,
                         time_start,
-                        time_end
+                        time_end,
                     )
                     schedule.append(schedule_elem.model_copy(deep=True))
         return schedule
-        
+
     def __extract_rooms_schedule_element(self, lesson, group, lang, day, time_start, time_end):
         dot, room = self.__extract_room(lesson)
         lesson_type = self.__extract_lesson_type(lesson)

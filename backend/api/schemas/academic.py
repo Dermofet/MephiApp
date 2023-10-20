@@ -22,13 +22,7 @@ class AcademicSchema(AcademicBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
     def clone(self):
-        return AcademicSchema(
-            guid=self.guid,
-            name=self.name
-        )
+        return AcademicSchema(guid=self.guid, name=self.name)
 
     def to_model(self):
-        return AcademicModel(
-            guid=self.guid,
-            name=self.name
-        )
+        return AcademicModel(guid=self.guid, name=self.name)

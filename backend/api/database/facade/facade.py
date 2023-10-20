@@ -80,6 +80,7 @@ class FacadeDB(IFacadeDB, ABC):
     # Academic
     async def create_academic(self, data: AcademicCreateSchema) -> AcademicModel:
         return await self.academic_dao.create(data)
+
     async def bulk_insert_academic(self, data: List[AcademicCreateSchema]) -> None:
         return await self.academic_dao.bulk_insert(data)
 
@@ -88,7 +89,7 @@ class FacadeDB(IFacadeDB, ABC):
 
     async def get_by_name_academic(self, name: str) -> AcademicModel:
         return await self.academic_dao.get_by_name(name)
-    
+
     async def get_all_academics(self) -> List[AcademicModel]:
         return await self.academic_dao.get_all()
 
@@ -107,8 +108,10 @@ class FacadeDB(IFacadeDB, ABC):
 
     async def get_by_id_corps(self, guid: UUID4) -> CorpsModel:
         return await self.corps_dao.get_by_id(guid)
+
     async def get_by_name_corps(self, name: str) -> CorpsModel:
         return await self.corps_dao.get_by_name(name)
+
     async def get_all_corps(self) -> List[CorpsModel]:
         return await self.corps_dao.get_all()
 
@@ -155,10 +158,10 @@ class FacadeDB(IFacadeDB, ABC):
 
     async def get_all_lesson(self, limit: int, offset: int) -> List[LessonModel]:
         return await self.lesson_dao.get_all(limit, offset)
-    
+
     async def get_all_trans_lesson(self, limit: int, offset: int, lang: str) -> List[LessonModel]:
         return await self.lesson_dao.get_all_trans(limit, offset, lang)
-    
+
     async def bulk_insert_trans_lesson(self, data: List[LessonTranslateLoading]) -> None:
         return await self.lesson_dao.bulk_insert_trans(data)
 
@@ -174,7 +177,9 @@ class FacadeDB(IFacadeDB, ABC):
     async def get_trans_lesson(self, lesson: LessonModel, lang: str) -> LessonTranslateModel:
         return await self.lesson_dao.get_trans(lesson, lang)
 
-    async def get_teachers_lesson(self, lesson: LessonModel, lang: str) -> List[Tuple[TeacherModel, TeacherTranslateModel]]:
+    async def get_teachers_lesson(
+        self, lesson: LessonModel, lang: str
+    ) -> List[Tuple[TeacherModel, TeacherTranslateModel]]:
         return await self.lesson_dao.get_teachers(lesson, lang)
 
     async def get_groups_lesson(self, lesson: LessonModel) -> List[GroupModel]:
@@ -183,12 +188,14 @@ class FacadeDB(IFacadeDB, ABC):
     async def get_rooms_lesson(self, lesson: LessonModel) -> List[RoomModel]:
         return await self.lesson_dao.get_rooms(lesson)
 
-    async def get_by_group_lesson(self, group: str, lang: str, date_: datetime.date = datetime.date.today()) -> \
-            List[LessonModel]:
+    async def get_by_group_lesson(
+        self, group: str, lang: str, date_: datetime.date = datetime.date.today()
+    ) -> List[LessonModel]:
         return await self.lesson_dao.get_by_group(group, lang, date_)
 
-    async def get_by_teacher_lesson(self, teacher: str, lang: str, date_: datetime.date = datetime.date.today()) -> \
-            List[LessonModel]:
+    async def get_by_teacher_lesson(
+        self, teacher: str, lang: str, date_: datetime.date = datetime.date.today()
+    ) -> List[LessonModel]:
         return await self.lesson_dao.get_by_teacher(teacher, lang, date_)
 
     async def update_lesson(self, guid: UUID4, data: LessonCreateSchema) -> LessonModel:
@@ -206,7 +213,7 @@ class FacadeDB(IFacadeDB, ABC):
 
     async def get_by_news_id_news(self, news_id: str) -> NewsModel:
         return await self.news_dao.get_by_news_id(news_id)
-    
+
     async def get_images_news(self, news: NewsModel) -> List[NewsImageModel]:
         return await self.news_dao.get_images(news)
 
@@ -235,7 +242,9 @@ class FacadeDB(IFacadeDB, ABC):
     async def get_by_number_room(self, number: str) -> RoomModel:
         return await self.room_dao.get_by_number(number)
 
-    async def get_empty_room(self, room_filter: RoomFilter, corps: List[str]) -> List[Tuple[str, datetime.time, datetime.time, str]]:
+    async def get_empty_room(
+        self, room_filter: RoomFilter, corps: List[str]
+    ) -> List[Tuple[str, datetime.time, datetime.time, str]]:
         return await self.room_dao.get_empty(room_filter, corps)
 
     async def update_room(self, guid: UUID4, data: RoomCreateSchema) -> RoomModel:
@@ -260,7 +269,7 @@ class FacadeDB(IFacadeDB, ABC):
 
     async def bulk_insert_teacher(self, data: List[TeacherCreateSchema]) -> None:
         return await self.teacher_dao.bulk_insert(data)
-    
+
     async def bulk_insert_trans_teacher(self, data: List[TeacherTranslateLoading]) -> None:
         return await self.teacher_dao.bulk_insert_trans(data)
 
@@ -269,11 +278,13 @@ class FacadeDB(IFacadeDB, ABC):
 
     async def get_all_teacher(self, lang: str) -> List[str]:
         return await self.teacher_dao.get_all(lang)
-    
+
     async def get_all_full_teacher(self, lang: str) -> List[str]:
         return await self.teacher_dao.get_all_full(lang)
 
-    async def get_all_trans_teacher(self, limit: int = -1, offset: int = -1, lang: str = "ru") -> List[TeacherTranslateModel]:
+    async def get_all_trans_teacher(
+        self, limit: int = -1, offset: int = -1, lang: str = "ru"
+    ) -> List[TeacherTranslateModel]:
         return await self.teacher_dao.get_all_trans(limit=limit, offset=offset, lang=lang)
 
     async def get_by_name_teacher(self, name: str) -> TeacherModel:

@@ -13,27 +13,24 @@ class ScheduleTranslate(BaseLoader):
     index = 0
 
     def __init__(
-            self, 
-            langs: List[str], 
-            iam_token: str, 
-            folder_id: str,
-            redis: str,
-            postgres_dsn: str,
-            single_connection_client=True,
-            is_logged=True,
-            debug=False
-        ):
+        self,
+        langs: List[str],
+        iam_token: str,
+        folder_id: str,
+        redis: str,
+        postgres_dsn: str,
+        single_connection_client=True,
+        is_logged=True,
+        debug=False,
+    ):
         super().__init__(
             redis=redis,
             postgres_dsn=postgres_dsn,
             single_connection_client=single_connection_client,
             is_logged=is_logged,
-            debug=debug
+            debug=debug,
         )
-        self.translator = YandexTranslator(
-            iam_token=iam_token,
-            folder_id=folder_id
-        )
+        self.translator = YandexTranslator(iam_token=iam_token, folder_id=folder_id)
         self.langs = langs
 
     async def translate(self):
@@ -76,7 +73,7 @@ class ScheduleTranslate(BaseLoader):
             subgroup_len = len(t.subgroup) if t.subgroup is not None else 0
             type_len = len(t.type) if t.type is not None else 0
             name_len = len(t.name)
-            
+
             if total_len + name_len + subgroup_len + type_len < self.max_chars_per_request:
                 text.extend((t.name, t.subgroup, t.type))
                 total_len += name_len + subgroup_len + type_len
@@ -102,15 +99,15 @@ class ScheduleTranslate(BaseLoader):
                 type=chunk[2],
                 lang=lang,
             )
-            for tr, chunk in zip(
-                trans, zip(*[iter(translated_lessons)] * chunk_size)
-            )
+            for tr, chunk in zip(trans, zip(*[iter(translated_lessons)] * chunk_size))
         ]
 
     async def translate_lesson_types(self):
         types = {}
         for lang in self.langs:
-            tr = self.translator.translate("ru", lang, ["лекция", "практика", "лабораторная работа", "аудиторная работа"])
+            tr = self.translator.translate(
+                "ru", lang, ["лекция", "практика", "лабораторная работа", "аудиторная работа"]
+            )
             types[lang] = {
                 "лекция": tr[0],
                 "практика": tr[1],
@@ -157,7 +154,7 @@ class ScheduleTranslate(BaseLoader):
                     teacher_guid=str(t.teacher_guid),
                     name=f"{name_parts[0]} {'.'.join([i[0] for i in name_parts[1:]])}.",
                     fullname=fullname,
-                    lang="en"
+                    lang="en",
                 )
             )
         return res

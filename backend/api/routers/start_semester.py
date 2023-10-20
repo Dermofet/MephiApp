@@ -30,10 +30,9 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
     description="Получить дату начала семестра",
     summary="Получить дату",
 )
-async def get(
-        start_semester_service: StartSemesterService = Depends(StartSemesterService.get_service)
-):
+async def get(start_semester_service: StartSemesterService = Depends(StartSemesterService.get_service)):
     return await start_semester_service.get()
+
 
 # TODO Удалить
 

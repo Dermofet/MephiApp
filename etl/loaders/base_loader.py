@@ -17,12 +17,12 @@ class BaseLoader:
     session: AsyncSession
 
     def __init__(
-            self,
-            redis: str,
-            postgres_dsn: str,
-            single_connection_client: bool = True,
-            is_logged: bool = True,
-            debug: bool = False,
+        self,
+        redis: str,
+        postgres_dsn: str,
+        single_connection_client: bool = True,
+        is_logged: bool = True,
+        debug: bool = False,
     ):
         self.redis_db = Redis.from_url(redis, single_connection_client=single_connection_client)
         self.logger = Logger(is_logged)
@@ -33,7 +33,9 @@ class BaseLoader:
             pool_pre_ping=True,
             pool_recycle=1800,
         )
-        self.__async_session = async_sessionmaker(self.__engine, expire_on_commit=False, class_=AsyncSession, autoflush=False)
+        self.__async_session = async_sessionmaker(
+            self.__engine, expire_on_commit=False, class_=AsyncSession, autoflush=False
+        )
 
     def init_facade(self):
         self.session = self.__async_session()
@@ -42,7 +44,7 @@ class BaseLoader:
     def __del__(self):
         asyncio.run(self.session.close())
         self.redis_db.close()
-        
+
 
 class WrapperBaseLoader:
     loader: BaseLoader
@@ -52,31 +54,31 @@ class WrapperBaseLoader:
         url: str,
         redis: str,
         postgres_dsn: str,
-        auth_url: str = None, 
-        auth_service_url: str = None, 
-        login: str = None, 
-        password: str = None, 
-        use_auth: bool = True, 
+        auth_url: str = None,
+        auth_service_url: str = None,
+        login: str = None,
+        password: str = None,
+        use_auth: bool = True,
         single_connection_client: bool = True,
         debug: bool = False,
-        is_logged: bool = True
+        is_logged: bool = True,
     ):
         super().__init__(
             url=url,
-            redis=redis, 
-            auth_url=auth_url, 
+            redis=redis,
+            auth_url=auth_url,
             auth_service_url=auth_service_url,
-            login=login, 
+            login=login,
             password=password,
             use_auth=use_auth,
             single_connection_client=single_connection_client,
-            is_logged=is_logged
+            is_logged=is_logged,
         )
         self.loader = BaseLoader(
             redis=redis,
             postgres_dsn=postgres_dsn,
             single_connection_client=single_connection_client,
             is_logged=is_logged,
-            debug=debug
+            debug=debug,
         )
         self.loader.init_facade()

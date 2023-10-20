@@ -31,7 +31,6 @@ from etl.schemas.teacher import TeacherTranslateLoading
 
 
 class IFacadeDB(ABC):
-    
     @abstractmethod
     async def is_alive(self) -> bool:
         ...
@@ -97,7 +96,9 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
-    async def get_all_corps(self, ) -> List[CorpsModel]:
+    async def get_all_corps(
+        self,
+    ) -> List[CorpsModel]:
         ...
 
     @abstractmethod
@@ -181,7 +182,9 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
-    async def get_teachers_lesson(self, lesson: LessonModel, lang: str) -> List[Tuple[TeacherModel, TeacherTranslateModel]]:
+    async def get_teachers_lesson(
+        self, lesson: LessonModel, lang: str
+    ) -> List[Tuple[TeacherModel, TeacherTranslateModel]]:
         ...
 
     @abstractmethod
@@ -193,11 +196,15 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
-    async def get_by_group_lesson(self, group: str, lang: str, date_: datetime.date = datetime.date.today()) -> List[LessonModel]:
+    async def get_by_group_lesson(
+        self, group: str, lang: str, date_: datetime.date = datetime.date.today()
+    ) -> List[LessonModel]:
         ...
 
     @abstractmethod
-    async def get_by_teacher_lesson(self, teacher: str, lang: str, date_: datetime.date = datetime.date.today()) -> List[LessonModel]:
+    async def get_by_teacher_lesson(
+        self, teacher: str, lang: str, date_: datetime.date = datetime.date.today()
+    ) -> List[LessonModel]:
         ...
 
     @abstractmethod
@@ -249,7 +256,9 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
-    async def get_all_room(self, ) -> List[RoomModel]:
+    async def get_all_room(
+        self,
+    ) -> List[RoomModel]:
         ...
 
     @abstractmethod
@@ -257,8 +266,9 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
-    async def get_empty_room(self, room_filter: RoomFilter, corps: list[str]) -> List[
-        tuple[str, datetime.time, datetime.time, str]]:
+    async def get_empty_room(
+        self, room_filter: RoomFilter, corps: list[str]
+    ) -> List[tuple[str, datetime.time, datetime.time, str]]:
         ...
 
     @abstractmethod
@@ -274,7 +284,9 @@ class IFacadeDB(ABC):
         ...
 
     @abstractmethod
-    async def get_start_semester(self, ) -> StartSemesterModel:
+    async def get_start_semester(
+        self,
+    ) -> StartSemesterModel:
         ...
 
     @abstractmethod
@@ -303,10 +315,12 @@ class IFacadeDB(ABC):
 
     @abstractmethod
     async def get_all_full_teacher(self, lang: str) -> List[str]:
-        ...    
+        ...
 
     @abstractmethod
-    async def get_all_trans_teacher(self, limit: int = -1, offset: int = -1, lang: str = "ru") -> List[TeacherTranslateModel]:
+    async def get_all_trans_teacher(
+        self, limit: int = -1, offset: int = -1, lang: str = "ru"
+    ) -> List[TeacherTranslateModel]:
         ...
 
     @abstractmethod

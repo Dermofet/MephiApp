@@ -20,26 +20,26 @@ class NewsParser(BaseParser):
     url: str
 
     def __init__(
-            self,
-            url: str,
-            redis: str, 
-            auth_url: str = None, 
-            auth_service_url: str = None, 
-            login: str = None, 
-            password: str = None, 
-            use_auth: bool = True, 
-            single_connection_client: bool = True, 
-            is_logged: bool = True
+        self,
+        url: str,
+        redis: str,
+        auth_url: str = None,
+        auth_service_url: str = None,
+        login: str = None,
+        password: str = None,
+        use_auth: bool = True,
+        single_connection_client: bool = True,
+        is_logged: bool = True,
     ):
         super().__init__(
-            redis=redis, 
-            auth_url=auth_url, 
+            redis=redis,
+            auth_url=auth_url,
             auth_service_url=auth_service_url,
-            login=login, 
+            login=login,
             password=password,
             use_auth=use_auth,
             single_connection_client=single_connection_client,
-            is_logged=is_logged
+            is_logged=is_logged,
         )
         self.url = url
 
@@ -49,16 +49,17 @@ class NewsParser(BaseParser):
             logger.info("Start creating tasks")
 
             for tag in self.parse_tags(url):
-                page_count = self.parse_count_pages(f'{url}?category={tag[1]}')
+                page_count = self.parse_count_pages(f"{url}?category={tag[1]}")
                 logger.info(f"Tag '{tag[0]}' contains {page_count} pages")
 
                 tasks = [
                     json.dumps(
                         {
-                            "url": f'{url}?category={tag[1]}&page={i}',
+                            "url": f"{url}?category={tag[1]}&page={i}",
                             "tag": tag[0],
                         }
-                    ) for i in range(page_count)
+                    )
+                    for i in range(page_count)
                 ]
                 self.set_data_to_db(self.db, tasks, "news_tasks", "task")
 
@@ -70,29 +71,28 @@ class NewsParser(BaseParser):
     @staticmethod
     def base_url(url):
         parsed = urlparse(url)
-        return f'{parsed.scheme}://{parsed.netloc}'
-    
+        return f"{parsed.scheme}://{parsed.netloc}"
+
     @staticmethod
     def full_url(base_url: str, url: str):
-        return f'{base_url}{url}' if base_url not in url else url
-    
+        return f"{NewsParser.base_url(base_url)}{url}" if "https" or "http" not in url else url
+
     @staticmethod
     def get_soup(url):
         with requests.get(url) as response:
-            return BeautifulSoup(response.text, 'lxml')
+            return BeautifulSoup(response.text, "lxml")
 
     def parse_tags(self, url: str):
         soup = self.get_soup(url)
 
         return [
-            (tag.text, tag['value'])
-            for tag in soup.find("select", class_="form-select required").findAll("option")
+            (tag.text, tag["value"]) for tag in soup.find("select", class_="form-select required").findAll("option")
         ]
 
     def parse_count_pages(self, url: str):
         soup = self.get_soup(url)
 
-        href_last_page = soup.find("li", class_="pager-last last").find("a")['href']
+        href_last_page = soup.find("li", class_="pager-last last").find("a")["href"]
         return int(href_last_page.split("page=")[1]) + 1
 
     @staticmethod
@@ -101,7 +101,9 @@ class NewsParser(BaseParser):
 
         async_results = []
         for key in db.scan_iter("news_tasks:*"):
-            async_result = NewsParser.parse_news_page.s(NewsParser.base_url(url), **json.loads(db.hget(name=key, key="task")))
+            async_result = NewsParser.parse_news_page.s(
+                NewsParser.base_url(url), **json.loads(db.hget(name=key, key="task"))
+            )
             async_results.append(async_result)
             db.delete(key)
 
@@ -112,10 +114,7 @@ class NewsParser(BaseParser):
     def parse_news_page(base_url_str, url, tag):
         try:
             logger = Logger()
-            db = Redis.from_url(
-                config.REDIS_URI.unicode_string(),
-                single_connection_client=True
-            )
+            db = Redis.from_url(config.REDIS_URI.unicode_string(), single_connection_client=True)
 
             soup = NewsParser.get_soup(url)
 
@@ -146,15 +145,12 @@ class NewsParser(BaseParser):
                 date=news_data["date"],
                 text=news["news_text"],
                 tag=tag,
-                imgs=[
-                    NewsImageLoading(url=img["img"], text=img["text"])
-                    for img in news["news_imgs"]
-                ],
+                imgs=[NewsImageLoading(url=img["img"], text=img["text"]) for img in news["news_imgs"]],
             )
         except Exception as e:
             logger.error(f"Error[parse_full_news]:\n{traceback.format_exc()}")
             return None
-    
+
     @staticmethod
     def parse_preview(logger, base_url_str, preview, tag: str):
         try:
@@ -162,20 +158,20 @@ class NewsParser(BaseParser):
 
             if len(preview_fields) == 4:
                 news_data = {
-                    'preview_url': preview_fields[0].find("img")['src'],
-                    'title': preview_fields[3].find("a").text,
-                    'date': preview_fields[1].find("span", class_="date-display-single").text,
-                    'tag': tag,
+                    "preview_url": preview_fields[0].find("img")["src"],
+                    "title": preview_fields[3].find("a").text,
+                    "date": preview_fields[1].find("span", class_="date-display-single").text,
+                    "tag": tag,
                 }
-                news_url = NewsParser.full_url(base_url_str, preview_fields[3].find('a')['href'])
+                news_url = NewsParser.full_url(base_url_str, preview_fields[3].find("a")["href"])
             else:
                 news_data = {
-                    'preview_url': None,
-                    'title': preview_fields[2].find("a").text,
-                    'date': preview_fields[0].find("span", class_="date-display-single").text,
-                    'tag': tag
+                    "preview_url": None,
+                    "title": preview_fields[2].find("a").text,
+                    "date": preview_fields[0].find("span", class_="date-display-single").text,
+                    "tag": tag,
                 }
-                news_url = NewsParser.full_url(base_url_str, preview_fields[2].find('a')['href'])
+                news_url = NewsParser.full_url(base_url_str, preview_fields[2].find("a")["href"])
             return news_data, news_url
         except Exception as e:
             logger.error(f"Error[parse_preview]: {traceback.format_exc()}")
@@ -195,10 +191,7 @@ class NewsParser(BaseParser):
         try:
             soup = NewsParser.get_soup(url)
 
-            result = {
-                "id": url.split("news/")[1],
-                "news_imgs": []
-            }
+            result = {"id": url.split("news/")[1], "news_imgs": []}
             preview_url = ""
 
             text = soup.find("div", class_="field-item even")
@@ -208,7 +201,7 @@ class NewsParser(BaseParser):
 
                 imgs_block = soup.find("div", class_="region region-content").find(
                     "div", id="block-views-modern-gallery-block"
-                ) 
+                )
                 if imgs_block is not None:
                     NewsParser.process_image_block(logger, base_url_str, result, imgs_block, text)
 
@@ -221,7 +214,7 @@ class NewsParser(BaseParser):
 
     @staticmethod
     def get_image_source(img, base_url_str):
-        return NewsParser.full_url(base_url_str, img['src']) if img != '' else None
+        return NewsParser.full_url(base_url_str, img["src"]) if img != "" else None
 
     @staticmethod
     def process_text(logger, base_url_str, result, text, preview_url):
@@ -250,32 +243,29 @@ class NewsParser(BaseParser):
 
         return preview_url
 
-
     @staticmethod
     def process_image_block(logger: Logger, base_url_str, result, imgs_block, text):
         for tag_a in imgs_block.findAll("a"):
             img = tag_a.find("img")
             if img is not None:
-                img['src'] = tag_a['href']
+                img["src"] = tag_a["href"]
                 img_src = NewsParser.get_image_source(img, base_url_str)
 
                 if img_src is not None and NewsParser.is_valid(logger, img_src):
-                    result["news_imgs"].append(
-                        {'img': img_src, 'text': None}
-                    )
+                    result["news_imgs"].append({"img": img_src, "text": None})
 
         for tag in imgs_block.findAll("a"):
             img = tag.find("img")
-            img['src'] = tag['href']
-            del img['height']
-            del img['width']
+            img["src"] = tag["href"]
+            del img["height"]
+            del img["width"]
             tag.insert_before(img)
             tag.extract()
 
         div_tag = imgs_block.find("div", class_="view-content")
         if div_tag is not None:
             text.append(div_tag)
-    
+
     @staticmethod
     def set_news_to_db(db: Redis, data: List[NewsLoading]):
         for item in data:
@@ -285,4 +275,3 @@ class NewsParser(BaseParser):
     def set_data_to_db(db: Redis, data: List[str], pattern_field: str, key_field: str):
         for item in data:
             db.hset(f"{pattern_field}:{hash(item)}", key=key_field, value=item)
-            

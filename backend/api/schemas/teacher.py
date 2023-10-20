@@ -11,7 +11,7 @@ from backend.api.schemas.teacher_translate import (
 
 class TeacherBaseSchema(BaseModel):
     url: Optional[str] = Field(description="Ссылка на дискорд")
-    alt_url: Optional[str] = Field(description="Ссылка на дискорд") 
+    alt_url: Optional[str] = Field(description="Ссылка на дискорд")
 
 
 class TeacherCreateSchema(TeacherBaseSchema):

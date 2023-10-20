@@ -17,12 +17,13 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
     summary="Получить новости",
 )
 async def get_all(
-        tag: str = "Главные новости",
-        offset: int = 0,
-        limit: int = 100,
-        news_service: NewsService = Depends(NewsService.get_service),
+    tag: str = "Главные новости",
+    offset: int = 0,
+    limit: int = 100,
+    news_service: NewsService = Depends(NewsService.get_service),
 ):
     return await news_service.get_all(tag, offset, limit)
+
 
 # TODO Удалить
 

@@ -18,6 +18,7 @@ def all_news():
 def new_news():
     beat_tasks.parse_new_news.delay()
 
+
 def translate_schedule():
     beat_tasks.translate_schedule.delay()
 
@@ -26,12 +27,14 @@ args = [arg for arg in sys.argv if arg != ""]
 
 # Проверить, что был передан хотя бы один аргумент
 if len(args) < 2:
-    msg = "Usage: python etl_.py [parameter]\n" + \
-          "Available parameters:\n" + \
-          "  - schedule         Parse and load schedule\n" + \
-          "  - start_semester   Parse and load start semester\n" + \
-          "  - all_news         Parse and load all news\n" + \
-          "  - new_news         Parse and load new news"
+    msg = (
+        "Usage: python etl_.py [parameter]\n"
+        + "Available parameters:\n"
+        + "  - schedule         Parse and load schedule\n"
+        + "  - start_semester   Parse and load start semester\n"
+        + "  - all_news         Parse and load all news\n"
+        + "  - new_news         Parse and load new news"
+    )
     print(msg)
 else:
     # Получить значение параметра

@@ -28,13 +28,14 @@ class LessonDAO:
     """
 
     _session: AsyncSession
-    
+
     def __init__(self, session: AsyncSession):
         self._session = session
 
     """
     Создание занятия
     """
+
     async def create(self, data: LessonCreateSchema) -> LessonModel:
         lesson = LessonModel(
             time_start=data.time_start,
@@ -43,14 +44,11 @@ class LessonDAO:
             weeks=data.weeks,
             day=data.day,
             date_start=data.date_start,
-            date_end=data.date_end
+            date_end=data.date_end,
         )
 
         lesson = await self.set_dependencies(
-            lesson=lesson,
-            groups=[data.group],
-            rooms=[data.room],
-            teachers=[data.teacher_name]
+            lesson=lesson, groups=[data.group], rooms=[data.room], teachers=[data.teacher_name]
         )
 
         self._session.add(lesson)
@@ -59,15 +57,13 @@ class LessonDAO:
 
         return lesson
 
-
     async def _set_dependencies(
-            self,
-            lesson: LessonModel,
-            groups: List[str],
-            rooms: List[str],
-            teachers: List[str],
+        self,
+        lesson: LessonModel,
+        groups: List[str],
+        rooms: List[str],
+        teachers: List[str],
     ) -> LessonModel:
-        
         group_dao = GroupDAO(self._session)
         room_dao = RoomDAO(self._session)
         teacher_dao = TeacherDAO(self._session)
@@ -92,6 +88,7 @@ class LessonDAO:
     """
     Массовое создание занятий
     """
+
     async def bulk_insert(self, data: List[LessonLoading]) -> None:
         db_lessons = []
 
@@ -108,9 +105,9 @@ class LessonDAO:
             for trans in lesson.trans:
                 db_lesson.trans.add(
                     LessonTranslateModel(
-                        name=trans.name, 
-                        subgroup=trans.subgroup, 
-                        type=trans.type, 
+                        name=trans.name,
+                        subgroup=trans.subgroup,
+                        type=trans.type,
                         lang=trans.lang,
                     )
                 )
@@ -118,10 +115,7 @@ class LessonDAO:
             self._session.add(db_lesson)
 
             db_lesson = await self._set_dependencies(
-                lesson=db_lesson,
-                groups=lesson.groups,
-                rooms=lesson.rooms,
-                teachers=lesson.teachers
+                lesson=db_lesson, groups=lesson.groups, rooms=lesson.rooms, teachers=lesson.teachers
             )
 
             db_lessons.append(db_lesson)
@@ -131,6 +125,7 @@ class LessonDAO:
     """
     Получение занятия по id
     """
+
     async def get_by_id(self, guid: UUID4) -> LessonModel:
         lesson = await self._session.execute(select(LessonModel).where(LessonModel.guid == guid).limit(1))
         return lesson.scalar()
@@ -138,26 +133,23 @@ class LessonDAO:
     async def get_all(self, limit: int, offset: int) -> List[LessonModel]:
         lessons = await self._session.execute(select(LessonModel).offset(offset).limit(limit))
         return lessons.scalars().unique().all()
-    
+
     async def get_all_trans(self, limit: int = -1, offset: int = -1, lang: str = "ru") -> List[LessonModel]:
         """
-            Executes a database query to get all lesson translations.
+        Executes a database query to get all lesson translations.
 
-            Constructs a SQL query to retrieve lesson translations based on provided filters.
-            Executes the query and returns the result.
+        Constructs a SQL query to retrieve lesson translations based on provided filters.
+        Executes the query and returns the result.
 
-            Args:
-                limit: Maximum number of results to return 
-                offset: Number of results to skip
-                lang: Language code to filter translations by
+        Args:
+            limit: Maximum number of results to return
+            offset: Number of results to skip
+            lang: Language code to filter translations by
 
-            Returns:
-                List[LessonModel]: List of lesson translation database models  
+        Returns:
+            List[LessonModel]: List of lesson translation database models
         """
-        query = (
-            select(LessonTranslateModel)
-            .where(LessonTranslateModel.lang == lang)
-        )
+        query = select(LessonTranslateModel).where(LessonTranslateModel.lang == lang)
         if offset != -1:
             query = query.offset(offset)
         if limit != -1:
@@ -165,30 +157,34 @@ class LessonDAO:
 
         trans = await self._session.execute(query)
         return trans.scalars().unique().all()
-    
+
     async def bulk_insert_trans(self, data: List[LessonTranslateLoading]) -> None:
-        self._session.add_all([
-            LessonTranslateModel(
-                name=trans.name,
-                type=trans.type,
-                lang=trans.lang,
-                subgroup=trans.subgroup,
-                lesson_guid=trans.lesson_guid
-            ) for trans in data
-        ])
+        self._session.add_all(
+            [
+                LessonTranslateModel(
+                    name=trans.name,
+                    type=trans.type,
+                    lang=trans.lang,
+                    subgroup=trans.subgroup,
+                    lesson_guid=trans.lesson_guid,
+                )
+                for trans in data
+            ]
+        )
         await self._session.flush()
 
     """
     Получение уникального занятия
     """
+
     async def get_unique(self, data: LessonCreateSchema) -> LessonModel:
         lesson_translate_subq = (
             select(LessonTranslateModel.lesson_guid)
             .where(
-                (LessonTranslateModel.name == data.name) &
-                (LessonTranslateModel.subgroup == data.subgroup) &
-                (LessonTranslateModel.type == data.type) &
-                (LessonTranslateModel.lang == data.lang)
+                (LessonTranslateModel.name == data.name)
+                & (LessonTranslateModel.subgroup == data.subgroup)
+                & (LessonTranslateModel.type == data.type)
+                & (LessonTranslateModel.lang == data.lang)
             )
             .limit(1)
             .subquery()
@@ -196,27 +192,14 @@ class LessonDAO:
 
         teacher_subq = (
             select(TeacherModel.guid)
-            .where(
-                (TeacherModel.name == data.teacher_name) &
-                (TeacherModel.lang == data.lang)
-            )
+            .where((TeacherModel.name == data.teacher_name) & (TeacherModel.lang == data.lang))
             .limit(1)
             .subquery()
         )
 
-        group_subq = (
-            select(GroupModel.guid)
-            .where(GroupModel.name == data.group)
-            .limit(1)
-            .subquery()
-        )
+        group_subq = select(GroupModel.guid).where(GroupModel.name == data.group).limit(1).subquery()
 
-        room_subq = (
-            select(RoomModel.guid)
-            .where(RoomModel.number == data.room)
-            .limit(1)
-            .subquery()
-        )
+        room_subq = select(RoomModel.guid).where(RoomModel.number == data.room).limit(1).subquery()
 
         lesson_query = (
             select(LessonModel)
@@ -225,16 +208,16 @@ class LessonDAO:
             .join(AT_lesson_teacher, LessonModel.guid == AT_lesson_teacher.c.lesson_guid)
             .join(lesson_translate_subq, LessonModel.guid == lesson_translate_subq.c.lesson_guid)
             .where(
-                (LessonModel.time_start == data.time_start) &
-                (LessonModel.time_end == data.time_end) &
-                (LessonModel.dot == data.dot) &
-                (LessonModel.weeks == data.weeks) &
-                (LessonModel.date_start == data.date_start) &
-                (LessonModel.date_end == data.date_end) &
-                (LessonModel.day == data.day) &
-                (AT_lesson_room.c.room_guid == room_subq) &
-                (AT_lesson_group.c.group_guid == group_subq) &
-                (AT_lesson_teacher.c.teacher_guid == teacher_subq)
+                (LessonModel.time_start == data.time_start)
+                & (LessonModel.time_end == data.time_end)
+                & (LessonModel.dot == data.dot)
+                & (LessonModel.weeks == data.weeks)
+                & (LessonModel.date_start == data.date_start)
+                & (LessonModel.date_end == data.date_end)
+                & (LessonModel.day == data.day)
+                & (AT_lesson_room.c.room_guid == room_subq)
+                & (AT_lesson_group.c.group_guid == group_subq)
+                & (AT_lesson_teacher.c.teacher_guid == teacher_subq)
             )
             .limit(1)
         )
@@ -245,25 +228,21 @@ class LessonDAO:
     """
     Получение уникального занятия
     """
+
     async def get_lesson(self, data: LessonCreateSchema) -> LessonModel:
         lesson_translate_subq = (
             select(LessonTranslateModel.lesson_guid)
             .where(
-                (LessonTranslateModel.name == data.name) &
-                (LessonTranslateModel.subgroup == data.subgroup) &
-                (LessonTranslateModel.type == data.type) &
-                (LessonTranslateModel.lang == data.lang)
+                (LessonTranslateModel.name == data.name)
+                & (LessonTranslateModel.subgroup == data.subgroup)
+                & (LessonTranslateModel.type == data.type)
+                & (LessonTranslateModel.lang == data.lang)
             )
             .limit(1)
             .scalar_subquery()
         )
 
-        room_subq = (
-            select(RoomModel.guid)
-            .where(RoomModel.number == data.room)
-            .limit(1)
-            .scalar_subquery()
-        )
+        room_subq = select(RoomModel.guid).where(RoomModel.number == data.room).limit(1).scalar_subquery()
 
         lesson_room_subq = (
             select(AT_lesson_room.c.lesson_guid)
@@ -274,22 +253,16 @@ class LessonDAO:
 
         lesson_query = (
             select(LessonModel)
-            .join(
-                lesson_translate_subq,
-                LessonModel.guid == lesson_translate_subq
-            )
-            .join(
-                lesson_room_subq,
-                LessonModel.guid == lesson_room_subq
-            )
+            .join(lesson_translate_subq, LessonModel.guid == lesson_translate_subq)
+            .join(lesson_room_subq, LessonModel.guid == lesson_room_subq)
             .where(
-                (LessonModel.time_start == data.time_start) &
-                (LessonModel.time_end == data.time_end) &
-                (LessonModel.dot == data.dot) &
-                (LessonModel.weeks == data.weeks) &
-                (LessonModel.date_start == data.date_start) &
-                (LessonModel.date_end == data.date_end) &
-                (LessonModel.day == data.day)
+                (LessonModel.time_start == data.time_start)
+                & (LessonModel.time_end == data.time_end)
+                & (LessonModel.dot == data.dot)
+                & (LessonModel.weeks == data.weeks)
+                & (LessonModel.date_start == data.date_start)
+                & (LessonModel.date_end == data.date_end)
+                & (LessonModel.day == data.day)
             )
             .limit(1)
         )
@@ -299,30 +272,24 @@ class LessonDAO:
     """
     Получение id занятия
     """
+
     async def get_id(self, data: LessonCreateSchema) -> UUID4:
         lesson_translate_subq = (
             select(LessonTranslateModel.lesson_guid)
             .where(
-                (LessonTranslateModel.name == data.name) &
-                (LessonTranslateModel.subgroup == data.subgroup) &
-                (LessonTranslateModel.type == data.type) &
-                (LessonTranslateModel.lang == data.lang)
+                (LessonTranslateModel.name == data.name)
+                & (LessonTranslateModel.subgroup == data.subgroup)
+                & (LessonTranslateModel.type == data.type)
+                & (LessonTranslateModel.lang == data.lang)
             )
             .limit(1)
             .subquery()
         )
 
-        room_subq = (
-            select(RoomModel.guid)
-            .where(RoomModel.number == data.room)
-            .limit(1)
-            .scalar_subquery()
-        )
+        room_subq = select(RoomModel.guid).where(RoomModel.number == data.room).limit(1).scalar_subquery()
 
         lesson_room_subq = (
-            select(AT_lesson_room.c.lesson_guid)
-            .where(AT_lesson_room.c.room_guid == room_subq)
-            .subquery()
+            select(AT_lesson_room.c.lesson_guid).where(AT_lesson_room.c.room_guid == room_subq).subquery()
         )
 
         lesson_query = (
@@ -330,13 +297,13 @@ class LessonDAO:
             .join(lesson_translate_subq, LessonModel.guid == lesson_translate_subq.c.lesson_guid)
             .join(lesson_room_subq, LessonModel.guid == lesson_room_subq.c.lesson_guid)
             .where(
-                (LessonModel.time_start == data.time_start) &
-                (LessonModel.time_end == data.time_end) &
-                (LessonModel.dot == data.dot) &
-                (LessonModel.weeks == data.weeks) &
-                (LessonModel.date_start == data.date_start) &
-                (LessonModel.date_end == data.date_end) &
-                (LessonModel.day == data.day)
+                (LessonModel.time_start == data.time_start)
+                & (LessonModel.time_end == data.time_end)
+                & (LessonModel.dot == data.dot)
+                & (LessonModel.weeks == data.weeks)
+                & (LessonModel.date_start == data.date_start)
+                & (LessonModel.date_end == data.date_end)
+                & (LessonModel.day == data.day)
             )
             .limit(1)
         )
@@ -347,33 +314,27 @@ class LessonDAO:
     """
     Получение занятия по группе
     """
-    async def get_by_group(self, group: str, lang: str, date_: datetime.date = datetime.date.today()) -> List[LessonModel]:
+
+    async def get_by_group(
+        self, group: str, lang: str, date_: datetime.date = datetime.date.today()
+    ) -> List[LessonModel]:
         lessons = await self._session.execute(
             select(LessonModel)
-            .join(
-                LessonTranslateModel,
-                LessonTranslateModel.lesson_guid == LessonModel.guid
-            )
-            .join(
-                AT_lesson_group,
-                AT_lesson_group.c.lesson_guid == LessonModel.guid
-            )
-            .join(
-                GroupModel,
-                GroupModel.guid == AT_lesson_group.c.group_guid
-            )
+            .join(LessonTranslateModel, LessonTranslateModel.lesson_guid == LessonModel.guid)
+            .join(AT_lesson_group, AT_lesson_group.c.lesson_guid == LessonModel.guid)
+            .join(GroupModel, GroupModel.guid == AT_lesson_group.c.group_guid)
             .where(
-                GroupModel.name == group and
-                LessonTranslateModel.lang == lang and
-                (LessonModel.date_start <= date_ <= LessonModel.date_end)
+                GroupModel.name == group
+                and LessonTranslateModel.lang == lang
+                and (LessonModel.date_start <= date_ <= LessonModel.date_end)
             )
         )
         return lessons.scalars().unique().all()
-    
+
     async def get_trans(self, lesson: LessonModel, lang: str) -> LessonTranslateModel:
         trans = await self._session.execute(lesson.trans.select().where(LessonTranslateModel.lang == lang))
         return trans.scalars().first()
-    
+
     async def get_teachers(self, lesson: LessonModel, lang: str) -> List[Tuple[TeacherModel, TeacherTranslateModel]]:
         teacher_dao = TeacherDAO(self._session)
 
@@ -381,7 +342,7 @@ class LessonDAO:
         teachers = teachers.scalars().all()
 
         return [(teacher, await teacher_dao.get_trans(teacher, lang=lang)) for teacher in teachers]
-    
+
     async def get_groups(self, lesson: LessonModel) -> List[GroupModel]:
         group_dao = GroupDAO(self._session)
 
@@ -390,7 +351,7 @@ class LessonDAO:
         for group in groups:
             group.academic = await group_dao.get_academic(group)
         return groups
-    
+
     async def get_rooms(self, lesson: LessonModel) -> List[RoomModel]:
         room_dao = RoomDAO(self._session)
 
@@ -403,26 +364,22 @@ class LessonDAO:
     """
     Получение занятия по преподавателю
     """
-    async def get_by_teacher(self, teacher: str, lang: str, date_: datetime.date = datetime.date.today()) -> List[LessonModel]:
+
+    async def get_by_teacher(
+        self, teacher: str, lang: str, date_: datetime.date = datetime.date.today()
+    ) -> List[LessonModel]:
         lessons = await self._session.execute(
             select(LessonModel)
-            .join(
-                AT_lesson_teacher,
-                AT_lesson_teacher.c.lesson_guid == LessonModel.guid
-            )
-            .join(
-                TeacherTranslateModel,
-                TeacherTranslateModel.teacher_guid == AT_lesson_teacher.c.teacher_guid
-            )
+            .join(AT_lesson_teacher, AT_lesson_teacher.c.lesson_guid == LessonModel.guid)
+            .join(TeacherTranslateModel, TeacherTranslateModel.teacher_guid == AT_lesson_teacher.c.teacher_guid)
             .where(
-                TeacherTranslateModel.name == teacher and
-                TeacherTranslateModel.lang == lang and
-                and_(
+                TeacherTranslateModel.name == teacher
+                and TeacherTranslateModel.lang == lang
+                and and_(
                     LessonModel.date_start is not None,
                     and_(
-                        LessonModel.date_end is not None,
-                        between(date_, LessonModel.date_start, LessonModel.date_end)
-                    )
+                        LessonModel.date_end is not None, between(date_, LessonModel.date_start, LessonModel.date_end)
+                    ),
                 )
             )
         )
@@ -431,6 +388,7 @@ class LessonDAO:
     """
     Обновление занятия
     """
+
     async def update(self, guid: UUID4, data: LessonCreateSchema) -> LessonModel:
         lesson = await self.get_by_id(guid)
         lesson_translate = await self.get_by_name_lesson_translate(data.name, data.lang)
@@ -451,18 +409,13 @@ class LessonDAO:
                 weeks=data.weeks,
                 date_start=data.date_start,
                 date_end=data.date_end,
-                day=data.day
+                day=data.day,
             )
         )
         await self._session.execute(
             update(LessonModel)
             .where(LessonTranslateModel.guid == lesson_translate.guid)
-            .values(
-                type=data.type,
-                name=data.name,
-                subgroup=data.subgroup,
-                lang=data.lang
-            )
+            .values(type=data.type, name=data.name, subgroup=data.subgroup, lang=data.lang)
         )
         await self._session.flush()
         await self._session.refresh(lesson)
@@ -472,6 +425,7 @@ class LessonDAO:
     """
     Обновление перевода занятия
     """
+
     async def update_translate(self, data: LessonCreateSchema, guid: str) -> LessonModel:
         lesson = await self.get_by_id(guid)
 
@@ -483,11 +437,7 @@ class LessonDAO:
                 HTTPException(status_code=404, detail="Занятие на этом языке существует")
 
         trans = LessonTranslateModel(
-            type=data.type,
-            name=data.name,
-            subgroup=data.subgroup,
-            lang=data.lang,
-            lesson_guid=lesson.guid
+            type=data.type, name=data.name, subgroup=data.subgroup, lang=data.lang, lesson_guid=lesson.guid
         )
         lesson.trans.append(trans)
 
@@ -499,6 +449,7 @@ class LessonDAO:
     """
     Удаление занятия
     """
+
     async def delete(self, guid: UUID4) -> None:
         await self._session.execute(delete(LessonModel).where(LessonModel.guid == guid))
         await self._session.flush()

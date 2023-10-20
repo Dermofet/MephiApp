@@ -4,12 +4,12 @@ from etl.schemas.news import NewsLoading
 
 class NewsLoader(BaseLoader):
     def __init__(
-            self,
-            redis: str,
-            postgres_dsn: str,
-            single_connection_client: bool = True,
-            is_logged: bool = True,
-            debug: bool = False
+        self,
+        redis: str,
+        postgres_dsn: str,
+        single_connection_client: bool = True,
+        is_logged: bool = True,
+        debug: bool = False,
     ):
         super().__init__(redis, postgres_dsn, single_connection_client, is_logged, debug)
 
@@ -37,7 +37,7 @@ class NewsLoader(BaseLoader):
                 self.logger.debug(f"Loaded {i} news")
                 news = []
 
-        if len(news) > 0: 
+        if len(news) > 0:
             await self.facade_db.bulk_insert_news(news)
             self.logger.debug(f"Loaded {i} news")
 

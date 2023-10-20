@@ -9,16 +9,16 @@ class RoomParser(BaseParser):
     url: str
 
     def __init__(
-            self,
-            url: str,
-            redis: str,
-            auth_url: str,
-            auth_service_url: str,
-            login: str,
-            password: str,
-            use_auth: bool,
-            single_connection_client: bool = True,
-            is_logged: bool = True,
+        self,
+        url: str,
+        redis: str,
+        auth_url: str,
+        auth_service_url: str,
+        login: str,
+        password: str,
+        use_auth: bool,
+        single_connection_client: bool = True,
+        is_logged: bool = True,
     ):
         super().__init__(
             use_auth=use_auth,
@@ -26,13 +26,13 @@ class RoomParser(BaseParser):
             auth_url=auth_url,
             auth_service_url=auth_service_url,
             login=login,
-            password=password, 
-            single_connection_client=single_connection_client, 
+            password=password,
+            single_connection_client=single_connection_client,
             is_logged=is_logged,
         )
         self.url = url
 
-        self.logger.info('RoomParser initialized')
+        self.logger.info("RoomParser initialized")
 
     async def parse(self):
         res_rooms, res_corps = await self.parse_rooms()
@@ -46,23 +46,20 @@ class RoomParser(BaseParser):
 
         box = soup.find("div", class_="box")
         if box is None:
-            self.logger.info('Rooms found: 0, Corps found: 0')
+            self.logger.info("Rooms found: 0, Corps found: 0")
             return res_rooms, res_corps
 
         for name, rooms in zip(box.findAll("h3", class_="light"), box.findAll("ul", class_="list-inline")):
             res_corps.append(CorpsLoading(name=name.text))
-            res_rooms.extend(
-                RoomLoading(number=room.text, corps=name.text)
-                for room in rooms.findAll("a")
-            )
+            res_rooms.extend(RoomLoading(number=room.text, corps=name.text) for room in rooms.findAll("a"))
 
-        self.logger.info(f'Rooms found: {len(res_rooms)}, Corps found: {len(res_corps)}')
+        self.logger.info(f"Rooms found: {len(res_rooms)}, Corps found: {len(res_corps)}")
 
         return res_rooms, res_corps
 
     def set_info_to_db(self, rooms: List[RoomLoading], corps: List[CorpsLoading]):
         for corp in corps:
-            self.db.hset(f"corps:{hash(corp)}", key='corp', value=corp.model_dump_redis())
+            self.db.hset(f"corps:{hash(corp)}", key="corp", value=corp.model_dump_redis())
 
         for room in rooms:
-            self.db.hset(f"rooms:{hash(room)}", key='room', value=room.model_dump_redis())
+            self.db.hset(f"rooms:{hash(room)}", key="room", value=room.model_dump_redis())

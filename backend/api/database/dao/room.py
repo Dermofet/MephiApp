@@ -29,6 +29,7 @@ class RoomDAO:
     """
     Создание комнаты
     """
+
     async def create(self, data: RoomCreateSchema, corps_guid) -> RoomModel:
         room = RoomModel(number=data.number, corps_guid=corps_guid)
 
@@ -41,6 +42,7 @@ class RoomDAO:
     """
     Обновление комнаты
     """
+
     async def bulk_insert(self, data: List[RoomCreateSchema]) -> None:
         db_rooms = []
         corps_dao = CorpsDAO(self._session)
@@ -55,6 +57,7 @@ class RoomDAO:
     """
     Получение комнаты по id
     """
+
     async def get_by_id(self, guid: UUID4) -> RoomModel:
         room = await self._session.execute(select(RoomModel).where(RoomModel.guid == guid).limit(1))
         return room.scalar()
@@ -62,6 +65,7 @@ class RoomDAO:
     """
     Получение всех комнат
     """
+
     async def get_all(self) -> List[RoomModel]:
         rooms = await self._session.execute(select(RoomModel))
         return rooms.scalars().unique().all()
@@ -69,6 +73,7 @@ class RoomDAO:
     """
     Получение комнаты по номеру
     """
+
     async def get_by_number(self, number: str) -> RoomModel:
         room = await self._session.execute(select(RoomModel).where(RoomModel.number == number).limit(1))
         return room.scalar()
@@ -76,7 +81,10 @@ class RoomDAO:
     """
     Получение комнаты пустой
     """
-    async def get_empty(self, room_filter: RoomFilter, corps: List[str]) -> List[Tuple[str, datetime.time, datetime.time, str]]:
+
+    async def get_empty(
+        self, room_filter: RoomFilter, corps: List[str]
+    ) -> List[Tuple[str, datetime.time, datetime.time, str]]:
         start_semester_dao = StartSemesterDAO(self._session)
 
         date = await start_semester_dao.get()
@@ -93,7 +101,7 @@ class RoomDAO:
             3: "Четверг",
             4: "Пятница",
             5: "Суббота",
-            6: "Воскресенье"
+            6: "Воскресенье",
         }
 
         occupied_rooms = await self._get_occupied_rooms(room_filter, corps, week, weekdays)
@@ -102,14 +110,15 @@ class RoomDAO:
         print(f"full_time_free_rooms = {full_time_free_rooms}")
         return self._get_free_rooms(room_filter, occupied_rooms, full_time_free_rooms)
 
-    async def _get_occupied_rooms(self, room_filter: RoomFilter, corps: List[str], week: List[int], weekdays: Dict[int, str]) -> \
-        List[Tuple[str, datetime.time, datetime.time, str]]:
+    async def _get_occupied_rooms(
+        self, room_filter: RoomFilter, corps: List[str], week: List[int], weekdays: Dict[int, str]
+    ) -> List[Tuple[str, datetime.time, datetime.time, str]]:
         occupied_rooms = await self._session.execute(
             select(
                 RoomModel.number.label("room_number"),
                 LessonModel.time_start.label("lesson_time_start"),
                 LessonModel.time_end.label("lesson_time_end"),
-                CorpsModel.name.label("corps_name")
+                CorpsModel.name.label("corps_name"),
             )
             .join(RoomModel.lessons)
             .join(RoomModel.corps)
@@ -119,70 +128,54 @@ class RoomDAO:
                     LessonModel.day == weekdays[room_filter.date_.weekday()],
                     LessonModel.weeks.in_(week),
                     or_(
-
                         LessonModel.date_start.is_(None),
-                        and_(
-                            LessonModel.date_start == room_filter.date_,
-                            LessonModel.date_end.is_(None)
-                        ),
-                        and_(
-                            LessonModel.date_start <= room_filter.date_,
-                            LessonModel.date_end >= room_filter.date_
-                        )
+                        and_(LessonModel.date_start == room_filter.date_, LessonModel.date_end.is_(None)),
+                        and_(LessonModel.date_start <= room_filter.date_, LessonModel.date_end >= room_filter.date_),
                     ),
                     or_(
                         and_(
                             LessonModel.time_start >= room_filter.time_start,
-                            LessonModel.time_start <= room_filter.time_end
+                            LessonModel.time_start <= room_filter.time_end,
                         ),
                         and_(
-                            LessonModel.time_end >= room_filter.time_start,
-                            LessonModel.time_end <= room_filter.time_end
+                            LessonModel.time_end >= room_filter.time_start, LessonModel.time_end <= room_filter.time_end
                         ),
                         and_(
-                            LessonModel.time_start < room_filter.time_start,
-                            LessonModel.time_end > room_filter.time_end
-                        )
-                    )
+                            LessonModel.time_start < room_filter.time_start, LessonModel.time_end > room_filter.time_end
+                        ),
+                    ),
                 )
             )
-            .distinct().order_by(RoomModel.number, LessonModel.time_start)
+            .distinct()
+            .order_by(RoomModel.number, LessonModel.time_start)
         )
 
         return occupied_rooms.all()
 
-    async def _get_full_time_free_rooms(self, corps: List[str], occupied_rooms: List[Tuple[str, datetime.time, datetime.time, str]]) -> \
-        List[Tuple[str, str]]:
+    async def _get_full_time_free_rooms(
+        self, corps: List[str], occupied_rooms: List[Tuple[str, datetime.time, datetime.time, str]]
+    ) -> List[Tuple[str, str]]:
         occupied_rooms_numbers = (room[0] for room in occupied_rooms)
         full_time_free_rooms = await self._session.execute(
-            select(
-                RoomModel.number.label("room_number"),
-                CorpsModel.name.label("corps_name")
-            )
+            select(RoomModel.number.label("room_number"), CorpsModel.name.label("corps_name"))
             .join(RoomModel.corps)
-            .where(
-                and_(
-                    CorpsModel.name.in_(corps),
-                    RoomModel.number.notin_(occupied_rooms_numbers)
-                )
-            )
+            .where(and_(CorpsModel.name.in_(corps), RoomModel.number.notin_(occupied_rooms_numbers)))
         )
 
         return full_time_free_rooms.all()
 
     def _get_free_rooms(
-        self, 
-        room_filter: RoomFilter, 
-        occupied_rooms: List[Tuple[str, datetime.time, datetime.time, str]], 
-        full_time_free_rooms: List[Tuple[str, str]]
+        self,
+        room_filter: RoomFilter,
+        occupied_rooms: List[Tuple[str, datetime.time, datetime.time, str]],
+        full_time_free_rooms: List[Tuple[str, str]],
     ) -> List[Tuple[str, datetime.time, datetime.time, str]]:
         last_room = None
         free_rooms = []
         deltatime = datetime.timedelta(minutes=10)
         for room in occupied_rooms:
             if last_room is None:
-                if room[1] > room_filter.time_start and \
-                            self._sub_time(room[1], room_filter.time_start) > deltatime:
+                if room[1] > room_filter.time_start and self._sub_time(room[1], room_filter.time_start) > deltatime:
                     free_rooms.append((room[0], room_filter.time_start, room[1], room[3]))
                 last_room = room
                 continue
@@ -193,24 +186,22 @@ class RoomDAO:
                 last_room = room
                 continue
 
-            if last_room[2] < room_filter.time_end and \
-                        self._sub_time(last_room[2], room_filter.time_end) > deltatime:
+            if last_room[2] < room_filter.time_end and self._sub_time(last_room[2], room_filter.time_end) > deltatime:
                 free_rooms.append((last_room[0], last_room[2], room_filter.time_end, last_room[3]))
 
-            if room[1] > room_filter.time_start and \
-                        self._sub_time(room[1], room_filter.time_start) > deltatime:
+            if room[1] > room_filter.time_start and self._sub_time(room[1], room_filter.time_start) > deltatime:
                 free_rooms.append((room[0], room_filter.time_start, room[1], room[3]))
             last_room = room
 
         free_rooms.extend(
-            (room[0], room_filter.time_start, room_filter.time_end, room[1])
-            for room in full_time_free_rooms
+            (room[0], room_filter.time_start, room_filter.time_end, room[1]) for room in full_time_free_rooms
         )
         return free_rooms
 
     """
     Получение даты начала семестра
     """
+
     @staticmethod
     def _sub_time(time1: datetime.time, time2: datetime.time) -> datetime.timedelta:
         datetime1 = datetime.datetime.combine(datetime.date.today(), time1)
@@ -224,6 +215,7 @@ class RoomDAO:
     """
     Получение даты начала семестра
     """
+
     async def update(self, guid: UUID4, data: RoomCreateSchema) -> RoomModel:
         room = await self.get_by_id(guid)
 
@@ -238,6 +230,7 @@ class RoomDAO:
     """
     Удаление комнаты
     """
+
     async def delete(self, guid: UUID4) -> None:
         await self._session.execute(delete(RoomModel).where(RoomModel.guid == guid))
         await self._session.flush()

@@ -19,13 +19,13 @@ class NewsLoading(Base):
     @field_validator("date", mode="before")
     def change_date_start(cls, value):
         if isinstance(value, str):
-            date_ = value.split('.')
+            date_ = value.split(".")
             date_.reverse()
             return "-".join(date_)
         return None
 
     def __hash__(self) -> int:
         return hash(self.news_id)
-    
+
     def __eq__(self, other) -> bool:
         return self.news_id == other.news_id

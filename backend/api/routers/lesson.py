@@ -64,9 +64,9 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
     summary="Получение занятий по группе",
 )
 async def get_by_group(
-        group: str,
-        lang: str = "ru",
-        lesson_service: LessonService = Depends(LessonService.get_service),
+    group: str,
+    lang: str = "ru",
+    lesson_service: LessonService = Depends(LessonService.get_service),
 ):
     return await lesson_service.get_by_group(group=group, lang=lang)
 
@@ -80,9 +80,9 @@ async def get_by_group(
     summary="Получение занятий по преподавателю",
 )
 async def get_by_teacher(
-        teacher: str,
-        lang: str = "ru",
-        lesson_service: LessonService = Depends(LessonService.get_service),
+    teacher: str,
+    lang: str = "ru",
+    lesson_service: LessonService = Depends(LessonService.get_service),
 ):
     return await lesson_service.get_by_teacher(teacher=teacher, lang=lang)
 

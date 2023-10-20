@@ -38,7 +38,7 @@ async def get_empty(
     time_start: datetime.time = Query(..., description="Начало отрезка времени, в котором аудитория свободна"),
     time_end: datetime.time = Query(..., description="Конец отрезка времени, в котором аудитория свободна"),
     date_: datetime.date = Query(..., description="Дата, когда аудитория свободна"),
-    room_service: RoomService = Depends(RoomService.get_service)
+    room_service: RoomService = Depends(RoomService.get_service),
 ):
     room_filter = RoomFilter(time_start=time_start, time_end=time_end, date_=date_)
     return await room_service.get_empty(room_filter, corps)
@@ -51,7 +51,5 @@ async def get_empty(
     description="Получить все аудитории",
     summary="Получить все аудитории",
 )
-async def get_all(
-    room_service: RoomService = Depends(RoomService.get_service)
-):
+async def get_all(room_service: RoomService = Depends(RoomService.get_service)):
     return await room_service.get_all()

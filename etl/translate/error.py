@@ -5,6 +5,7 @@ class YandexError(Exception):
     def __str__(self) -> str:
         return self.message
 
+
 class InvalidMaxLengthError(YandexError):
     def __init__(self, *args) -> None:
         if args:
@@ -12,7 +13,7 @@ class InvalidMaxLengthError(YandexError):
             self.cur_len = args[1]
         else:
             self.max_len = None
-            self.cur_len = None 
+            self.cur_len = None
         super().__init__(args[1:])
 
     def __str__(self) -> str:
