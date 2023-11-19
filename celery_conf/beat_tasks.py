@@ -122,6 +122,7 @@ def load_news():
 def parse_new_news():
     asyncio.run(etl_new_news())
 
+
 async def etl_new_news():
     e = NewNewsParser(
         url=config.MEPHI_NEWS_PAGE_URL.unicode_string(),
@@ -142,6 +143,7 @@ async def etl_new_news():
 @beat_app.task
 def parse_start_semester():
     asyncio.run(etl_start_semester())
+
 
 async def etl_start_semester():
     e = StartSemesterParser(

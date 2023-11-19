@@ -9,6 +9,8 @@ from pydantic import AmqpDsn, Field, HttpUrl, PostgresDsn, RedisDsn, field_valid
 from pydantic_core.core_schema import FieldValidationInfo
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from utils.version import Version
+
 
 class AsyncPostgresDns(PostgresDsn):
     allowed_schemas = ["postgres+asyncpg", "postgresql+asyncpg"]
@@ -25,11 +27,13 @@ class Config(_Settings):
     # Backend
     BACKEND_TITLE: str = Field(..., description="Backend title")
     BACKEND_DESCRIPTION: str = Field(..., description="Backend description")
-    BACKEND_PREFIX: str = Field(..., description="Backend prefix")
 
     BACKEND_HOST: str = Field(..., description="Backend host")
     BACKEND_PORT: int = Field(..., description="Backend port")
     BACKEND_RELOAD: bool = Field(..., description="Backend reload")
+
+    # Version
+    API_VERSIONS: List[Version] = Field(..., description="Api versions", validate_default=True)
 
     # Postgres
     POSTGRES_USER: str = Field(..., description="Postgres user")
@@ -91,6 +95,12 @@ class Config(_Settings):
 
     RABBITMQ_URI: Optional[AmqpDsn] = Field(None, description="RabbitMQ uri", validate_default=True)
     LOCAL_RABBITMQ_URI: Optional[AmqpDsn] = Field(None, description="Local RabbitMQ uri", validate_default=True)
+
+    @field_validator("API_VERSIONS", mode="before")
+    def create_api_versions(cls, v: List[str], info: FieldValidationInfo) -> List[Version]:
+        if not all(isinstance(version, str) for version in v):
+            raise ValueError("API_VERSIONS must be a list of strings")
+        return [Version(version) for version in v]
 
     @field_validator("DB_URI", mode="before")
     def create_db_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:

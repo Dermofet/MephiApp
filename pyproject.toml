@@ -27,6 +27,7 @@ redis = "^5.0.1"
 loguru = "^0.7.0"
 eventlet = "^0.33.3"
 user-agents = "^2.2.0"
+prometheus_fastapi_instrumentator = "^6.1.0"
 
 
 [tool.poetry.dev-dependencies]

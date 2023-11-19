@@ -1,28 +1,14 @@
 from fastapi import APIRouter, Depends
-from pydantic import UUID4
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from backend.api.schemas.teacher import TeacherCreateSchema, TeacherOutputSchema
-from backend.api.services.teacher import TeacherService
-from config import config
+from backend.api.database.connection import get_session
+from backend.api.routers.utils import get_version
+from backend.api.schemas.teacher import TeacherOutputSchema
+from backend.api.services.utils import get_teacher_service
+from utils.version import Version
 
-router = APIRouter(prefix=config.BACKEND_PREFIX)
-
-# TODO Удалить
-
-# @router.post(
-#     "/teachers",
-#     response_model=TeacherOutputSchema,
-#     response_description="Преподаватель успешно создан",
-#     status_code=status.HTTP_201_CREATED,
-#     description="Создать преподавателя и вернуть его",
-#     summary="Создание преподавателя",
-# )
-# async def create(
-#         schemas: TeacherCreateSchema,
-#         teacher_service: TeacherService = Depends(TeacherService.get_service),
-# ):
-#     return await teacher_service.create(schemas=schemas)
+router = APIRouter()
 
 
 @router.get(
@@ -34,8 +20,10 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
 )
 async def get_all(
     lang: str = "ru",
-    teacher_service: TeacherService = Depends(TeacherService.get_service),
+    version: Version = Depends(get_version),
+    session: AsyncSession = Depends(get_session),
 ):
+    teacher_service = await get_teacher_service(version, session)
     return await teacher_service.get_all(lang)
 
 
@@ -49,35 +37,8 @@ async def get_all(
 async def get_by_name(
     name: str,
     lang: str = "ru",
-    teacher_service: TeacherService = Depends(TeacherService.get_service),
+    version: Version = Depends(get_version),
+    session: AsyncSession = Depends(get_session),
 ):
+    teacher_service = await get_teacher_service(version, session)
     return await teacher_service.get_by_name(name=name, lang=lang)
-
-
-# @router.put(
-#     "/teachers/{guid}",
-#     response_model=TeacherOutputSchema,
-#     status_code=status.HTTP_200_OK,
-#     description="Обновить информацию о преподавателе по id",
-#     summary="Обновить информацию о преподавателе по id",
-# )
-# async def update(
-#         schemas: TeacherCreateSchema,
-#         guid: UUID4,
-#         teacher_service: TeacherService = Depends(TeacherService.get_service),
-# ):
-#     return await teacher_service.update(guid, schemas)
-
-
-# @router.put(
-#     "/teachers",
-#     response_model=TeacherOutputSchema,
-#     status_code=status.HTTP_200_OK,
-#     description="Обновить информацию о преподавателе",
-#     summary="Обновить информацию о преподавателе",
-# )
-# async def update(
-#         schemas: TeacherCreateSchema,
-#         teacher_service: TeacherService = Depends(TeacherService.get_service),
-# ):
-#     return await teacher_service.update(db, schemas)

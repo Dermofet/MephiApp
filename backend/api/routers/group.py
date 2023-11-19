@@ -1,27 +1,14 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from backend.api.schemas.group import GroupCreateSchema, GroupOutputSchema
-from backend.api.services.group import GroupService
-from config import config
+from backend.api.database.connection import get_session
+from backend.api.routers.utils import get_version
+from backend.api.schemas.group import GroupOutputSchema
+from backend.api.services.utils import get_group_service
+from utils.version import Version
 
-router = APIRouter(prefix=config.BACKEND_PREFIX)
-
-# TODO Удалить
-
-# @router.post(
-#     "/groups",
-#     response_model=GroupOutputSchema,
-#     response_description="Группа успешно создано",
-#     status_code=status.HTTP_201_CREATED,
-#     description="Создать группу и вернуть его",
-#     summary="Создание группы",
-# )
-# async def create(
-#         schemas: GroupCreateSchema,
-#         group_service: GroupService = Depends(GroupService.get_service),
-# ):
-#     return await group_service.create(schemas=schemas)
+router = APIRouter()
 
 
 @router.get(
@@ -32,8 +19,10 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
     summary="Получить все группы",
 )
 async def get_all(
-    group_service: GroupService = Depends(GroupService.get_service),
+    version: Version = Depends(get_version),
+    session: AsyncSession = Depends(get_session),
 ):
+    group_service = await get_group_service(version, session)
     return await group_service.get_all()
 
 
@@ -46,6 +35,8 @@ async def get_all(
 )
 async def get(
     name: str,
-    group_service: GroupService = Depends(GroupService.get_service),
+    version: Version = Depends(get_version),
+    session: AsyncSession = Depends(get_session),
 ):
+    group_service = await get_group_service(version, session)
     return await group_service.get_by_name(name=name)

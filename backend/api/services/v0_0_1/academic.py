@@ -2,7 +2,7 @@ from fastapi import HTTPException, Response
 from pydantic import UUID4
 
 from backend.api.schemas.academic import AcademicCreateSchema, AcademicOutputSchema, AcademicSchema
-from backend.api.services.base_servise import BaseService
+from backend.api.services.v0_0_1.base_servise import BaseService
 
 
 class AcademicService(BaseService):

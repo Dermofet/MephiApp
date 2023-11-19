@@ -3,12 +3,11 @@ from typing import Dict, List, Tuple
 
 from fastapi import HTTPException
 from pydantic import UUID4
-from sqlalchemy import and_, delete, not_, or_, select, update
+from sqlalchemy import and_, delete, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.api.database.dao.corps import CorpsDAO
-from backend.api.database.dao.start_semester import StartSemesterDAO
-from backend.api.database.models.association_tables import AT_lesson_room
+from backend.api.database.dao.v0_0_1.corps import CorpsDAO
+from backend.api.database.dao.v0_0_1.start_semester import StartSemesterDAO
 from backend.api.database.models.corps import CorpsModel
 from backend.api.database.models.lesson import LessonModel
 from backend.api.database.models.room import RoomModel

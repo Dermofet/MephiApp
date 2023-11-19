@@ -10,6 +10,9 @@ from backend.api.routers.room import router as room_router
 from backend.api.routers.start_semester import router as start_semester_router
 from backend.api.routers.teacher import router as teacher_router
 from config import config
+from backend.api.middlewares.version import VersionMiddleware
+
+from prometheus_fastapi_instrumentator import Instrumentator
 
 tags_metadata = [
     {"name": "group", "description": "Работа с группами"},
@@ -23,10 +26,10 @@ tags_metadata = [
 app = FastAPI(
     debug=config.DEBUG,
     openapi_tags=tags_metadata,
-    openapi_url=f"{config.BACKEND_PREFIX}/openapi.json",
     title=config.BACKEND_TITLE,
     description=config.BACKEND_DESCRIPTION,
 )
+Instrumentator().instrument(app).expose(app)
 
 app.add_middleware(
     CORSMiddleware,
@@ -36,6 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
+app.add_middleware(VersionMiddleware)
 
 app.include_router(lesson_router, tags=["lesson"])
 app.include_router(room_router, tags=["room"])

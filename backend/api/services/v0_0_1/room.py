@@ -5,7 +5,7 @@ from pydantic import UUID4
 
 from backend.api.filters.room import RoomFilter
 from backend.api.schemas.room import RoomCreateSchema, RoomOutputSchema, RoomSchema
-from backend.api.services.base_servise import BaseService
+from backend.api.services.v0_0_1.base_servise import BaseService
 
 
 class RoomService(BaseService):

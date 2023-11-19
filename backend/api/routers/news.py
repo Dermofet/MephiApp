@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends
-from pydantic import UUID4
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
+from backend.api.database.connection import get_session
+from backend.api.routers.utils import get_version
 from backend.api.schemas.news import NewsOutputSchema
-from backend.api.services.news import NewsService
-from config import config
+from backend.api.services.utils import get_news_service
+from utils.version import Version
 
-router = APIRouter(prefix=config.BACKEND_PREFIX)
+router = APIRouter()
 
 
 @router.get(
@@ -20,22 +22,8 @@ async def get_all(
     tag: str = "Главные новости",
     offset: int = 0,
     limit: int = 100,
-    news_service: NewsService = Depends(NewsService.get_service),
+    version: Version = Depends(get_version),
+    session: AsyncSession = Depends(get_session),
 ):
+    news_service = await get_news_service(version, session)
     return await news_service.get_all(tag, offset, limit)
-
-
-# TODO Удалить
-
-# @router.get(
-#     "/news/{guid}",
-#     response_model=NewsOutputSchema,
-#     status_code=status.HTTP_200_OK,
-#     description="Получить группу по названию",
-#     summary="Получить группу по названию",
-# )
-# async def get(
-#         guid: UUID4,
-#         news_service: NewsService = Depends(NewsService.get_service),
-# ):
-#     return await news_service.get(guid)

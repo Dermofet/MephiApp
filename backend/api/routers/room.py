@@ -2,28 +2,16 @@ import datetime
 from typing import Annotated, List, Union
 
 from fastapi import APIRouter, Depends, Query
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
+from backend.api.database.connection import get_session
 from backend.api.filters.room import RoomFilter
-from backend.api.services.room import RoomService
-from config import config
+from backend.api.routers.utils import get_version
+from backend.api.services.utils import get_room_service
+from utils.version import Version
 
-router = APIRouter(prefix=config.BACKEND_PREFIX)
-
-
-# @router.post(
-#     "/rooms",
-#     response_model=RoomOutputSchema,
-#     response_description="Аудитория успешно создано",
-#     status_code=status.HTTP_201_CREATED,
-#     description="Создать аудитории и вернуть его",
-#     summary="Создание аудитории",
-# )
-# async def create(
-#         schemas: RoomCreateSchema,
-#         room_service: RoomService = Depends(RoomService.get_service)
-# ):
-#     return await room_service.create(schemas=schemas)
+router = APIRouter()
 
 
 @router.get(
@@ -38,10 +26,12 @@ async def get_empty(
     time_start: datetime.time = Query(..., description="Начало отрезка времени, в котором аудитория свободна"),
     time_end: datetime.time = Query(..., description="Конец отрезка времени, в котором аудитория свободна"),
     date_: datetime.date = Query(..., description="Дата, когда аудитория свободна"),
-    room_service: RoomService = Depends(RoomService.get_service),
+    version: Version = Depends(get_version),
+    session: AsyncSession = Depends(get_session),
 ):
     room_filter = RoomFilter(time_start=time_start, time_end=time_end, date_=date_)
-    return await room_service.get_empty(room_filter, corps)
+    room_service = await get_room_service(version, session)
+    return room_service.get_empty(room_filter, corps)
 
 
 @router.get(
@@ -51,5 +41,9 @@ async def get_empty(
     description="Получить все аудитории",
     summary="Получить все аудитории",
 )
-async def get_all(room_service: RoomService = Depends(RoomService.get_service)):
+async def get_all(
+    version: Version = Depends(get_version),
+    session: AsyncSession = Depends(get_session),
+):
+    room_service = await get_room_service(version, session)
     return await room_service.get_all()

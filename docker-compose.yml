@@ -39,7 +39,6 @@ services:
       DEBUG: ${DEBUG}
       BACKEND_TITLE: ${BACKEND_TITLE}
       BACKEND_DESCRIPTION: ${BACKEND_DESCRIPTION}
-      BACKEND_PREFIX: ${BACKEND_PREFIX}
       BACKEND_HOST: ${BACKEND_HOST}
       BACKEND_PORT: ${BACKEND_PORT}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -85,7 +84,6 @@ services:
     ports:
       - "9000:9000"
     environment:
-      WORKER_CELERY_NAME: ${WORKER_CELERY_NAME}
       BEAT_CELERY_NAME: ${BEAT_CELERY_NAME}
 
   rabbitmq:
@@ -113,5 +111,24 @@ services:
       REDIS_DB: ${REDIS_DB}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: always
+    ports:
+      - 3003:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+
 volumes:
   app-db-data:
+  grafana_data:

@@ -79,8 +79,50 @@ class NewsParser(BaseParser):
 
     @staticmethod
     def get_soup(url):
-        with requests.get(url) as response:
-            return BeautifulSoup(response.text, "lxml")
+        proxies = [
+            "http://85.26.146.169:80",
+            "http://95.66.138.21:8880",
+            "http://213.183.56.99:80",
+            "http://91.228.239.216:3128",
+            "http://94.125.48.238:80",
+            "http://93.157.248.108:88",
+            "http://94.243.8.251:80",
+            "http://109.194.22.61:8080",
+            "http://185.57.237.32:4411",
+            "http://193.138.178.6:8282",
+            "http://194.67.91.153:80",
+            "http://85.234.126.107:55555",
+            "http://62.33.207.201:80",
+            "http://185.153.44.74:8080",
+            "http://213.150.76.246:3128",
+            "http://81.23.193.94:32650",
+            "http://81.211.10.161:3128",
+            "http://188.124.230.43:32199",
+            "http://82.208.111.19:80",
+            "http://88.201.217.203:80",
+            "http://176.192.80.10:3128",
+            "http://109.248.249.29:8081",
+            "http://78.107.235.8:3131",
+            "http://95.213.234.86:3128",
+            "http://78.25.148.220:32650",
+            "http://95.213.234.84:3128",
+            "http://82.146.37.145:80",
+            "http://95.31.22.173:7777",
+            "http://62.33.207.202:80",
+            "http://91.197.77.118:443",
+            "http://95.213.211.38:3128",
+            "http://84.201.254.47:3128",
+            "http://185.39.17.246:8080",
+            "http://62.33.136.222:8080",
+            "http://95.167.29.50:8080",
+        ]
+        for proxy in proxies:
+            proxies_dict = {"http": proxy, "https": proxy}
+            try:
+                with requests.get(url, proxies=proxies_dict) as response:
+                    return BeautifulSoup(response.text, "lxml")
+            except Exception as err:
+                print(f"Error: {err}")
 
     def parse_tags(self, url: str):
         soup = self.get_soup(url)

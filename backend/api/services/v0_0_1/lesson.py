@@ -14,7 +14,7 @@ from backend.api.schemas.lesson import (
 from backend.api.schemas.lesson_translate import LessonTranslateCreateSchema
 from backend.api.schemas.teacher import TeacherSchema
 from backend.api.schemas.teacher_translate import TeacherTranslateSchema
-from backend.api.services.base_servise import BaseService
+from backend.api.services.v0_0_1.base_servise import BaseService
 
 
 class LessonService(BaseService):
@@ -112,6 +112,9 @@ class LessonService(BaseService):
                     ).model_dump()
                 )
             )
+        
+        if not lessons_schemes:
+            raise HTTPException(404, "Занятий не найдено")
 
         return LessonsByGroupSchema(lessons=lessons_schemes, group=group, lang=lang).dict()
 
@@ -159,6 +162,9 @@ class LessonService(BaseService):
                     ).model_dump()
                 )
             )
+
+        if not lessons_schemes:
+            raise HTTPException(404, "Занятий не найдено")
 
         t = await self.facade.get_by_name_teacher(teacher)
         t_trans = await self.facade.get_trans_teacher(t, lang="ru")

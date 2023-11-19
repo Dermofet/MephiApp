@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 
 from backend.api.schemas.start_semester import StartSemesterCreateSchema, StartSemesterOutputSchema, StartSemesterSchema
-from backend.api.services.base_servise import BaseService
+from backend.api.services.v0_0_1.base_servise import BaseService
 
 
 class StartSemesterService(BaseService):

@@ -4,7 +4,7 @@ from fastapi import HTTPException, Response
 from pydantic import UUID4
 
 from backend.api.schemas.corps import CorpsCreateSchema, CorpsOutputSchema, CorpsSchema
-from backend.api.services.base_servise import BaseService
+from backend.api.services.v0_0_1.base_servise import BaseService
 
 
 class CorpsService(BaseService):

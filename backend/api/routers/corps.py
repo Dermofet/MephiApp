@@ -1,27 +1,13 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from backend.api.schemas.corps import CorpsCreateSchema, CorpsOutputSchema
-from backend.api.services.corps import CorpsService
-from config import config
+from backend.api.database.connection import get_session
+from backend.api.routers.utils import get_version
+from backend.api.services.utils import get_corps_service
+from utils.version import Version
 
-router = APIRouter(prefix=config.BACKEND_PREFIX)
-
-# TODO Удалить
-
-# @router.post(
-#     "/corps",
-#     response_model=CorpsOutputSchema,
-#     response_description="Корпус успешно создано",
-#     status_code=status.HTTP_201_CREATED,
-#     description="Создать корпус и вернуть его",
-#     summary="Создание корпуса",
-# )
-# async def create(
-#     schemas: CorpsCreateSchema,
-#     corps_service: CorpsService = Depends(CorpsService.get_service),
-# ):
-#     return await corps_service.create(schemas=schemas)
+router = APIRouter()
 
 
 @router.get(
@@ -32,6 +18,8 @@ router = APIRouter(prefix=config.BACKEND_PREFIX)
     summary="Получить корпус",
 )
 async def get_all(
-    corps_service: CorpsService = Depends(CorpsService.get_service),
+    version: Version = Depends(get_version),
+    session: AsyncSession = Depends(get_session),
 ):
+    corps_service = await get_corps_service(version, session)
     return await corps_service.get_all()

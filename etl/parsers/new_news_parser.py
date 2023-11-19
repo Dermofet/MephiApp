@@ -84,11 +84,10 @@ class NewNewsParser(WrapperBaseLoader, NewsParser):
 
     def __get_news_id(self, preview):
         preview_fields = preview.select(".field-content")
-        print(F"Url: {self.url}")
         if len(preview_fields) == 4:
-            news_url =  preview_fields[3].find("a")["href"]
+            news_url = preview_fields[3].find("a")["href"]
         else:
-            news_url =  preview_fields[2].find("a")["href"]
+            news_url = preview_fields[2].find("a")["href"]
         return news_url.split("news/")[1]
 
     def __set_info_to_db(self, news: List[NewsLoading]):

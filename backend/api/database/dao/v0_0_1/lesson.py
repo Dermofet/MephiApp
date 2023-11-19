@@ -6,10 +6,9 @@ from pydantic import UUID4
 from sqlalchemy import and_, between, delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.api.database.dao.academic import AcademicDAO
-from backend.api.database.dao.group import GroupDAO
-from backend.api.database.dao.room import RoomDAO
-from backend.api.database.dao.teacher import TeacherDAO
+from backend.api.database.dao.v0_0_1.group import GroupDAO
+from backend.api.database.dao.v0_0_1.room import RoomDAO
+from backend.api.database.dao.v0_0_1.teacher import TeacherDAO
 from backend.api.database.models.association_tables import AT_lesson_group, AT_lesson_room, AT_lesson_teacher
 from backend.api.database.models.group import GroupModel
 from backend.api.database.models.lesson import LessonModel
@@ -18,7 +17,6 @@ from backend.api.database.models.room import RoomModel
 from backend.api.database.models.teacher import TeacherModel
 from backend.api.database.models.teacher_translate import TeacherTranslateModel
 from backend.api.schemas.lesson import LessonCreateSchema
-from backend.api.schemas.lesson_translate import LessonTranslateCreateSchema
 from etl.schemas.lesson import LessonLoading, LessonTranslateLoading
 
 
