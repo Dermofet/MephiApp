@@ -35,9 +35,19 @@ http:
         - websecure
       tls:
         certResolver: myresolver
+    grafana:
+      rule: "Host(`acm-mephi.site`) && PathPrefix('/grafana')"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: myresolver
 
   services:
     backend:
       loadBalancer:
         servers:
           - url: "http://localhost:8000"
+    grafana:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:3003"
