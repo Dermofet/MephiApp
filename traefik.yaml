@@ -36,7 +36,7 @@ http:
       tls:
         certResolver: myresolver
     grafana:
-      rule: "Host(`acm-mephi.site`) && PathPrefix('/grafana')"
+      rule: "Host(`acm-mephi.site`) && Path('/grafana')"
       entryPoints:
         - websecure
       tls:

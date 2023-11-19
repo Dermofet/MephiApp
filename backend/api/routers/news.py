@@ -8,9 +8,16 @@ from backend.api.schemas.news import NewsOutputSchema
 from backend.api.services.utils import get_news_service
 from utils.version import Version
 
-router = APIRouter(prefix="/api/v2.0")
+router = APIRouter()
 
 
+@router.get(
+    "/api/v2.0/news/all",
+    response_model=dict[str, list[NewsOutputSchema]],
+    status_code=status.HTTP_200_OK,
+    description="Получить новости",
+    summary="Получить новости",
+)
 @router.get(
     "/news/all",
     response_model=dict[str, list[NewsOutputSchema]],

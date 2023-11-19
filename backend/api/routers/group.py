@@ -8,9 +8,16 @@ from backend.api.schemas.group import GroupOutputSchema
 from backend.api.services.utils import get_group_service
 from utils.version import Version
 
-router = APIRouter(prefix="/api/v2.0")
+router = APIRouter()
 
 
+@router.get(
+    "/api/v2.0/groups",
+    response_model=dict[str, list[str]],
+    status_code=status.HTTP_200_OK,
+    description="Получить все группы",
+    summary="Получить все группы",
+)
 @router.get(
     "/groups",
     response_model=dict[str, list[str]],
@@ -26,6 +33,13 @@ async def get_all(
     return await group_service.get_all()
 
 
+@router.get(
+    "/api/v2.0/groups/{name}",
+    response_model=GroupOutputSchema,
+    status_code=status.HTTP_200_OK,
+    description="Получить группу по названию",
+    summary="Получить группу по названию",
+)
 @router.get(
     "/groups/{name}",
     response_model=GroupOutputSchema,

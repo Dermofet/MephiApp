@@ -11,9 +11,16 @@ from backend.api.routers.utils import get_version
 from backend.api.services.utils import get_room_service
 from utils.version import Version
 
-router = APIRouter(prefix="/api/v2.0")
+router = APIRouter()
 
 
+@router.get(
+    "/api/v2.0/rooms/empty",
+    response_model=dict[str, list[dict]],
+    status_code=status.HTTP_200_OK,
+    description="Получить все аудитории, в которых не проводятся занятия в заданный период времени",
+    summary="Получить пустые аудитории",
+)
 @router.get(
     "/rooms/empty",
     response_model=dict[str, list[dict]],
@@ -34,6 +41,13 @@ async def get_empty(
     return room_service.get_empty(room_filter, corps)
 
 
+@router.get(
+    "/api/v2.0/rooms",
+    response_model=List[str],
+    status_code=status.HTTP_200_OK,
+    description="Получить все аудитории",
+    summary="Получить все аудитории",
+)
 @router.get(
     "/rooms",
     response_model=List[str],
