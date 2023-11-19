@@ -8,7 +8,7 @@ from backend.api.schemas.start_semester import StartSemesterOutputSchema
 from backend.api.services.utils import get_start_semester_service
 from utils.version import Version
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v2.0")
 
 
 @router.get(

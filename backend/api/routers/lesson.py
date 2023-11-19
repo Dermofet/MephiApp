@@ -7,7 +7,7 @@ from backend.api.routers.utils import get_version
 from backend.api.services.utils import get_lesson_service
 from utils.version import Version
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v2.0")
 
 
 @router.get(

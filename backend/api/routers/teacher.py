@@ -8,7 +8,7 @@ from backend.api.schemas.teacher import TeacherOutputSchema
 from backend.api.services.utils import get_teacher_service
 from utils.version import Version
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v2.0")
 
 
 @router.get(

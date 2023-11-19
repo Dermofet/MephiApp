@@ -4,7 +4,7 @@ from fastapi.responses import RedirectResponse
 from config import config
 from utils import redirect
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v2.0")
 
 
 @router.get(
