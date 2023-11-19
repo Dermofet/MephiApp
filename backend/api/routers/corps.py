@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/api/v2.0/corps",
+    "/v2.0/corps",
     response_model=dict[str, list[str]],
     status_code=status.HTTP_200_OK,
     description="Получить корпус",

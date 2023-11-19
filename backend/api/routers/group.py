@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/api/v2.0/groups",
+    "/v2.0/groups",
     response_model=dict[str, list[str]],
     status_code=status.HTTP_200_OK,
     description="Получить все группы",
@@ -34,7 +34,7 @@ async def get_all(
 
 
 @router.get(
-    "/api/v2.0/groups/{name}",
+    "/v2.0/groups/{name}",
     response_model=GroupOutputSchema,
     status_code=status.HTTP_200_OK,
     description="Получить группу по названию",

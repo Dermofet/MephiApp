@@ -30,13 +30,13 @@ certificatesResolvers:
 http:
   routers:
     backend:
-      rule: "Host(`acm-mephi.site`)" # Замените на ваш домен
+      rule: "Host(`acm-mephi.site`) && Path(`/api`)" # Замените на ваш домен
       entryPoints:
         - websecure
       tls:
         certResolver: myresolver
     grafana:
-      rule: "Host(`acm-mephi.site`) && Path('/grafana')"
+      rule: "Host(`acm-mephi.site`) && Path(`/grafana`)"
       entryPoints:
         - websecure
       tls:

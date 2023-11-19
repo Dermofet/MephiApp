@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/api/v2.0/teachers/{lang}",
+    "/v2.0/teachers/{lang}",
     response_model=dict[str, list[str]],
     status_code=status.HTTP_200_OK,
     description="Получить полные ФИО всеx преподавателей",
@@ -35,7 +35,7 @@ async def get_all(
 
 
 @router.get(
-    "/api/v2.0/teachers/{name}",
+    "/v2.0/teachers/{name}",
     response_model=TeacherOutputSchema,
     status_code=status.HTTP_200_OK,
     description="Получить полное ФИО преподавателя",
