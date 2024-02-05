@@ -23,6 +23,7 @@ class _Settings(BaseSettings):
 class Config(_Settings):
     # Debug
     DEBUG: bool = Field(..., description="Debug mode")
+    MODE: str = Field(..., description="Mode")
 
     # Backend
     BACKEND_TITLE: str = Field(..., description="Backend title")
@@ -49,6 +50,9 @@ class Config(_Settings):
     )
     LOCAL_DB_URI: Optional[AsyncPostgresDns] = Field(
         None, description="Postgres uri for alembic", validate_default=True
+    )
+    TEST_DB_URI: Optional[AsyncPostgresDns] = Field(
+        None, description="Postgres uri for test", validate_default=True
     )
 
     # Parsers
@@ -124,8 +128,21 @@ class Config(_Settings):
             username=info.data["POSTGRES_USER"],
             password=info.data["POSTGRES_PASSWORD"],
             host=info.data["LOCAL_POSTGRES_SERVER"],
-            port=info.data["LOCAL_POSTGRES_PORT"],
+            port=info.data["POSTGRES_PORT"],
             path=info.data["POSTGRES_DB"],
+        )
+        
+    @field_validator("TEST_DB_URI", mode="before")
+    def create_test_db_uri(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
+        if isinstance(v, str):
+            return v
+        return AsyncPostgresDns.build(
+            scheme="postgresql+asyncpg",
+            username=info.data["POSTGRES_USER"],
+            password=info.data["POSTGRES_PASSWORD"],
+            host=info.data["LOCAL_POSTGRES_SERVER"],
+            port=info.data["LOCAL_POSTGRES_PORT"],
+            path=f'test_{info.data["POSTGRES_DB"]}',
         )
 
     @field_validator("REDIS_URI", mode="before")

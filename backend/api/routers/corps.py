@@ -9,14 +9,6 @@ from utils.version import Version
 
 router = APIRouter()
 
-
-@router.get(
-    "/v2.0/corps",
-    response_model=dict[str, list[str]],
-    status_code=status.HTTP_200_OK,
-    description="Получить корпус",
-    summary="Получить корпус",
-)
 @router.get(
     "/corps",
     response_model=dict[str, list[str]],
