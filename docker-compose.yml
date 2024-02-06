@@ -49,7 +49,7 @@ services:
       ENV: development
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`acm-mephi.site`)"
+      - "traefik.http.routers.backend.rule=Host(`acm-mephi.site`) && Path(`/api`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
 
@@ -128,11 +128,6 @@ services:
       - 3003:3000
     volumes:
       - grafana_data:/var/lib/grafana
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`acm-mephi.site`) && Path(`/grafana`)"
-      - "traefik.http.routers.backend.entrypoints=websecure"
-      - "traefik.http.routers.backend.tls.certresolver=myresolver"
 
 volumes:
   app-db-data:

@@ -8,7 +8,7 @@ from backend.api.schemas.group import GroupOutputSchema
 from backend.api.services.utils import get_group_service
 from utils.version import Version
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 
 @router.get(

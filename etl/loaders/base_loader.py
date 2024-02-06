@@ -39,7 +39,7 @@ class BaseLoader:
 
     def init_facade(self):
         self.session = self.__async_session()
-        self.facade_db = FacadeDB(self.session)
+        self.facade_db = FacadeDB(self.session, version="0.0.1")
 
     def __del__(self):
         asyncio.run(self.session.close())

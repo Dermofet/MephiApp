@@ -7,8 +7,15 @@ from backend.api.routers.utils import get_version
 from backend.api.services.utils import get_corps_service
 from utils.version import Version
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
+@router.get(
+    "/2.0/corps",
+    response_model=dict[str, list[str]],
+    status_code=status.HTTP_200_OK,
+    description="Получить корпус",
+    summary="Получить корпус",
+)
 @router.get(
     "/corps",
     response_model=dict[str, list[str]],

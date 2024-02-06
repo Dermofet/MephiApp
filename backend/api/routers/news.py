@@ -8,7 +8,7 @@ from backend.api.schemas.news import NewsOutputSchema
 from backend.api.services.utils import get_news_service
 from utils.version import Version
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 
 @router.get(
