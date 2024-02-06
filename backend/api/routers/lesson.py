@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api")
 
 
 @router.get(
-    "/v2.0/lessons/groups/{group}",
+    "/2.0/lessons/groups/{group}",
     response_model=dict,
     response_description="Успешный возврат занятий",
     status_code=status.HTTP_200_OK,
@@ -37,7 +37,7 @@ async def get_by_group(
 
 
 @router.get(
-    "/v2.0/lessons/teachers/{teacher}",
+    "/2.0/lessons/teachers/{teacher}",
     response_model=dict,
     response_description="Успешный возврат занятий",
     status_code=status.HTTP_200_OK,

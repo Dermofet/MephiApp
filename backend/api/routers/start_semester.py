@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api")
 
 
 @router.get(
-    "/v2.0/start_semester",
+    "/2.0/start_semester",
     response_model=StartSemesterOutputSchema,
     status_code=status.HTTP_200_OK,
     description="Получить дату начала семестра",

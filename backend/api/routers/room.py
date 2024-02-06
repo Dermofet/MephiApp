@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api")
 
 
 @router.get(
-    "/v2.0/rooms/empty",
+    "/2.0/rooms/empty",
     response_model=dict[str, list[dict]],
     status_code=status.HTTP_200_OK,
     description="Получить все аудитории, в которых не проводятся занятия в заданный период времени",
@@ -42,7 +42,7 @@ async def get_empty(
 
 
 @router.get(
-    "/v2.0/rooms",
+    "/2.0/rooms",
     response_model=List[str],
     status_code=status.HTTP_200_OK,
     description="Получить все аудитории",

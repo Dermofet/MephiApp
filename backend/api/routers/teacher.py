@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api")
 
 
 @router.get(
-    "/v2.0/teachers/{lang}",
+    "/2.0/teachers/{lang}",
     response_model=dict[str, list[str]],
     status_code=status.HTTP_200_OK,
     description="Получить полные ФИО всеx преподавателей",

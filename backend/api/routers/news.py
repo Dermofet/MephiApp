@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api")
 
 
 @router.get(
-    "/v2.0/news/all",
+    "/2.0/news/all",
     response_model=dict[str, list[NewsOutputSchema]],
     status_code=status.HTTP_200_OK,
     description="Получить новости",
