@@ -6,4 +6,4 @@
 
 -------------
 
-В текущий момент backend переписывается под асинхронную работу SQLAlchemy (https://github.com/Dermofet/MephiApp/tree/async-backend_1)
+В текущий момент backend переписывается под асинхронную работу SQLAlchemy (https://github.com/Dermofet/MephiApp/tree/async_backend_1)
